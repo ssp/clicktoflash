@@ -317,10 +317,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 55EB70470E04A8650016593D /* Build configuration list for PBXNativeTarget "ClickToFlash" */;
 			buildPhases = (
+				794759ED0F6095D900FD82E3 /* CopyFiles */,
 				55EB703F0E04A8640016593D /* Sources */,
 				55EB70400E04A8640016593D /* Frameworks */,
 				55EB703E0E04A8640016593D /* Resources */,
-				794759ED0F6095D900FD82E3 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -572,7 +572,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Install plugin for user";
-				PRODUCT_VERSION = 1.5.3b4;
 			};
 			name = Debug;
 		};
@@ -580,7 +579,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Install plugin for user";
-				PRODUCT_VERSION = 1.5.3b4;
 			};
 			name = Release;
 		};
@@ -592,7 +590,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
-				PRODUCT_VERSION = 1.6b1;
+				PRODUCT_VERSION = 1.6b2;
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Debug;
@@ -605,7 +603,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
-				PRODUCT_VERSION = 1.6b1;
+				PRODUCT_VERSION = 1.6b2;
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Release;
@@ -678,7 +676,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Build Package";
-				PRODUCT_VERSION = 1.5.3b4;
 			};
 			name = Debug;
 		};
@@ -686,7 +683,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Build Package";
-				PRODUCT_VERSION = 1.5.3b4;
 			};
 			name = Release;
 		};
