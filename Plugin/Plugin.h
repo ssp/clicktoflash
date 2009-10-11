@@ -28,6 +28,7 @@ THE SOFTWARE.
 #import <WebKit/WebKit.h>
 
 @class CTFKiller;
+@class CTFButtonsView;
 
 @interface CTFClickToFlashPlugin : NSView <WebPlugInViewFactory> {
 	NSArray *defaultWhitelist;
@@ -50,6 +51,7 @@ THE SOFTWARE.
 	BOOL _contextMenuIsVisible;
 	NSTimer *_delayingTimer;
 	
+	CTFButtonsView * buttonsView;
 	CTFKiller * killer;
 	
 	NSURL * previewURL;
@@ -86,6 +88,8 @@ THE SOFTWARE.
 
 - (CTFKiller *) killer;
 - (void)setKiller:(CTFKiller *)newKiller;
+- (CTFButtonsView *) buttonsView;
+- (void) setButtonsView: (CTFButtonsView *) newButtonsView;
 - (DOMElement *)container;
 - (void)setContainer:(DOMElement *)newValue;
 - (NSString *)host;

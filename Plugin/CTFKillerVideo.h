@@ -47,6 +47,8 @@ enum CTFKVLookupStatus {
 	BOOL requiresConversion;
 	
 	NSSize videoSize;
+	
+	NSButton * fullscreenButton;
 }
 
 /*
@@ -122,8 +124,9 @@ enum CTFKVLookupStatus {
 - (void) setLookupStatus: (enum CTFKVLookupStatus) newLookupStatus;
 - (void) increaseActiveLookups;
 - (void) decreaseActiveLookups;
-- (BOOL)requiresConversion;
-- (void)setRequiresConversion:(BOOL)newRequiresConversion;
-
+- (BOOL) requiresConversion;
+- (void) setRequiresConversion: (BOOL) newRequiresConversion;
+- (NSButton *) fullscreenButton;
+- (void) setFullscreenButton: (NSButton *) newFullscreenButton;
 
 @end

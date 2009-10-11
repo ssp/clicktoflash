@@ -31,6 +31,7 @@
 #import "CTFUserDefaultsController.h"
 #import "CTFUtilities.h"
 #import "Plugin.h"
+#import "CTFButtonsView.h"
 
 static NSString * divCSS = @"margin:auto;padding:0px;border:0px none;text-align:center;display:block;float:none;";
 static NSString * sDisableVideoElement = @"disableVideoElement";
@@ -55,6 +56,7 @@ static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
 		requiresConversion = NO;
 		
 		videoSize = NSZeroSize;
+		[self setFullscreenButton:nil];
 	}
 	
 	return self;
@@ -62,6 +64,7 @@ static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
 
 
 - (void) dealloc {
+	[self setFullscreenButton:nil];
 	[super dealloc];
 }
 
@@ -682,6 +685,21 @@ static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
 
 
 
+- (void) setupButtons {
+	if ( [self fullscreenButton] == nil ) {
+		NSButton * button = [CTFButtonsView button];
+		[button setImage: [NSImage imageNamed:NSImageNameEnterFullScreenTemplate]];
+		[button setToolTip: CtFLocalizedString( @"Play Fullscreen in QuickTime Player", @"*Same as for menu item, used in setupButtons*" )];
+		[button sizeToFit];
+		[button setTarget: self];
+		[button setAction: @selector(openFullscreenInQTPlayer:)];
+		[self setFullscreenButton: button];
+		[[[self plugin] buttonsView] addButton: button];
+	}
+}
+
+
+
 
 #pragma mark -
 #pragma mark Accessors
@@ -703,6 +721,7 @@ static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
 
 - (void)setHasVideo:(BOOL)newHasVideo {
 	hasVideo = newHasVideo;
+	[self setupButtons];
 	[[self plugin] setNeedsDisplay: YES];
 }
 
@@ -713,6 +732,7 @@ static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
 
 - (void)setHasVideoHD:(BOOL)newHasVideoHD {
 	hasVideoHD = newHasVideoHD;
+	[self setupButtons];
 	[[self plugin] setNeedsDisplay: YES];
 }
 
@@ -743,16 +763,24 @@ static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
 }
 
 
-- (BOOL)requiresConversion
-{
+- (BOOL) requiresConversion {
 	return requiresConversion;
 }
 
-- (void)setRequiresConversion:(BOOL)newRequiresConversion
-{
+- (void) setRequiresConversion: (BOOL) newRequiresConversion {
 	requiresConversion = newRequiresConversion;
 }
 
+			
+- (NSButton *) fullscreenButton {
+	return fullscreenButton;
+}
+
+- (void) setFullscreenButton: (NSButton *) newFullscreenButton {
+	[newFullscreenButton retain];
+	[fullscreenButton release];
+	fullscreenButton = newFullscreenButton;
+}			
 
 @end
 

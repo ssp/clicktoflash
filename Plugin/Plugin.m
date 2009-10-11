@@ -36,7 +36,7 @@ THE SOFTWARE.
 #import "CTFLoader.h"
 #import "CTFActionButton.h"
 #import "CTFMainButton.h"
-
+#import "CTFButtonsView.h"
 
 #define LOGGING_ENABLED 0
 
@@ -48,15 +48,13 @@ static NSString *sFlashNewMIMEType = @"application/futuresplash";
 static NSString *sAutoLoadInvisibleFlashViewsKey = @"autoLoadInvisibleViews";
 static NSString *sPluginEnabled = @"pluginEnabled";
 static NSString *sApplicationWhitelist = @"applicationWhitelist";
-static NSString *sDrawGearImageOnlyOnMouseOverHiddenPref = @"drawGearImageOnlyOnMouseOver";
+// static NSString *sDrawGearImageOnlyOnMouseOverHiddenPref = @"drawGearImageOnlyOnMouseOver";
 
 // Info.plist key for app developers
 static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 
 // Subview Tags
 enum subviewTags {
-	CTFGradientViewTag,
-	CTFImageViewTag,
 	CTFMainButtonTag,
 	CTFActionButtonTag
 };
@@ -312,8 +310,10 @@ enum subviewTags {
 		
 		[self setOriginalOpacityAttributes:originalOpacityDict];
 		
+		NSRect myBounds = [self bounds];
+		
 		// Add main control button
-		CTFMainButton * mainButton = [[[CTFMainButton alloc] initWithFrame: [self bounds]] autorelease];
+		CTFMainButton * mainButton = [[[CTFMainButton alloc] initWithFrame: myBounds] autorelease];
 		[mainButton setTag: CTFMainButtonTag];
 		[mainButton setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
 		[mainButton setButtonType: NSMomentaryPushInButton];
@@ -337,6 +337,12 @@ enum subviewTags {
 		[actionButton setTag: CTFActionButtonTag];
 		[actionButton setAutoresizingMask: NSViewMaxXMargin | NSViewMinYMargin];
 		[self addSubview: actionButton];
+		
+		// Add view for additional buttons (proper sizing is done by view itself)
+		CTFButtonsView * theButtonsView = [[[CTFButtonsView alloc] initWithFrame: myBounds] autorelease];
+		[theButtonsView setAutoresizingMask: NSViewWidthSizable];
+		[self addSubview: theButtonsView];
+		[self setButtonsView: theButtonsView];
 	}
 
     return self;
@@ -360,6 +366,7 @@ enum subviewTags {
 	[self setAttributes:nil];
 	[self setOriginalOpacityAttributes:nil];
 	[self setKiller:nil];
+	[self setButtonsView:nil];
 	[self setPreviewURL:nil];
 	[self setPreviewImage:nil];
 	
@@ -982,6 +989,17 @@ enum subviewTags {
 	[newKiller retain];
 	[killer release];
 	killer = newKiller;
+}
+
+
+- (CTFButtonsView *) buttonsView {
+	return buttonsView;
+}
+
+- (void) setButtonsView: (CTFButtonsView *) newButtonsView {
+	[newButtonsView retain];
+	[buttonsView release];
+	buttonsView = newButtonsView;
 }
 
 

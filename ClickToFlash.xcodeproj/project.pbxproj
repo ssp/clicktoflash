@@ -45,6 +45,7 @@
 		6953E4360F3EDE9D0014ECF7 /* CTFMenubarMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6953E4340F3EDE9D0014ECF7 /* CTFMenubarMenuController.m */; };
 		6953E43C0F3EDEB50014ECF7 /* MenubarMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6953E43A0F3EDEB50014ECF7 /* MenubarMenu.xib */; };
 		69A26D0C0F302C10006648BC /* NSBezierPath-RoundedRectangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 69A26D0B0F302C10006648BC /* NSBezierPath-RoundedRectangle.m */; };
+		6C05EE1E1081E59700616436 /* CTFButtonsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C05EE1D1081E59700616436 /* CTFButtonsView.m */; };
 		6C09630C107FCA610006923A /* CTFActionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C09630B107FCA610006923A /* CTFActionButton.m */; };
 		6C09648010808D4B0006923A /* CTFMainButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C09647F10808D4B0006923A /* CTFMainButton.m */; };
 		6C2C5A6A1068CE8700A90A54 /* Credits.css in Resources */ = {isa = PBXBuildFile; fileRef = A40485B110629B0E00FDC4E2 /* Credits.css */; };
@@ -156,6 +157,8 @@
 		6953E43B0F3EDEB50014ECF7 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Plugin/English.lproj/MenubarMenu.xib; sourceTree = "<group>"; };
 		69A26D0A0F302C10006648BC /* NSBezierPath-RoundedRectangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSBezierPath-RoundedRectangle.h"; path = "Plugin/NSBezierPath-RoundedRectangle.h"; sourceTree = "<group>"; };
 		69A26D0B0F302C10006648BC /* NSBezierPath-RoundedRectangle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSBezierPath-RoundedRectangle.m"; path = "Plugin/NSBezierPath-RoundedRectangle.m"; sourceTree = "<group>"; };
+		6C05EE1C1081E59700616436 /* CTFButtonsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFButtonsView.h; path = Plugin/CTFButtonsView.h; sourceTree = "<group>"; };
+		6C05EE1D1081E59700616436 /* CTFButtonsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFButtonsView.m; path = Plugin/CTFButtonsView.m; sourceTree = "<group>"; };
 		6C09630A107FCA610006923A /* CTFActionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFActionButton.h; path = Plugin/CTFActionButton.h; sourceTree = "<group>"; };
 		6C09630B107FCA610006923A /* CTFActionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFActionButton.m; path = Plugin/CTFActionButton.m; sourceTree = "<group>"; };
 		6C09647E10808D4B0006923A /* CTFMainButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFMainButton.h; path = Plugin/CTFMainButton.h; sourceTree = "<group>"; };
@@ -256,6 +259,8 @@
 				6C09647E10808D4B0006923A /* CTFMainButton.h */,
 				6C09630B107FCA610006923A /* CTFActionButton.m */,
 				6C09630A107FCA610006923A /* CTFActionButton.h */,
+				6C05EE1D1081E59700616436 /* CTFButtonsView.m */,
+				6C05EE1C1081E59700616436 /* CTFButtonsView.h */,
 				6C8E03FE10795EB900E21A50 /* CTFLoader.m */,
 				6C8E03FD10795EB900E21A50 /* CTFLoader.h */,
 				6C8EC6F310764F810053587F /* CTFKiller.m */,
@@ -527,6 +532,7 @@
 				6C8E03FF10795EB900E21A50 /* CTFLoader.m in Sources */,
 				6C09630C107FCA610006923A /* CTFActionButton.m in Sources */,
 				6C09648010808D4B0006923A /* CTFMainButton.m in Sources */,
+				6C05EE1E1081E59700616436 /* CTFButtonsView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
