@@ -9,9 +9,6 @@
 #import "CTFActionButton.h"
 #import "CTFUtilities.h"
 
-static CGFloat padding = 3.;
-static CGFloat leftMargin = 5.;
-static CGFloat backgroundOpacity = .8;
 
 
 @implementation CTFActionButton
@@ -92,6 +89,7 @@ static CGFloat backgroundOpacity = .8;
 	}
 			
 	if( gearImage ) {
+		const CGFloat padding = 3.;
 		CGFloat gearSize = [gearImage size].width; // assumes the gear to be square
 		CGFloat size = gearSize + 2.0 * padding;
 		CGFloat x = round(bounds.size.width * .5) - round(size * .5);
