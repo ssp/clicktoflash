@@ -49,6 +49,7 @@ enum CTFKVLookupStatus {
 	NSSize videoSize;
 	
 	NSButton * fullscreenButton;
+	NSView * containerView;
 }
 
 /*
@@ -96,6 +97,9 @@ enum CTFKVLookupStatus {
 - (IBAction) downloadVideoSD: (id) sender;
 - (IBAction) downloadVideoHD: (id) sender;
 
+// QuickTime
+- (void) setupQuickTime;
+
 // Internal stuff
 - (void) _convertElementForMP4: (DOMElement*) element atURL: (NSString*) URLString;
 - (void) _convertElementForVideoElement: (DOMElement*) element atURL: (NSString*) URLString;
@@ -128,5 +132,6 @@ enum CTFKVLookupStatus {
 - (void) setRequiresConversion: (BOOL) newRequiresConversion;
 - (NSButton *) fullscreenButton;
 - (void) setFullscreenButton: (NSButton *) newFullscreenButton;
-
+- (NSView *) containerView;
+- (void) setContainerView: (NSView *) containerView;
 @end

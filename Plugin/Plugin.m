@@ -313,24 +313,14 @@ enum subviewTags {
 		NSRect myBounds = [self bounds];
 		
 		// Add main control button
-		CTFMainButton * mainButton = [[[CTFMainButton alloc] initWithFrame: myBounds] autorelease];
-		[mainButton setTag: CTFMainButtonTag];
-		[mainButton setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
-		[mainButton setButtonType: NSMomentaryPushInButton];
-		[mainButton setTarget: self];
-		[mainButton setAction: @selector(clicked:)];
-		[self addSubview: mainButton];		
-		
-		/* // Doesn't work for us as NSImageView can only scale proportionally to _fit_ but not to _fit width_
-		// Add Image View
-		NSImageView * imageView = [[[NSImageView alloc] initWithFrame: [self bounds]] autorelease];
-		[imageView setTag: CTFImageViewTag];
-		[imageView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-		[imageView setImage: NSImageFrameNone];
-		[imageView setImageAlignment: NSImageAlignCenter];
-		[imageView setImageScaling: NSImageScaleProportionally];
-		[self addSubview: imageView];
-		*/
+		CTFMainButton * myMainButton = [[[CTFMainButton alloc] initWithFrame: myBounds] autorelease];
+		[myMainButton setTag: CTFMainButtonTag];
+		[myMainButton setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
+		[myMainButton setButtonType: NSMomentaryPushInButton];
+		[myMainButton setTarget: self];
+		[myMainButton setAction: @selector(clicked:)];
+		[self addSubview: myMainButton];		
+		[self setMainButton: myMainButton];
 		
 		// Add action button control
 		CTFActionButton * actionButton = [CTFActionButton actionButton];
@@ -343,6 +333,9 @@ enum subviewTags {
 		[theButtonsView setAutoresizingMask: NSViewWidthSizable];
 		[self addSubview: theButtonsView];
 		[self setButtonsView: theButtonsView];
+		
+		// Need layers so buttons can be drawn on top of movies.
+		[self setWantsLayer:YES];
 	}
 
     return self;
@@ -366,6 +359,7 @@ enum subviewTags {
 	[self setAttributes:nil];
 	[self setOriginalOpacityAttributes:nil];
 	[self setKiller:nil];
+	[self setMainButton:nil];
 	[self setButtonsView:nil];
 	[self setPreviewURL:nil];
 	[self setPreviewImage:nil];
@@ -989,6 +983,17 @@ enum subviewTags {
 	[newKiller retain];
 	[killer release];
 	killer = newKiller;
+}
+
+
+- (CTFMainButton *) mainButton {
+	return mainButton;
+}
+
+- (void) setMainButton: (CTFMainButton *) newMainButton {
+	[newMainButton retain];
+	[mainButton release];
+	mainButton = newMainButton;
 }
 
 

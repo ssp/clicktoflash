@@ -85,6 +85,7 @@ static CGFloat height = 32.;
 
 - (void) insertButton: (NSControl*) button atIndex: (NSInteger) index {
 	[buttons insertObject:button atIndex:index];
+	[button setWantsLayer:YES];
 	[self addSubview: button];
 	[self arrangeButtons];
 }

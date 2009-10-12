@@ -38,6 +38,7 @@ static NSString * sDisableVideoElement = @"disableVideoElement";
 static NSString * sUseYouTubeH264DefaultsKey = @"useYouTubeH264";
 static NSString * sUseYouTubeHDH264DefaultsKey = @"useYouTubeHDH264";
 static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
+static NSString * useQTKitDefaultsKey = @"use QTKit";
 
 
 @implementation CTFKillerVideo
@@ -288,6 +289,56 @@ static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
 
 
 
+
+
+#pragma mark -
+#pragma mark QuickTime
+
+- (void) setupQuickTime {
+	NSRect bounds = [[self plugin] bounds];
+	NSView * myContainerView = [self containerView];
+	QTMovieView * myMovieView = [[myContainerView subviews] objectAtIndex:0];
+	
+	if ( myMovieView == nil ) {
+		myMovieView = [[[QTMovieView alloc] initWithFrame:bounds] autorelease];
+		[myMovieView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];		
+		
+		NSView * myContainerView = [[[NSView alloc] initWithFrame:bounds] autorelease];
+		[myContainerView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+		[myContainerView addSubview: myMovieView];
+		[myContainerView setWantsLayer:YES];
+		
+		if ( myContainerView == nil || myMovieView == nil ) { return; }
+		
+		[self setContainerView: myContainerView];
+	}
+	
+	[fullscreenButton setAction: @selector(enterFullScreen:)];
+	
+	NSString * movieURLString = [self videoURLStringForHD: [self useVideoHD]];
+	NSURL * movieURL = [NSURL URLWithString: movieURLString];
+//	if ([QTMovie canInitWithURL: movieURL]) {   <------ SEEMS to give wrong results for youtube URLs, say
+		NSError * error = nil;
+		QTMovie * movie = [QTMovie movieWithURL: movieURL error: &error];
+		if ( movie != nil ) {
+			[myMovieView setMovie: movie];
+			[[self plugin] addSubview:myMovieView positioned: NSWindowBelow relativeTo: nil];
+			[[[self plugin] mainButton] setHidden:YES];
+		}
+	else {
+		NSLog(@"%@", [error localizedDescription]);
+	}
+
+//	}
+}
+
+
+
+
+
+
+
+
 #pragma mark -
 #pragma mark Actions
 
@@ -352,8 +403,7 @@ static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
 }
 
 
-- (IBAction)openFullscreenInQTPlayer:(id)sender;
-{
+- (IBAction)openFullscreenInQTPlayer:(id)sender {
 	BOOL useHD = [[CTFUserDefaultsController standardUserDefaults] boolForKey:sUseYouTubeHDH264DefaultsKey];
 	
 	[self openFullscreenInQTPlayerUsingHD: useHD];
@@ -367,6 +417,33 @@ static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
 	[self openFullscreenInQTPlayerUsingHD: YES];	
 }
 
+
+- (IBAction) enterFullScreen: (id) sender {
+	[fullscreenButton setImage: [NSImage imageNamed: NSImageNameExitFullScreenTemplate]];
+	[fullscreenButton setAction: @selector(exitFullScreen:)];
+	[[self containerView] setAutoresizingMask: NSViewMinXMargin | NSViewMaxXMargin];
+	
+	NSDictionary * fullScreenOptions = [NSDictionary dictionaryWithObjectsAndKeys:
+										[NSNumber numberWithBool: NO], NSFullScreenModeAllScreens,
+								//		[], NSFullScreenModeSetting,
+								//		[], NSFullScreenModeWindowLevel,
+										[NSNumber numberWithUnsignedInteger:(1 <<  2) | (1 << 1)], @"NSFullScreenModeApplicationPresentationOptions",
+								// NSApplicationPresentationAutoHideMenuBar = (1 <<  2), NSApplicationPresentationHideDock = (1 << 1)
+										nil];
+	
+	NSScreen * myScreen =[NSScreen mainScreen]; //[[[self containerView] window] screen];
+	[[self plugin] enterFullScreenMode:myScreen withOptions:fullScreenOptions];
+	
+}
+
+
+
+
+- (IBAction) exitFullScreen: (id) sender {
+	[fullscreenButton setImage: [NSImage imageNamed: NSImageNameEnterFullScreenTemplate]];
+	[fullscreenButton setAction: @selector(enterFullScreen:)];
+	[[self plugin] exitFullScreenModeWithOptions:nil];
+}
 
 
 
@@ -445,6 +522,10 @@ static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
 
 
 - (void) _convertToMP4ContainerUsingHD: (BOOL) useHD {
+	if ( [[CTFUserDefaultsController standardUserDefaults] boolForKey: useQTKitDefaultsKey ] ) {
+		[self setupQuickTime];
+	}
+	else {
 	DOMElement * container = [[self plugin] container];
 	DOMDocument* document = [container ownerDocument];
 	NSString * URLString = [self videoURLStringForHD: useHD];
@@ -488,6 +569,7 @@ static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
 	[[container parentNode] replaceChild: CtFContainerElement oldChild: container];
 	
     [[self plugin] setContainer:nil];
+	}
 }
 
 
@@ -781,6 +863,18 @@ static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
 	[fullscreenButton release];
 	fullscreenButton = newFullscreenButton;
 }			
+
+
+- (NSView *) containerView {
+	return containerView;
+}
+
+- (void) setContainerView: (NSView *) newContainerView {
+	[newContainerView retain];
+	[containerView release];
+	containerView = newContainerView;
+}
+
 
 @end
 
