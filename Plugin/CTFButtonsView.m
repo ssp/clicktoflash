@@ -7,6 +7,8 @@
 //
 
 #import "CTFButtonsView.h"
+#import "Plugin.h"
+
 
 static CGFloat interButtonGap = 4.;
 static CGFloat topMargin = 4.;
@@ -76,6 +78,10 @@ static CGFloat height = 32.;
 }
 
 
+
+- (NSInteger) tag {
+	return CTFButtonsViewTag;
+}
 
 
 

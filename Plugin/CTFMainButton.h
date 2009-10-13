@@ -8,10 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class CTFClickToFlashPlugin;
 
 @interface CTFMainButton : NSButton {
-	
+	CTFClickToFlashPlugin * plugin;
 }
+
+- (CTFClickToFlashPlugin *) plugin;
+- (void) setPlugin: (CTFClickToFlashPlugin *) newPlugin;
 
 @end
 
@@ -20,7 +24,6 @@
 #pragma mark -
 
 @interface CTFMainButtonCell : NSButtonCell {
-
 }
 
 - (void) drawGradientInRect: (NSRect) rect;
@@ -29,5 +32,8 @@
 - (void) drawGlossForBounds: (NSRect) bounds;
 
 - (NSString*) badgeLabelText;
+
+- (CTFClickToFlashPlugin *) plugin;
+
 
 @end

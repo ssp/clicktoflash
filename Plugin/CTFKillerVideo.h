@@ -46,10 +46,9 @@ enum CTFKVLookupStatus {
 	enum CTFKVLookupStatus lookupStatus;
 	BOOL requiresConversion;
 	
-	NSSize videoSize;
+	NSView * movieContainerView;
 	
-	NSButton * fullscreenButton;
-	NSView * containerView;
+	NSSize videoSize;
 }
 
 /*
@@ -130,8 +129,7 @@ enum CTFKVLookupStatus {
 - (void) decreaseActiveLookups;
 - (BOOL) requiresConversion;
 - (void) setRequiresConversion: (BOOL) newRequiresConversion;
-- (NSButton *) fullscreenButton;
-- (void) setFullscreenButton: (NSButton *) newFullscreenButton;
-- (NSView *) containerView;
-- (void) setContainerView: (NSView *) containerView;
+- (NSView *) movieContainerView;
+- (void) setMovieContainerView: (NSView *) newMovieContainerView;
+
 @end

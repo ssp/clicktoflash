@@ -56,6 +56,7 @@
 		6C8EC775107671F20053587F /* CTFKillerVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EC774107671F20053587F /* CTFKillerVideo.m */; };
 		6C8EC7E9107686780053587F /* CTFKillerSIFR.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EC7E8107686780053587F /* CTFKillerSIFR.m */; };
 		6CC18AE61076D09B00D9E1A0 /* CTFKillerVimeo.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CC18AE51076D09B00D9E1A0 /* CTFKillerVimeo.m */; };
+		6CF9E9EF1083D8D7004C0C1C /* CTFFullscreenWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CF9E9EE1083D8D7004C0C1C /* CTFFullscreenWindow.m */; };
 		79166CBD0FF69E1800B1F69B /* CTFGradient.m in Sources */ = {isa = PBXBuildFile; fileRef = 79166CBB0FF69E1800B1F69B /* CTFGradient.m */; };
 		79A21C4D0F30B735009424B8 /* CTFWhitelistWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79A21C490F30B735009424B8 /* CTFWhitelistWindowController.m */; };
 		79B1F5C0105D9CEE0081D0B0 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 79B1F5BF105D9CEE0081D0B0 /* dsa_pub.pem */; };
@@ -176,6 +177,8 @@
 		6C8EC7E8107686780053587F /* CTFKillerSIFR.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFKillerSIFR.m; path = Plugin/CTFKillerSIFR.m; sourceTree = "<group>"; };
 		6CC18AE41076D09B00D9E1A0 /* CTFKillerVimeo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFKillerVimeo.h; path = Plugin/CTFKillerVimeo.h; sourceTree = "<group>"; };
 		6CC18AE51076D09B00D9E1A0 /* CTFKillerVimeo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFKillerVimeo.m; path = Plugin/CTFKillerVimeo.m; sourceTree = "<group>"; };
+		6CF9E9ED1083D8D7004C0C1C /* CTFFullScreenWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFFullScreenWindow.h; path = Plugin/CTFFullScreenWindow.h; sourceTree = "<group>"; };
+		6CF9E9EE1083D8D7004C0C1C /* CTFFullscreenWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFFullscreenWindow.m; path = Plugin/CTFFullscreenWindow.m; sourceTree = "<group>"; };
 		79166CBB0FF69E1800B1F69B /* CTFGradient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFGradient.m; path = Plugin/CTFGradient.m; sourceTree = "<group>"; };
 		79166CBC0FF69E1800B1F69B /* CTFGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFGradient.h; path = Plugin/CTFGradient.h; sourceTree = "<group>"; };
 		79475E0C0F658D9A00FD82E3 /* Sparkle.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sparkle.xcodeproj; path = Plugin/Sparkle/Sparkle.xcodeproj; sourceTree = "<group>"; };
@@ -273,6 +276,8 @@
 				6CC18AE41076D09B00D9E1A0 /* CTFKillerVimeo.h */,
 				6C8EC7E8107686780053587F /* CTFKillerSIFR.m */,
 				6C8EC7E7107686780053587F /* CTFKillerSIFR.h */,
+				6CF9E9ED1083D8D7004C0C1C /* CTFFullScreenWindow.h */,
+				6CF9E9EE1083D8D7004C0C1C /* CTFFullscreenWindow.m */,
 				A40485DF10629C4100FDC4E2 /* CTFAboutBoxWindowController.m */,
 				A40485DE10629C4100FDC4E2 /* CTFAboutBoxWindowController.h */,
 				A4DEFC770FF33F7400CCB6A8 /* CTFPreferencesDictionary.m */,
@@ -533,6 +538,7 @@
 				6C09630C107FCA610006923A /* CTFActionButton.m in Sources */,
 				6C09648010808D4B0006923A /* CTFMainButton.m in Sources */,
 				6C05EE1E1081E59700616436 /* CTFButtonsView.m in Sources */,
+				6CF9E9EF1083D8D7004C0C1C /* CTFFullscreenWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,6 +651,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				PRODUCT_VERSION = 1.6b1;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Debug;

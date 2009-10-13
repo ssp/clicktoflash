@@ -27,9 +27,20 @@ THE SOFTWARE.
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
 
+
+// Subview Tags
+enum subviewTags {
+	CTFMainButtonTag,
+	CTFActionButtonTag,
+	CTFButtonsViewTag,
+	CTFFullScreenButtonTag
+};
+
+
 @class CTFKiller;
 @class CTFMainButton;
 @class CTFButtonsView;
+@class CTFFullScreenWindow;
 
 @interface CTFClickToFlashPlugin : NSView <WebPlugInViewFactory> {
 	NSArray *defaultWhitelist;
@@ -52,9 +63,12 @@ THE SOFTWARE.
 	BOOL _contextMenuIsVisible;
 	NSTimer *_delayingTimer;
 	
+	NSView * containerView;
 	CTFMainButton * mainButton;
 	CTFButtonsView * buttonsView;
 	CTFKiller * killer;
+	
+	CTFFullScreenWindow * fullScreenWindow;
 	
 	NSURL * previewURL;
 	NSImage * previewImage;
@@ -81,6 +95,9 @@ THE SOFTWARE.
 - (void) browseToURLString: (NSString*) URLString;
 - (void) downloadURLString: (NSString*) URLString;
 
+- (IBAction) toggleFullScreen: (id) sender;
+- (NSButton*) addFullScreenButton;
+
 - (BOOL) isConsideredInvisible;
 
 - (id) initWithArguments:(NSDictionary *)arguments;
@@ -88,12 +105,18 @@ THE SOFTWARE.
 - (void)_uniquePrefsFileWhitelist;
 - (void) _addApplicationWhitelistArrayToPrefsFile;
 
+
 - (CTFKiller *) killer;
 - (void)setKiller:(CTFKiller *)newKiller;
 - (CTFMainButton *) mainButton;
+- (NSView *) containerView;
+- (void) setContainerView: (NSView *) newContainerView;
 - (void)setMainButton:(CTFMainButton *) newMainButton;
 - (CTFButtonsView *) buttonsView;
 - (void) setButtonsView: (CTFButtonsView *) newButtonsView;
+- (CTFFullScreenWindow *) fullScreenWindow;
+- (void) setFullScreenWindow: (CTFFullScreenWindow *) newFullScreenWindow;
+- (BOOL)isFullScreen;
 - (DOMElement *)container;
 - (void)setContainer:(DOMElement *)newValue;
 - (NSString *)host;

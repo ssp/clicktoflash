@@ -37,6 +37,10 @@ THE SOFTWARE.
 #import "CTFActionButton.h"
 #import "CTFMainButton.h"
 #import "CTFButtonsView.h"
+#import "CTFFullScreenWindow.h"
+
+#import <Carbon/Carbon.h>
+
 
 #define LOGGING_ENABLED 0
 
@@ -52,12 +56,6 @@ static NSString *sApplicationWhitelist = @"applicationWhitelist";
 
 // Info.plist key for app developers
 static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
-
-// Subview Tags
-enum subviewTags {
-	CTFMainButtonTag,
-	CTFActionButtonTag
-};
 
 
 @interface CTFClickToFlashPlugin (Internal)
@@ -82,10 +80,12 @@ enum subviewTags {
 #pragma mark -
 #pragma mark Class Methods
 
-+ (NSView *)plugInViewWithArguments:(NSDictionary *)arguments
-{
++ (NSView *)plugInViewWithArguments:(NSDictionary *)arguments {
     return [[[self alloc] initWithArguments:arguments] autorelease];
 }
+
+
+
 
 
 #pragma mark -
@@ -312,6 +312,14 @@ enum subviewTags {
 		
 		NSRect myBounds = [self bounds];
 		
+		// Add a full size subview which will contain everything
+		NSView * myContainerView = [[[NSView alloc] initWithFrame:myBounds] autorelease];
+		[myContainerView setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
+		// Need layers so buttons can be drawn on top of movies.
+		[myContainerView setWantsLayer:YES];
+		[self addSubview: myContainerView];
+		[self setContainerView: myContainerView];
+		
 		// Add main control button
 		CTFMainButton * myMainButton = [[[CTFMainButton alloc] initWithFrame: myBounds] autorelease];
 		[myMainButton setTag: CTFMainButtonTag];
@@ -319,23 +327,23 @@ enum subviewTags {
 		[myMainButton setButtonType: NSMomentaryPushInButton];
 		[myMainButton setTarget: self];
 		[myMainButton setAction: @selector(clicked:)];
-		[self addSubview: myMainButton];		
+		[myMainButton setPlugin: self];
+		[myContainerView addSubview: myMainButton];		
 		[self setMainButton: myMainButton];
 		
 		// Add action button control
 		CTFActionButton * actionButton = [CTFActionButton actionButton];
 		[actionButton setTag: CTFActionButtonTag];
 		[actionButton setAutoresizingMask: NSViewMaxXMargin | NSViewMinYMargin];
-		[self addSubview: actionButton];
+		[myContainerView addSubview: actionButton];
 		
 		// Add view for additional buttons (proper sizing is done by view itself)
 		CTFButtonsView * theButtonsView = [[[CTFButtonsView alloc] initWithFrame: myBounds] autorelease];
 		[theButtonsView setAutoresizingMask: NSViewWidthSizable];
-		[self addSubview: theButtonsView];
+		[myContainerView addSubview: theButtonsView];
 		[self setButtonsView: theButtonsView];
 		
-		// Need layers so buttons can be drawn on top of movies.
-		[self setWantsLayer:YES];
+		[self setFullScreenWindow: nil];
 	}
 
     return self;
@@ -359,8 +367,10 @@ enum subviewTags {
 	[self setAttributes:nil];
 	[self setOriginalOpacityAttributes:nil];
 	[self setKiller:nil];
+	[self setContainerView:nil];
 	[self setMainButton:nil];
 	[self setButtonsView:nil];
+	[self setFullScreenWindow:nil];
 	[self setPreviewURL:nil];
 	[self setPreviewImage:nil];
 	
@@ -755,6 +765,102 @@ enum subviewTags {
 }
 
 
+
+
+
+
+#pragma mark -
+#pragma mark Full screen
+
+- (IBAction) enterFullScreen: (id) sender {
+	SetSystemUIMode(kUIModeAllSuppressed, kUIOptionAutoShowMenuBar);
+	
+	NSWindow * myWindow = [self window];
+	NSRect originRect;
+	originRect.size = [self frame].size;
+	originRect.origin = [[self window] convertBaseToScreen:[self convertPoint:NSZeroPoint toView:nil]];
+	CTFFullScreenWindow * myFullScreenWindow = [[[CTFFullScreenWindow alloc]
+										   initWithContentRect: originRect
+										   styleMask: NSBorderlessWindowMask
+										   backing: NSBackingStoreBuffered
+										   defer: YES] autorelease];
+	[self setFullScreenWindow: myFullScreenWindow];
+	[myFullScreenWindow setPlugin: self];
+
+	[myFullScreenWindow setLevel:NSNormalWindowLevel];
+	[myFullScreenWindow setContentView:[self containerView]];
+	[myFullScreenWindow setTitle: CtFLocalizedString(@"Video Playback", "-----")];
+	
+	[myFullScreenWindow makeKeyAndOrderFront:nil];
+    	
+	NSRect fullScreenFrame = [[myWindow screen] frame];
+	[myFullScreenWindow setFrame:[myFullScreenWindow frameRectForContentRect:fullScreenFrame] display:YES animate:YES];
+//	[[myFullScreenWindow animator] setFrame:[myFullScreenWindow frameRectForContentRect:fullScreenFrame] display:YES];
+
+	[[[self buttonsView] viewWithTag: CTFFullScreenButtonTag] setImage: [NSImage imageNamed: NSImageNameExitFullScreenTemplate]];
+	[[[self containerView] viewWithTag: CTFActionButtonTag] setHidden: YES];
+}
+
+
+
+
+- (IBAction) exitFullScreen: (id) sender {
+	if ( [self isFullScreen] ) {
+		// destination rect in screen coordinates
+		NSRect onScreenRect;
+		onScreenRect.origin = [[self window] convertBaseToScreen:[self convertPoint:NSZeroPoint toView:nil]];
+		onScreenRect.size = [self frame].size;
+		
+		// move to new location (don't use an animator here as it works asynchronously and we'd need to to time the transfer of the view separately then)
+		[[self fullScreenWindow] setFrame:onScreenRect display:YES animate:YES];
+		 
+		// transfer the view ba
+		[self addSubview:[fullScreenWindow contentView]];
+		[[self fullScreenWindow] close];
+		[self setFullScreenWindow: nil];
+		[[self window] makeKeyAndOrderFront:nil];
+		
+		[[[self buttonsView] viewWithTag: CTFFullScreenButtonTag] setImage: [NSImage imageNamed: NSImageNameEnterFullScreenTemplate]];
+		[[[self containerView] viewWithTag: CTFActionButtonTag] setHidden: NO];
+
+		SetSystemUIMode(kUIModeNormal, 0);
+	}
+}
+
+
+
+- (IBAction) toggleFullScreen: (id) sender {
+	if ([self isFullScreen]) {
+		[self exitFullScreen: sender];
+	}
+	else {
+		[self enterFullScreen: sender];
+	}	
+}
+
+
+
+- (NSButton *) addFullScreenButton {
+	NSButton * button = nil;
+	
+	if ([[self buttonsView] viewWithTag: CTFFullScreenButtonTag] == nil) {
+		button = [CTFButtonsView button];
+		[button setImage: [NSImage imageNamed:NSImageNameEnterFullScreenTemplate]];
+		[button setToolTip: CtFLocalizedString( @"Play Fullscreen in QuickTime Player", @"*Same as for menu item, used in setupButtons*" )];
+		[button sizeToFit];
+		[button setTarget: self];
+		[button setTag: CTFFullScreenButtonTag];
+		[button setAction: @selector(toggleFullScreen:)];
+		[[self buttonsView] addButton: button];
+	}
+	
+	return button;
+}
+
+
+
+
+
 #pragma mark -
 #pragma mark Accessibility
 
@@ -986,6 +1092,17 @@ enum subviewTags {
 }
 
 
+- (NSView *) containerView {
+	return containerView;
+}
+
+- (void) setContainerView: (NSView *) newContainerView {
+	[newContainerView retain];
+	[containerView release];
+	containerView = newContainerView;
+}
+
+
 - (CTFMainButton *) mainButton {
 	return mainButton;
 }
@@ -1005,6 +1122,21 @@ enum subviewTags {
 	[newButtonsView retain];
 	[buttonsView release];
 	buttonsView = newButtonsView;
+}
+
+
+- (CTFFullScreenWindow *) fullScreenWindow {
+	return fullScreenWindow;
+}
+
+- (void) setFullScreenWindow: (CTFFullScreenWindow *) newFullScreenWindow {
+	[newFullScreenWindow retain];
+	[[fullScreenWindow retain] autorelease];
+	fullScreenWindow = newFullScreenWindow;
+}
+
+- (BOOL) isFullScreen {
+	return (fullScreenWindow != nil);
 }
 
 
@@ -1033,7 +1165,7 @@ enum subviewTags {
 	[previewImage release];
 	previewImage = newPreviewImage;
 	
-	[self setNeedsDisplay: YES];
+	[[self containerView] setNeedsDisplay: YES];
 }
 
 - (void) receivedPreviewImage: (CTFLoader*) loader {

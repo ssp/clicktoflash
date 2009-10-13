@@ -30,6 +30,18 @@
 	return [[self superview] menuForEvent: event];
 }
 
+
+- (CTFClickToFlashPlugin *) plugin {
+	return plugin;
+}
+
+- (void) setPlugin: (CTFClickToFlashPlugin *) newPlugin {
+	[newPlugin retain];
+	[plugin release];
+	plugin = newPlugin;
+}
+
+
 @end
 
 
@@ -46,12 +58,12 @@
 
 - (void) drawWithFrame: (NSRect) rect inView:(NSView *) controlView {
 	NSRect bounds = [[self controlView] bounds];
-	NSRect fillRect   = NSInsetRect(bounds, 1.0, 1.0);
+	NSRect fillRect = NSInsetRect(bounds, 1.0, 1.0);
     
 	[self drawGradientInRect: fillRect];
 	[self drawPreviewInRect: fillRect];
 	
-    // Draw stroke
+    // Draw border
     [[NSColor colorWithCalibratedWhite:0.0 alpha:0.50] set];
     [NSBezierPath setDefaultLineWidth:2.0];
     [NSBezierPath setDefaultLineCapStyle:NSSquareLineCapStyle];
@@ -61,11 +73,12 @@
     [self drawBadgeForBounds: bounds];
     
 	// Draw 'glossy' overlay which can give some visual feedback on clicks when an preview image is set.
-	if ([(CTFClickToFlashPlugin*)[controlView superview] previewImage] != nil) {
+	if ([[self plugin] previewImage] != nil) {
 		[self drawGlossForBounds: bounds];		
 	}
 	
 }
+
 
 
 
@@ -107,9 +120,10 @@
 }
 
 
+
 - (void) drawPreviewInRect: (NSRect) rect {
 	// Overlay the preview image if there is one
-	NSImage * image = [(CTFClickToFlashPlugin*) [[self controlView] superview] previewImage];
+	NSImage * image = [[self plugin] previewImage];
 
 	if ( image != nil ) {
 		// Determine the destination rect. The approach is to scale the preview image until it fills the view horizontally. This risks losing pixels at the top and bottom but seems to match what the sites providing preview images do for widescreen movies, thus giving better results than 'clean' scaling to fit the whole image inside the view.
@@ -122,17 +136,16 @@
 		
 		destinationRect = NSMakeRect(rect.origin.x, destinationBottom, destinationWidth, destinationHeight);
 		
-		[image drawInRect:destinationRect fromRect:NSZeroRect operation:NSCompositeSourceIn fraction: 0.8];
+		[image drawInRect:destinationRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction: 0.8];
 	}
 }
 
 
 
 
-- (NSString*) badgeLabelText
-{
+- (NSString*) badgeLabelText {
 	NSString * labelText = nil;
-	CTFKiller * killer = [(CTFClickToFlashPlugin*)[[self controlView] superview] killer];
+	CTFKiller * killer = [[self plugin] killer];
 	
 	
 	if (killer != nil) {
@@ -235,7 +248,7 @@
     
 	CGFloat opacity = 0.45;
 	// Make Badge more opaque when we have a background image
-	if ( [(CTFClickToFlashPlugin*) [[self controlView] superview] previewImage] != nil ) {
+	if ( [[self plugin] previewImage] != nil ) {
 		opacity = 0.8;
 	}
 	
@@ -303,10 +316,14 @@
 #pragma mark -
 #pragma mark Helper
 
-- (BOOL) gearVisibleInView: (NSView *) view {
-	NSRect bounds = [view bounds];
-	return NSWidth( bounds ) > 32 && NSHeight( bounds ) > 32;
+- (CTFClickToFlashPlugin*) plugin {
+	CTFMainButton * button = (CTFMainButton*) [self controlView];
+	CTFClickToFlashPlugin * myPlugin = [button plugin];
+	return myPlugin;
 }
+
+
+
 
 
 

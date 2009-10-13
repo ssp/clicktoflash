@@ -57,17 +57,12 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 		requiresConversion = NO;
 		
 		videoSize = NSZeroSize;
-		[self setFullscreenButton:nil];
 	}
 	
 	return self;
 }
 
 
-- (void) dealloc {
-	[self setFullscreenButton:nil];
-	[super dealloc];
-}
 
 
 
@@ -295,41 +290,42 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 #pragma mark QuickTime
 
 - (void) setupQuickTime {
-	NSRect bounds = [[self plugin] bounds];
-	NSView * myContainerView = [self containerView];
+	NSRect bounds = [[[self plugin] containerView] bounds];
+	NSView * myContainerView = [self movieContainerView];
 	QTMovieView * myMovieView = [[myContainerView subviews] objectAtIndex:0];
 	
-	if ( myMovieView == nil ) {
+	if ( myContainerView == nil ) {
 		myMovieView = [[[QTMovieView alloc] initWithFrame:bounds] autorelease];
 		[myMovieView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];		
+		[myMovieView setPreservesAspectRatio:YES];
+		[myMovieView setFillColor: [NSColor blackColor]];
 		
-		NSView * myContainerView = [[[NSView alloc] initWithFrame:bounds] autorelease];
+		myContainerView = [[[NSView alloc] initWithFrame:bounds] autorelease];
 		[myContainerView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 		[myContainerView addSubview: myMovieView];
 		[myContainerView setWantsLayer:YES];
 		
-		if ( myContainerView == nil || myMovieView == nil ) { return; }
+		if ( myContainerView == nil || myMovieView == nil ) { 
+			// ERROR
+			NSLog(@"Could not create views in CTFKillerVideo -setupQuickTime");
+			return; 
+		}
 		
-		[self setContainerView: myContainerView];
+		[self setMovieContainerView: myContainerView];
 	}
-	
-	[fullscreenButton setAction: @selector(enterFullScreen:)];
-	
+		
 	NSString * movieURLString = [self videoURLStringForHD: [self useVideoHD]];
 	NSURL * movieURL = [NSURL URLWithString: movieURLString];
-//	if ([QTMovie canInitWithURL: movieURL]) {   <------ SEEMS to give wrong results for youtube URLs, say
 		NSError * error = nil;
 		QTMovie * movie = [QTMovie movieWithURL: movieURL error: &error];
 		if ( movie != nil ) {
 			[myMovieView setMovie: movie];
-			[[self plugin] addSubview:myMovieView positioned: NSWindowBelow relativeTo: nil];
+			[[[self plugin] containerView] addSubview:myMovieView positioned: NSWindowBelow relativeTo: nil];
 			[[[self plugin] mainButton] setHidden:YES];
 		}
 	else {
 		NSLog(@"%@", [error localizedDescription]);
 	}
-
-//	}
 }
 
 
@@ -418,32 +414,6 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 }
 
 
-- (IBAction) enterFullScreen: (id) sender {
-	[fullscreenButton setImage: [NSImage imageNamed: NSImageNameExitFullScreenTemplate]];
-	[fullscreenButton setAction: @selector(exitFullScreen:)];
-	[[self containerView] setAutoresizingMask: NSViewMinXMargin | NSViewMaxXMargin];
-	
-	NSDictionary * fullScreenOptions = [NSDictionary dictionaryWithObjectsAndKeys:
-										[NSNumber numberWithBool: NO], NSFullScreenModeAllScreens,
-								//		[], NSFullScreenModeSetting,
-								//		[], NSFullScreenModeWindowLevel,
-										[NSNumber numberWithUnsignedInteger:(1 <<  2) | (1 << 1)], @"NSFullScreenModeApplicationPresentationOptions",
-								// NSApplicationPresentationAutoHideMenuBar = (1 <<  2), NSApplicationPresentationHideDock = (1 << 1)
-										nil];
-	
-	NSScreen * myScreen =[NSScreen mainScreen]; //[[[self containerView] window] screen];
-	[[self plugin] enterFullScreenMode:myScreen withOptions:fullScreenOptions];
-	
-}
-
-
-
-
-- (IBAction) exitFullScreen: (id) sender {
-	[fullscreenButton setImage: [NSImage imageNamed: NSImageNameEnterFullScreenTemplate]];
-	[fullscreenButton setAction: @selector(enterFullScreen:)];
-	[[self plugin] exitFullScreenModeWithOptions:nil];
-}
 
 
 
@@ -746,6 +716,7 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 }
 
 
+
 // We don't handle anything but HTTP requests.
 - (BOOL) canPlayResponseResult: (NSURLResponse *) response {
 	BOOL result = NO;
@@ -767,18 +738,6 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 
 
 
-- (void) setupButtons {
-	if ( [self fullscreenButton] == nil ) {
-		NSButton * button = [CTFButtonsView button];
-		[button setImage: [NSImage imageNamed:NSImageNameEnterFullScreenTemplate]];
-		[button setToolTip: CtFLocalizedString( @"Play Fullscreen in QuickTime Player", @"*Same as for menu item, used in setupButtons*" )];
-		[button sizeToFit];
-		[button setTarget: self];
-		[button setAction: @selector(openFullscreenInQTPlayer:)];
-		[self setFullscreenButton: button];
-		[[[self plugin] buttonsView] addButton: button];
-	}
-}
 
 
 
@@ -803,8 +762,8 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 
 - (void)setHasVideo:(BOOL)newHasVideo {
 	hasVideo = newHasVideo;
-	[self setupButtons];
-	[[self plugin] setNeedsDisplay: YES];
+	[[self plugin] addFullScreenButton];
+	[[[self plugin] mainButton] setNeedsDisplay:YES];
 }
 
 
@@ -814,8 +773,8 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 
 - (void)setHasVideoHD:(BOOL)newHasVideoHD {
 	hasVideoHD = newHasVideoHD;
-	[self setupButtons];
-	[[self plugin] setNeedsDisplay: YES];
+	[[self plugin] addFullScreenButton];
+	[[[self plugin] mainButton] setNeedsDisplay: YES];
 }
 
 
@@ -828,7 +787,7 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 	if (lookupStatus == finished || lookupStatus == failed) {
 		[self finishedLookups];
 	}
-	[[self plugin] setNeedsDisplay: YES];
+	[[[self plugin] mainButton] setNeedsDisplay: YES];
 }
 
 
@@ -853,26 +812,15 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 	requiresConversion = newRequiresConversion;
 }
 
-			
-- (NSButton *) fullscreenButton {
-	return fullscreenButton;
+
+- (NSView *) movieContainerView {
+	return movieContainerView;
 }
 
-- (void) setFullscreenButton: (NSButton *) newFullscreenButton {
-	[newFullscreenButton retain];
-	[fullscreenButton release];
-	fullscreenButton = newFullscreenButton;
-}			
-
-
-- (NSView *) containerView {
-	return containerView;
-}
-
-- (void) setContainerView: (NSView *) newContainerView {
-	[newContainerView retain];
-	[containerView release];
-	containerView = newContainerView;
+- (void) setMovieContainerView: (NSView *) newMovieContainerView {
+	[newMovieContainerView retain];
+	[movieContainerView release];
+	movieContainerView = newMovieContainerView;
 }
 
 
