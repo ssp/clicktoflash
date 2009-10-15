@@ -59,6 +59,9 @@
 - (void) addAdditionalMenuItemsForContextualMenu;
 // Called when the user clicks the CtF view. Replace content here.
 - (BOOL) convertToContainer;
+// Called when full screen mode starts and ends.
+- (void) startFullScreen;
+- (void) stopFullScreen;
 
 
 // Accessors

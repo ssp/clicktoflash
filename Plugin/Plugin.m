@@ -312,15 +312,16 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		
 		NSRect myBounds = [self bounds];
 		
-		// Add a full size subview which will contain everything
+		// Add a full size subview which will contain everything. We need this so we can move it to full-screen without removing the plug-in from the web page.
 		NSView * myContainerView = [[[NSView alloc] initWithFrame:myBounds] autorelease];
 		[myContainerView setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
-		// Need layers so buttons can be drawn on top of movies.
-		[myContainerView setWantsLayer:YES];
 		[self addSubview: myContainerView];
 		[self setContainerView: myContainerView];
+
+		// Need layers so buttons can be drawn on top of movies.
+		[myContainerView setWantsLayer:YES];
 		
-		// Add main control button
+		// Add main control button, covering the full view. This does the main drawing.
 		CTFMainButton * myMainButton = [[[CTFMainButton alloc] initWithFrame: myBounds] autorelease];
 		[myMainButton setTag: CTFMainButtonTag];
 		[myMainButton setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
@@ -343,6 +344,12 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		[myContainerView addSubview: theButtonsView];
 		[self setButtonsView: theButtonsView];
 		
+		// attempt to construct a key loop: Plugin -> main button -> actionButton -> buttonsView -> Plugin. Is this the right philosophy?
+		[self setNextKeyView: myMainButton];
+		[myMainButton setNextKeyView: actionButton];
+		[actionButton setNextKeyView: buttonsView];
+		[buttonsView setNextKeyView: self];
+		
 		[self setFullScreenWindow: nil];
 	}
 
@@ -351,8 +358,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 
 
 
-- (void)webPlugInDestroy
-{
+- (void)webPlugInDestroy {
 	[NSObject cancelPreviousPerformRequestsWithTarget:self];
 	
 	[self _abortAlert];        // to be on the safe side
@@ -380,8 +386,9 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void) dealloc
-{
+
+
+- (void) dealloc {
 	// Just in case...
 	[self webPlugInDestroy];
 	
@@ -794,11 +801,14 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 	[myFullScreenWindow makeKeyAndOrderFront:nil];
     	
 	NSRect fullScreenFrame = [[myWindow screen] frame];
-	[myFullScreenWindow setFrame:[myFullScreenWindow frameRectForContentRect:fullScreenFrame] display:YES animate:YES];
-//	[[myFullScreenWindow animator] setFrame:[myFullScreenWindow frameRectForContentRect:fullScreenFrame] display:YES];
+//	[myFullScreenWindow setFrame:[myFullScreenWindow frameRectForContentRect:fullScreenFrame] display:YES animate:YES];
+	[[myFullScreenWindow animator] setFrame:[myFullScreenWindow frameRectForContentRect:fullScreenFrame] display:YES];
 
 	[[[self buttonsView] viewWithTag: CTFFullScreenButtonTag] setImage: [NSImage imageNamed: NSImageNameExitFullScreenTemplate]];
 	[[[self containerView] viewWithTag: CTFActionButtonTag] setHidden: YES];
+	if ( [self killer] != nil ) {
+		[[self killer] startFullScreen];
+	}
 }
 
 
@@ -824,6 +834,11 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		[[[self containerView] viewWithTag: CTFActionButtonTag] setHidden: NO];
 
 		SetSystemUIMode(kUIModeNormal, 0);
+
+		if ( [self killer] != nil ) {
+			[[self killer] stopFullScreen];
+		}
+		
 	}
 }
 
@@ -1002,90 +1017,87 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 #pragma mark -
 #pragma mark Accessors
 
-- (WebView *)webView
-{
+- (WebView *)webView {
     return _webView;
 }
-- (void)setWebView:(WebView *)newValue
-{
+
+- (void)setWebView:(WebView *)newValue {
     // Not retained, because the WebView owns the plugin, so we'll get a retain cycle.
     _webView = newValue;
 }
 
-- (DOMElement *)container
-{
+
+- (DOMElement *)container {
     return _container;
 }
-- (void)setContainer:(DOMElement *)newValue
-{
+
+- (void)setContainer:(DOMElement *)newValue {
     [newValue retain];
     [_container release];
     _container = newValue;
 }
 
-- (NSString *)host
-{
+
+- (NSString *)host {
     return _host;
 }
-- (void)setHost:(NSString *)newValue
-{
+
+- (void)setHost:(NSString *)newValue {
     [newValue retain];
     [_host release];
     _host = newValue;
 }
 
-- (NSString *)baseURL
-{
+
+- (NSString *)baseURL {
     return _baseURL;
 }
-- (void)setBaseURL:(NSString *)newValue
-{
+
+- (void)setBaseURL:(NSString *)newValue {
     [newValue retain];
     [_baseURL release];
     _baseURL = newValue;
 }
 
-- (NSDictionary *)attributes
-{
+
+- (NSDictionary *)attributes {
     return _attributes;
 }
-- (void)setAttributes:(NSDictionary *)newValue
-{
+
+- (void)setAttributes:(NSDictionary *)newValue {
     [newValue retain];
     [_attributes release];
     _attributes = newValue;
 }
 
-- (NSDictionary *)originalOpacityAttributes
-{
+
+- (NSDictionary *)originalOpacityAttributes {
     return _originalOpacityAttributes;
 }
-- (void)setOriginalOpacityAttributes:(NSDictionary *)newValue
-{
+
+- (void)setOriginalOpacityAttributes:(NSDictionary *)newValue {
     [newValue retain];
     [_originalOpacityAttributes release];
     _originalOpacityAttributes = newValue;
 }
 
-- (NSString *)src
-{
+
+- (NSString *)src {
     return _src;
 }
-- (void)setSrc:(NSString *)newValue
-{
+
+- (void)setSrc:(NSString *)newValue {
     [newValue retain];
     [_src release];
     _src = newValue;
 }
 
 
-- (CTFKiller *)killer
-{
+- (CTFKiller *)killer {
 	return killer;
 }
 
-- (void)setKiller:(CTFKiller *)newKiller
-{
+- (void)setKiller:(CTFKiller *)newKiller {
 	[newKiller retain];
 	[killer release];
 	killer = newKiller;

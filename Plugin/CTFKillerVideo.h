@@ -29,6 +29,8 @@
 #import "CTFKiller.h"
 
 @class DOMElement;
+@class QTMovie;
+@class QTMovieView;
 
 enum CTFKVLookupStatus {
 	nothing = 0,
@@ -36,6 +38,7 @@ enum CTFKVLookupStatus {
 	finished = 2,
 	failed = 3
 };
+
 
 @interface CTFKillerVideo : CTFKiller {
 	BOOL autoPlay;
@@ -46,16 +49,18 @@ enum CTFKVLookupStatus {
 	enum CTFKVLookupStatus lookupStatus;
 	BOOL requiresConversion;
 	
-	NSView * movieContainerView;
+	QTMovieView * movieView;
+	QTMovie * movie;
+	NSThread * movieSetupThread;
 	
 	NSSize videoSize;
 }
+
 
 /*
  Subclasses use setHasVideo and setHasVideoHD to indicate when they have determined movie paths.
  They set lookupStatus to indicate whether they are still busy doing lookups. Doing this will cause a redraw which can then alter the label text.
 */
-
 
 // to be implemented by subclasses if they want to
 
@@ -97,7 +102,10 @@ enum CTFKVLookupStatus {
 - (IBAction) downloadVideoHD: (id) sender;
 
 // QuickTime
-- (void) setupQuickTime;
+- (void) setupQuickTimeUsingHD: (NSNumber*) useHDNumber;
+- (void) reallySetupQuickTimeUsingHD: (NSNumber *) useHDNumber;
+- (QTMovie *) movieForHD: (NSNumber *) useHDNumber;
+
 
 // Internal stuff
 - (void) _convertElementForMP4: (DOMElement*) element atURL: (NSString*) URLString;
@@ -129,7 +137,10 @@ enum CTFKVLookupStatus {
 - (void) decreaseActiveLookups;
 - (BOOL) requiresConversion;
 - (void) setRequiresConversion: (BOOL) newRequiresConversion;
-- (NSView *) movieContainerView;
-- (void) setMovieContainerView: (NSView *) newMovieContainerView;
-
+- (QTMovieView *) movieView;
+- (void) setMovieView: (QTMovieView *) newMovieView;
+- (QTMovie *) movie;
+- (void) setMovie: (QTMovie *) newMovie;
+- (NSThread *) movieSetupThread;
+- (void) setMovieSetupThread: (NSThread *) newMovieSetupThread;
 @end

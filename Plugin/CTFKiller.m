@@ -110,6 +110,12 @@
 // Called when the user clicks the CtF view. Replace content here.
 - (BOOL) convertToContainer { return NO; }
 
+// Called when full screen mode starts and ends.
+- (void) startFullScreen { }
+
+- (void) stopFullScreen { }
+
+
 
 
 

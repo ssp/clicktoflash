@@ -114,10 +114,10 @@ static CGFloat height = 32.;
 	NSSize mySize = [self bounds].size;
 	CGFloat currentPosition = mySize.width;
 	
-	NSEnumerator * buttonEnum = [buttons objectEnumerator];
-	NSControl * button;
-	while ( (button = [buttonEnum nextObject]) ) {
+	for (NSInteger i = 0; i < [buttons count]; i++) {
+		NSControl * button = [buttons objectAtIndex: i];
 		NSRect buttonFrame = [button frame];
+
 		CGFloat buttonLeft = currentPosition - buttonFrame.size.width;
 		CGFloat buttonBottom = mySize.height - buttonFrame.size.height;
 		[button setFrameOrigin:NSMakePoint(buttonLeft, buttonBottom)];
@@ -126,7 +126,24 @@ static CGFloat height = 32.;
 		[button setHidden: (buttonLeft < 0)];
 		
 		currentPosition = buttonLeft - interButtonGap;
+
+		// set up key loop
+		if ( i == 0 ) { // first item
+			[self setNextKeyView: button];
+		}
+		else {
+			[[buttons objectAtIndex: i-1] setNextKeyView: button];
+		}
+		if ( i == [buttons count] ) {
+			[button setNextKeyView: (CTFClickToFlashPlugin *)[[self superview] superview]];
+		}
 	}
+	
+	if ( [buttons count] == 0) {
+		[self setNextKeyView: (CTFClickToFlashPlugin *)[[self superview] superview]];
+	}
+	
+	
 }
 
 

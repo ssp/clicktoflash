@@ -38,8 +38,8 @@ static NSString * sDisableVideoElement = @"disableVideoElement";
 static NSString * sUseYouTubeH264DefaultsKey = @"useYouTubeH264";
 static NSString * sUseYouTubeHDH264DefaultsKey = @"useYouTubeHDH264";
 static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
-static NSString * useQTKitDefaultsKey = @"use QTKit";
-
+static NSString * sUseQTKitDefaultsKey = @"use QTKit";
+static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 @implementation CTFKillerVideo
 
@@ -56,6 +56,10 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 		lookupStatus = nothing;
 		requiresConversion = NO;
 		
+		[self setMovieView: nil];
+		[self setMovie: nil];
+		[self setMovieSetupThread: nil];
+		
 		videoSize = NSZeroSize;
 	}
 	
@@ -63,6 +67,16 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 }
 
 
+
+- (void) dealloc {
+	[self setMovieView: nil];
+	[[self movie] stop];
+	[self setMovie:nil];
+	[[self movieSetupThread] cancel];
+	[self setMovieSetupThread: nil];
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
+	[super dealloc];
+}
 
 
 
@@ -284,50 +298,21 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 
 
 
-
-
-#pragma mark -
-#pragma mark QuickTime
-
-- (void) setupQuickTime {
-	NSRect bounds = [[[self plugin] containerView] bounds];
-	NSView * myContainerView = [self movieContainerView];
-	QTMovieView * myMovieView = [[myContainerView subviews] objectAtIndex:0];
-	
-	if ( myContainerView == nil ) {
-		myMovieView = [[[QTMovieView alloc] initWithFrame:bounds] autorelease];
-		[myMovieView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];		
-		[myMovieView setPreservesAspectRatio:YES];
-		[myMovieView setFillColor: [NSColor blackColor]];
-		
-		myContainerView = [[[NSView alloc] initWithFrame:bounds] autorelease];
-		[myContainerView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-		[myContainerView addSubview: myMovieView];
-		[myContainerView setWantsLayer:YES];
-		
-		if ( myContainerView == nil || myMovieView == nil ) { 
-			// ERROR
-			NSLog(@"Could not create views in CTFKillerVideo -setupQuickTime");
-			return; 
-		}
-		
-		[self setMovieContainerView: myContainerView];
-	}
-		
-	NSString * movieURLString = [self videoURLStringForHD: [self useVideoHD]];
-	NSURL * movieURL = [NSURL URLWithString: movieURLString];
-		NSError * error = nil;
-		QTMovie * movie = [QTMovie movieWithURL: movieURL error: &error];
-		if ( movie != nil ) {
-			[myMovieView setMovie: movie];
-			[[[self plugin] containerView] addSubview:myMovieView positioned: NSWindowBelow relativeTo: nil];
-			[[[self plugin] mainButton] setHidden:YES];
-		}
-	else {
-		NSLog(@"%@", [error localizedDescription]);
+// Called when full screen mode starts and ends.
+// In fullscreen mode: To get good letterboxing, fill the extra space around the movie view in black.
+- (void) startFullScreen { 
+	if ( [self movieView] != nil ) {
+		[[self movieView] setFillColor: [NSColor blackColor]];
 	}
 }
 
+
+// In the web page: To minimise distraction, if there is extra background space, fill it transparently.
+- (void) stopFullScreen { 
+	if ( [self movieView] != nil ) {
+		[[self movieView] setFillColor: [NSColor clearColor]];
+	}
+}
 
 
 
@@ -418,9 +403,178 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 
 
 
+#pragma mark -
+#pragma mark Insert Video using QTKit
+
+- (void) setupQuickTimeUsingHD: (NSNumber*) useHDNumber {
+	if ( [self movieSetupThread] != nil ) {
+		[[self movieSetupThread] cancel];
+	}
+	NSThread * thread = [[[NSThread alloc] initWithTarget:self selector:@selector(reallySetupQuickTimeUsingHD:) object:useHDNumber] autorelease];
+	[thread start];
+	[self setMovieSetupThread: thread];
+}
+
+
+
+- (void) reallySetupQuickTimeUsingHD: (NSNumber *) useHDNumber {
+	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+	NSView * mainContainer = [[self plugin] containerView];
+	NSRect bounds = [mainContainer bounds];
+	
+	QTMovieView * myMovieView = [self movieView];
+	BOOL needToInsertMovieView = NO;
+	
+	if ( myMovieView == nil ) {
+		myMovieView = [[[QTMovieView alloc] initWithFrame:bounds] autorelease];
+		[myMovieView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];		
+		[myMovieView setPreservesAspectRatio:YES];
+		[myMovieView setWantsLayer: YES]; // video seems invisible without the layer
+//		[myMovieView setCustomButtonVisible:YES];
+		if ( [[self plugin] isFullScreen] ) {
+			[myMovieView setFillColor: [NSColor blackColor]];			
+		}
+		else {
+			[myMovieView setFillColor: [NSColor clearColor]];
+		}
+
+		if ( myMovieView == nil ) { // ERROR
+			NSLog(@"Could not create view in CTFKillerVideo -setupQuickTime");
+			return; 
+		}
+		
+		[self setMovieView: myMovieView];
+		needToInsertMovieView = YES;
+	}
+	
+	CGFloat pIDiameter = 32.;
+	NSRect pIRect = NSMakeRect(NSMidX(bounds) - pIDiameter*.5, NSMidY(bounds) - pIDiameter*.5, pIDiameter, pIDiameter);
+	NSProgressIndicator * progressIndicator = [[NSProgressIndicator alloc] initWithFrame:pIRect];
+	[progressIndicator setAutoresizingMask: NSViewMinXMargin | NSViewMaxXMargin | NSViewMinYMargin | NSViewMaxYMargin];
+	[progressIndicator setStyle: NSProgressIndicatorSpinningStyle];
+	[progressIndicator startAnimation: self];
+	[progressIndicator setWantsLayer: YES];
+	[mainContainer addSubview:progressIndicator];
+	
+	QTMovie * myMovie = [self movieForHD: useHDNumber];
+	if ( myMovie != nil && ![[self movieSetupThread] isCancelled] ) {
+		[self setMovie: myMovie];
+		[myMovieView setMovie: myMovie];
+		if (needToInsertMovieView) {
+			[mainContainer addSubview: myMovieView positioned: NSWindowBelow relativeTo: nil];
+			[[self plugin] setNextKeyView: myMovieView];
+			[myMovieView setNextKeyView: (NSView*)[[self plugin] mainButton]];
+		}
+		[[[self plugin] mainButton] setHidden:YES];
+		[[[self plugin] window] makeFirstResponder: myMovieView];
+	}
+	
+	[progressIndicator stopAnimation: self];
+	[progressIndicator removeFromSuperview];
+	[progressIndicator release];
+	[self setMovieSetupThread: nil];
+
+/*	
+ Resizing the view size to perfectly match the movie's doesn't work, strangely. (It ruins the display and stalls the app.
+ CGFloat movieAspectRatio = [myMovieView movieBounds].size.width / [myMovieView movieBounds].size.height;
+	CGFloat newWidth = [[self plugin] frame].size.width;
+	CGFloat newHeight = newWidth / movieAspectRatio + [myMovieView controllerBarHeight];
+	[[self plugin] setFrameSize: NSMakeSize(newWidth,newHeight)];
+	[[self plugin] setNeedsDisplay:YES];
+	DOMCSSStyleDeclaration * style = [[[self plugin] container] style];
+	[style setProperty:@"height" value:@"100%" priority:nil];	
+	[style setProperty:@"width" value:@"100%" priority:nil];
+*/
+	[pool release];	
+}
+
+
+
+- (QTMovie *) movieForHD: (NSNumber *) useHDNumber {
+	BOOL useHD = [self useVideoHD];
+	if ( useHDNumber != nil ) {
+		useHD = [useHDNumber boolValue];
+	}
+	
+	NSString * movieURLString = [self videoURLStringForHD: useHD];
+	NSURL * movieURL = [NSURL URLWithString: movieURLString];
+	NSError * error = nil;
+	QTMovie * myMovie = nil;
+	//	movie = [QTMovie movieWithURL: movieURL error: &error];
+	float volumeLevel = 1.;
+	NSNumber * volumeNumber = [[CTFUserDefaultsController standardUserDefaults] objectForKey: sVideoVolumeLevelDefaultsKey];
+	if ( volumeNumber != nil ) {
+		volumeLevel = MAX(.0 , MIN( [volumeNumber floatValue], 1.));
+	}
+	volumeNumber = [NSNumber numberWithFloat: volumeLevel];
+	
+	NSDictionary * movieAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+									  movieURL, QTMovieURLAttribute, 
+									  [NSNumber numberWithBool:NO], QTMovieOpenAsyncOKAttribute,
+									  volumeNumber, QTMovieVolumeAttribute,
+									  nil];
+	
+	myMovie = [QTMovie movieWithAttributes:movieAttributes error:&error];
+//	NSLog(@"%@", [[myMovie movieAttributes] description]);
+	if ( myMovie == nil ) {
+		NSLog(@"ClickToFlash CTFKillerVideo -reallySetupQuickTime Error: %@ (%@)", [error localizedDescription], movieURLString);
+	}	
+	else {
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieVolumeChanged:) name:QTMovieVolumeDidChangeNotification object:myMovie];
+		if ([self autoPlay]) {
+			[myMovie autoplay];
+		}		
+	}
+	
+	return myMovie;	
+}
+
+
+
+- (void) movieVolumeChanged: (NSNotification *) notification {
+	NSNumber * volumeNumber = [NSNumber numberWithFloat:[[self movie] volume]];
+	[[CTFUserDefaultsController standardUserDefaults] setObject:volumeNumber forKey: sVideoVolumeLevelDefaultsKey];
+}
+
+
+
+- (NSButton *) addHDButton {
+	NSButton * button = nil;
+	
+	if ([self hasVideo] && [self hasVideoHD]) {
+		if ([[[self plugin] buttonsView] viewWithTag: CTFHDButtonTag] == nil) {
+			button = [CTFButtonsView button];
+			[button setTitle: CtFLocalizedString( @"HD", @"HD")];
+			[button setToolTip: CtFLocalizedString( @"Toggle High Definition", @"Tooltip for HD button" )];
+			[button sizeToFit];
+			[button setButtonType: NSPushOnPushOffButton];
+			[button setTag: CTFHDButtonTag];
+			if ( [self useVideoHD] ) {
+				[button setState: NSOnState];
+			}
+			[button setTarget: self];
+			[button setAction: @selector(toggleHD:)];
+			[[[self plugin] buttonsView] addButton: button];
+		}
+	}	
+	return button;
+}
+
+
+
+- (IBAction) toggleHD: (id) sender {
+	BOOL useHD = ([sender state] == NSOnState);
+	[self setupQuickTimeUsingHD: [NSNumber numberWithBool:useHD]];
+}
+
+
+
+
+
+
 
 #pragma mark -
-#pragma mark Insert Video
+#pragma mark Insert Video using the DOM
 
 - (void) _convertElementForMP4: (DOMElement*) element atURL: (NSString*) URLString
 {
@@ -492,8 +646,8 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 
 
 - (void) _convertToMP4ContainerUsingHD: (BOOL) useHD {
-	if ( [[CTFUserDefaultsController standardUserDefaults] boolForKey: useQTKitDefaultsKey ] ) {
-		[self setupQuickTime];
+	if ( [[CTFUserDefaultsController standardUserDefaults] boolForKey: sUseQTKitDefaultsKey ] ) {
+		[self setupQuickTimeUsingHD:nil];
 	}
 	else {
 	DOMElement * container = [[self plugin] container];
@@ -763,6 +917,7 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 - (void)setHasVideo:(BOOL)newHasVideo {
 	hasVideo = newHasVideo;
 	[[self plugin] addFullScreenButton];
+	[self addHDButton];
 	[[[self plugin] mainButton] setNeedsDisplay:YES];
 }
 
@@ -774,6 +929,7 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 - (void)setHasVideoHD:(BOOL)newHasVideoHD {
 	hasVideoHD = newHasVideoHD;
 	[[self plugin] addFullScreenButton];
+	[self addHDButton];
 	[[[self plugin] mainButton] setNeedsDisplay: YES];
 }
 
@@ -813,16 +969,37 @@ static NSString * useQTKitDefaultsKey = @"use QTKit";
 }
 
 
-- (NSView *) movieContainerView {
-	return movieContainerView;
+- (QTMovieView *) movieView {
+	return movieView;
 }
 
-- (void) setMovieContainerView: (NSView *) newMovieContainerView {
-	[newMovieContainerView retain];
-	[movieContainerView release];
-	movieContainerView = newMovieContainerView;
+- (void) setMovieView: (QTMovieView *) newMovieView {
+	[newMovieView retain];
+	[movieView release];
+	movieView = newMovieView;
 }
 
+
+- (QTMovie *) movie {
+	return movie;
+}
+
+- (void) setMovie: (QTMovie *) newMovie {
+	[newMovie retain];
+	[movie release];
+	movie = newMovie;
+}
+
+
+- (NSThread *) movieSetupThread {
+	return movieSetupThread;
+}
+
+- (void) setMovieSetupThread: (NSThread *) newMovieSetupThread {
+	[newMovieSetupThread retain];
+	[movieSetupThread release];
+	movieSetupThread = newMovieSetupThread;
+}
 
 @end
 
