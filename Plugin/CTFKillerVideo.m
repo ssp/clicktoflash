@@ -537,8 +537,8 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	if ([self hasVideo] && [self hasVideoHD]) {
 		if ([[[self plugin] buttonsView] viewWithTag: CTFHDButtonTag] == nil) {
 			button = [CTFButtonsView button];
-			[button setTitle: CtFLocalizedString( @"HD", @"HD")];
-			[button setToolTip: CtFLocalizedString( @"Toggle High Definition", @"Tooltip for HD button" )];
+			[button setTitle: CtFLocalizedString( @"HD", @"CTFKillerVideo: Label for HD button")];
+			[button setToolTip: CtFLocalizedString( @"Toggle High Definition", @"CTFKillerVideo: Tooltip for HD button" )];
 			[button sizeToFit];
 			[button setButtonType: NSPushOnPushOffButton];
 			[button setTag: CTFHDButtonTag];
@@ -552,6 +552,37 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	}	
 	return button;
 }
+
+
+
+- (NSButton *) addDownloadButton {
+	NSButton * button = nil;
+	
+	if ([self hasVideo] || [self hasVideoHD]) {
+		if ([[[self plugin] buttonsView] viewWithTag: CTFDownloadButtonTag] == nil) {
+			button = [CTFButtonsView button];
+			NSImage * downloadImage = [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[CTFClickToFlashPlugin class]] pathForResource:@"download" ofType:@"png"]] autorelease];
+			[button setImage: downloadImage];
+			[button setToolTip: CtFLocalizedString( @"Download video file", @"CTFKillerVideo: Tooltip for Video Download button" )];
+			[button sizeToFit];
+			[button setTag: CTFDownloadButtonTag];
+			[button setTarget: self];
+			[button setAction: @selector(downloadVideoUsingHD:)];
+			[[[self plugin] buttonsView] addButton: button];
+		}
+	}	
+	return button;
+}
+
+
+
+// called from the -setVideo: and -setVideoHD: setters
+- (void) addButtons {
+	[[self plugin] addFullScreenButton];
+	[self addDownloadButton];
+	[self addHDButton];
+}
+
 
 
 
@@ -928,7 +959,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 - (void)setHasVideo:(BOOL)newHasVideo {
 	hasVideo = newHasVideo;
 	[[self plugin] addFullScreenButton];
-	[self addHDButton];
+	[self addDownloadButton];
 	[[[self plugin] mainButton] setNeedsDisplay:YES];
 }
 
@@ -940,7 +971,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 - (void)setHasVideoHD:(BOOL)newHasVideoHD {
 	hasVideoHD = newHasVideoHD;
 	[[self plugin] addFullScreenButton];
-	[self addHDButton];
+	[self addDownloadButton];
 	[[[self plugin] mainButton] setNeedsDisplay: YES];
 }
 

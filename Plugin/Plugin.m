@@ -860,10 +860,10 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 	if ([[self buttonsView] viewWithTag: CTFFullScreenButtonTag] == nil) {
 		button = [CTFButtonsView button];
 		[button setImage: [NSImage imageNamed:NSImageNameEnterFullScreenTemplate]];
-		[button setToolTip: CtFLocalizedString( @"Play Fullscreen in QuickTime Player", @"*Same as for menu item, used in setupButtons*" )];
+		[button setToolTip: CtFLocalizedString( @"Fill entire screen", @"Tooltip for fullscreen button" )];
 		[button sizeToFit];
-		[button setTarget: self];
 		[button setTag: CTFFullScreenButtonTag];
+		[button setTarget: self];
 		[button setAction: @selector(toggleFullScreen:)];
 		[[self buttonsView] addButton: button];
 	}

@@ -34,7 +34,8 @@ enum subviewTags {
 	CTFActionButtonTag,
 	CTFButtonsViewTag,
 	CTFFullScreenButtonTag,
-	CTFHDButtonTag
+	CTFHDButtonTag,
+	CTFDownloadButtonTag
 };
 
 

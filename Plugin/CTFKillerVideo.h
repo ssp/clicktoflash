@@ -105,7 +105,8 @@ enum CTFKVLookupStatus {
 - (void) setupQuickTimeUsingHD: (NSNumber*) useHDNumber;
 - (void) reallySetupQuickTimeUsingHD: (NSNumber *) useHDNumber;
 - (QTMovie *) movieForHD: (NSNumber *) useHDNumber;
-
+- (NSButton *) addHDButton;
+- (NSButton *) addDownloadButton;
 
 // Internal stuff
 - (void) _convertElementForMP4: (DOMElement*) element atURL: (NSString*) URLString;
