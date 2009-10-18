@@ -8,15 +8,20 @@
 
 #import <Cocoa/Cocoa.h>
 
-
+@class CTFClickToFlashPlugin;
 
 
 @interface CTFActionButton : NSButton {
+	CTFClickToFlashPlugin * plugin;
 }
 
 + (id) actionButton;
 
+- (CTFClickToFlashPlugin *) plugin;
+- (void) setPlugin: (CTFClickToFlashPlugin *) newPlugin;
+
 @end
+
 
 
 @interface CTFActionButtonCell : NSButtonCell {

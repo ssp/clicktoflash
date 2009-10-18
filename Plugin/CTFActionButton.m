@@ -34,6 +34,22 @@
 
 
 
+- (id) initWithFrame: (NSRect) frameRect {
+	self = [super initWithFrame: frameRect];
+	if (self != nil) {
+		[self setPlugin: nil];
+	}
+	return self;
+}
+
+
+- (void) dealloc {
+	[self setPlugin: nil];
+	[super dealloc];
+}
+
+
+
 - (void) mouseDown: (NSEvent *) event {
 	[NSMenu popUpContextMenu:[self menuForEvent:event] withEvent:event forView:self];
 }	
@@ -41,7 +57,7 @@
 
 
 - (NSMenu*) menuForEvent: (NSEvent*) event {
-	return [[self superview] menuForEvent: event];
+	return [[self plugin] menuForEvent: event];
 }
 
 
@@ -49,7 +65,7 @@
 - (void) resizeWithOldSuperviewSize:(NSSize) oldBoundsSize {
 	NSPoint newOrigin;
 	
-	if ( [[self cell ] gearVisible] ) {
+	if ( [[self cell] gearVisible] ) {
 		NSSize superSize = [[self superview] bounds].size;
 		NSRect myRect = [self bounds];
 		newOrigin = NSMakePoint(myRect.origin.x, superSize.height - myRect.size.height);
@@ -62,7 +78,23 @@
 }
 
 
+
+
+
+#pragma mark Accessors
+
+- (CTFClickToFlashPlugin *) plugin {
+	return plugin;
+}
+
+- (void) setPlugin: (CTFClickToFlashPlugin *) newPlugin {
+	[newPlugin retain];
+	[plugin release];
+	plugin = newPlugin;
+}
+
 @end
+
 
 
 
@@ -112,7 +144,6 @@
 
 
 
-#pragma mark -
 #pragma mark Helper
 
 - (BOOL) gearVisible {
@@ -124,7 +155,6 @@
 
 
 
-#pragma mark -
 #pragma mark Accessibility
 
 - (NSArray *) accessibilityAttributeNames {

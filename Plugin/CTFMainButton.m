@@ -16,6 +16,8 @@
 
 @implementation CTFMainButton
 
+#pragma mark NSButton subclassing
+
 + (Class) cellClass {
 	return NSClassFromString(@"CTFMainButtonCell");
 }
@@ -27,9 +29,13 @@
 
 
 - (NSMenu*) menuForEvent: (NSEvent*) event {
-	return [[self superview] menuForEvent: event];
+	return [[self plugin] menuForEvent: event];
 }
 
+
+
+
+#pragma mark Accessors
 
 - (CTFClickToFlashPlugin *) plugin {
 	return plugin;
@@ -82,7 +88,7 @@
 
 
 
-#pragma mark -
+
 #pragma mark Drawing
 
 - (void) drawGradientInRect: (NSRect) rect {
@@ -313,7 +319,6 @@
 
 
 
-#pragma mark -
 #pragma mark Helper
 
 - (CTFClickToFlashPlugin*) plugin {
@@ -327,7 +332,6 @@
 
 
 
-#pragma mark -
 #pragma mark Accessibility
 
 - (BOOL)accessibilityIsIgnored {

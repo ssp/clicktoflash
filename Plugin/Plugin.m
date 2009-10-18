@@ -326,6 +326,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		[myMainButton setTag: CTFMainButtonTag];
 		[myMainButton setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
 		[myMainButton setButtonType: NSMomentaryPushInButton];
+		[myMainButton setWantsLayer: YES];
 		[myMainButton setTarget: self];
 		[myMainButton setAction: @selector(clicked:)];
 		[myMainButton setPlugin: self];
@@ -335,11 +336,14 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		// Add action button control
 		CTFActionButton * actionButton = [CTFActionButton actionButton];
 		[actionButton setTag: CTFActionButtonTag];
+		[actionButton setWantsLayer: YES];
+		[actionButton setPlugin: self];
 		[actionButton setAutoresizingMask: NSViewMaxXMargin | NSViewMinYMargin];
 		[myContainerView addSubview: actionButton];
 		
 		// Add view for additional buttons (proper sizing is done by view itself)
 		CTFButtonsView * theButtonsView = [[[CTFButtonsView alloc] initWithFrame: myBounds] autorelease];
+		[theButtonsView setWantsLayer: YES];
 		[theButtonsView setAutoresizingMask: NSViewWidthSizable];
 		[myContainerView addSubview: theButtonsView];
 		[self setButtonsView: theButtonsView];
@@ -453,11 +457,8 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 
 
 
-/*
- Build contextual menu
-*/
-- (NSMenu*) menuForEvent: (NSEvent*) event
-{
+// Build contextual menu
+- (NSMenu*) menuForEvent: (NSEvent*) event {
 	NSMenuItem * menuItem;
 	
 	[self setMenu: [[[NSMenu alloc] initWithTitle:CtFLocalizedString( @"ClickTo Flash Contextual menu", @"Title of Contextual Menu")] autorelease]];
@@ -801,7 +802,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 	[myFullScreenWindow makeKeyAndOrderFront:nil];
     	
 	NSRect fullScreenFrame = [[myWindow screen] frame];
-//	[myFullScreenWindow setFrame:[myFullScreenWindow frameRectForContentRect:fullScreenFrame] display:YES animate:YES];
+	// Use animator to go to full screen as using the window's setFrame:display:animate: just jumps to the full screen size
 	[[myFullScreenWindow animator] setFrame:[myFullScreenWindow frameRectForContentRect:fullScreenFrame] display:YES];
 
 	[[[self buttonsView] viewWithTag: CTFFullScreenButtonTag] setImage: [NSImage imageNamed: NSImageNameExitFullScreenTemplate]];
