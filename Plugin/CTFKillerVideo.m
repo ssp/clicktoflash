@@ -474,17 +474,9 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	[progressIndicator release];
 	[self setMovieSetupThread: nil];
 
-/*	
- Resizing the view size to perfectly match the movie's doesn't work, strangely. (It ruins the display and stalls the app.
- CGFloat movieAspectRatio = [myMovieView movieBounds].size.width / [myMovieView movieBounds].size.height;
-	CGFloat newWidth = [[self plugin] frame].size.width;
-	CGFloat newHeight = newWidth / movieAspectRatio + [myMovieView controllerBarHeight];
-	[[self plugin] setFrameSize: NSMakeSize(newWidth,newHeight)];
-	[[self plugin] setNeedsDisplay:YES];
-	DOMCSSStyleDeclaration * style = [[[self plugin] container] style];
-	[style setProperty:@"height" value:@"100%" priority:nil];	
-	[style setProperty:@"width" value:@"100%" priority:nil];
-*/
+	// not doing this on the main thread seems to hang the application
+	[self performSelectorOnMainThread:@selector(resizeToFitMovie) withObject:nil waitUntilDone:NO];
+	
 	[pool release];	
 }
 
@@ -517,7 +509,8 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	myMovie = [QTMovie movieWithAttributes:movieAttributes error:&error];
 //	NSLog(@"%@", [[myMovie movieAttributes] description]);
 	if ( myMovie == nil ) {
-		NSLog(@"ClickToFlash CTFKillerVideo -reallySetupQuickTime Error: %@ (%@)", [error localizedDescription], movieURLString);
+		// It seems like we occasionally get an error "The file is not a movie file" here. No idea why as the same URL appears to work again a bit later. Some clever retrying or reasonable handling of that might be nice.
+		NSLog(@"ClickToFlash CTFKillerVideo -movieForHD: Error: %@ (%@)", [error localizedDescription], movieURLString);
 	}	
 	else {
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieVolumeChanged:) name:QTMovieVolumeDidChangeNotification object:myMovie];
@@ -566,6 +559,24 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	BOOL useHD = ([sender state] == NSOnState);
 	[self setupQuickTimeUsingHD: [NSNumber numberWithBool:useHD]];
 }
+
+
+
+
+// Resize the plugin view to keep its width and have the aspect ratio of the movie
+- (void) resizeToFitMovie {
+	if ( [self movie] != nil && [self movieView] != nil ) {
+		CGFloat movieAspectRatio = [[self movieView] movieBounds].size.width / [[self movieView] movieBounds].size.height;
+		CGFloat newWidth = [[self plugin] frame].size.width;
+		CGFloat newHeight = newWidth / movieAspectRatio + [[self movieView] controllerBarHeight];
+		[[self plugin] setFrameSize: NSMakeSize(newWidth,newHeight)];
+		[[self plugin] setNeedsDisplay:YES];
+		//		DOMCSSStyleDeclaration * style = [[[self plugin] container] style];
+		//		[style setProperty:@"height" value:@"100%" priority:nil];	
+		//		[style setProperty:@"width" value:@"100%" priority:nil];
+	}
+}
+
 
 
 
