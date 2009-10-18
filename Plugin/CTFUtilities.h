@@ -24,6 +24,9 @@ THE SOFTWARE.
 
 */
 
+#define LOGGING_ENABLED 0
+
+
 
 #ifndef NSAppKitVersionNumber10_5
 #define NSAppKitVersionNumber10_5 949

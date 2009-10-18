@@ -42,8 +42,6 @@ THE SOFTWARE.
 #import <Carbon/Carbon.h>
 
 
-#define LOGGING_ENABLED 0
-
 // MIME types
 static NSString *sFlashOldMIMEType = @"application/x-shockwave-flash";
 static NSString *sFlashNewMIMEType = @"application/futuresplash";
