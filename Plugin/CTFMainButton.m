@@ -80,7 +80,7 @@
     
 	// Draw 'glossy' overlay which can give some visual feedback on clicks when an preview image is set.
 	if ([[self plugin] previewImage] != nil) {
-		[self drawGlossForBounds: bounds];		
+		[self drawGlossForBounds2: bounds];		
 	}
 	
 }
@@ -142,7 +142,7 @@
 		
 		destinationRect = NSMakeRect(rect.origin.x, destinationBottom, destinationWidth, destinationHeight);
 		
-		[image drawInRect:destinationRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction: 0.8];
+		[image drawInRect:destinationRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction: 1.0];
 	}
 }
 
@@ -289,6 +289,7 @@
 
 
 
+// First attempt to add an S-shaped gloss.
 - (void) drawGlossForBounds: (NSRect) bounds {
 	NSBezierPath * bP = [NSBezierPath bezierPath];
 	const CGFloat glowStartFraction = .3;
@@ -315,6 +316,47 @@
 	[[NSColor colorWithCalibratedWhite:1.0 alpha:0.07] set];
 	[bP fill];
 }
+
+
+
+// More glossy gloss. Thanks to Henrik Cederblad for the recommendations on how to do this.
+- (void) drawGlossForBounds2: (NSRect) bounds {
+	const CGFloat glowStartFraction = .46;
+	const CGFloat cP1XFraction = .3;
+	const CGFloat cP1YFraction = .5;
+	const CGFloat cP2XFraction = .4;
+	const CGFloat cP2YFraction = .5;
+	
+	CGFloat startY = .0;
+	CGFloat gradientRotation = 180.;
+	if ([self isHighlighted]) {
+		startY = NSMaxY(bounds);
+		gradientRotation = .0;
+	}
+	
+	NSBezierPath * bP = [NSBezierPath bezierPath];
+	[bP moveToPoint: NSMakePoint( .0, startY ) ];
+	[bP lineToPoint: NSMakePoint( .0, NSMaxY(bounds) * glowStartFraction )];
+	[bP curveToPoint: NSMakePoint( NSMidX(bounds), NSMidY(bounds) )
+	   controlPoint1: NSMakePoint( cP1XFraction * NSMaxX(bounds), cP1YFraction * NSMaxY(bounds))
+	   controlPoint2: NSMakePoint( cP2XFraction * NSMaxX(bounds), cP2YFraction * NSMaxY(bounds)) ];
+	[bP curveToPoint: NSMakePoint( NSMaxX(bounds), glowStartFraction * NSMaxY(bounds) )
+	   controlPoint1: NSMakePoint( (1. - cP2XFraction) * NSMaxX(bounds), (cP2YFraction) * NSMaxY(bounds) ) 
+	   controlPoint2: NSMakePoint( (1. - cP1XFraction) * NSMaxX(bounds), (cP1YFraction) * NSMaxY(bounds) ) ];
+	[bP lineToPoint: NSMakePoint( NSMaxX(bounds), startY ) ];
+	[bP closePath];
+	
+//	[bP drawPointsAndHandles];
+	
+	NSColor * startColor = [NSColor colorWithCalibratedWhite:1.0 alpha:0.2];
+	NSColor * endColor = [NSColor colorWithCalibratedWhite:1.0 alpha:0.00];
+	
+	NSGradient * gradient = [[[NSGradient alloc] initWithColorsAndLocations: startColor, .0, endColor, .8, nil] autorelease];
+	[gradient drawInBezierPath:bP angle:90 + gradientRotation];
+}
+
+
+
 
 
 

@@ -30,6 +30,7 @@
 - (void) drawPreviewInRect: (NSRect) rect;
 - (void) drawBadgeForBounds: (NSRect) bounds;
 - (void) drawGlossForBounds: (NSRect) bounds;
+- (void) drawGlossForBounds2: (NSRect) bounds;
 
 - (NSString*) badgeLabelText;
 
