@@ -418,7 +418,14 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 - (void) reallySetupQuickTimeUsingHD: (NSNumber *) useHDNumber {
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	NSView * mainContainer = [[self plugin] containerView];
-	NSRect bounds = [mainContainer bounds];
+	NSRect bounds;
+	if (mainContainer != nil) {
+		bounds = [mainContainer bounds];
+	}
+	else {
+		bounds = NSZeroRect;
+	}
+	
 	
 	QTMovieView * myMovieView = [self movieView];
 	BOOL needToInsertMovieView = NO;
