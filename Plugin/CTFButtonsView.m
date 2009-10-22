@@ -46,8 +46,7 @@ static CGFloat height = 32.;
 
 
 + (NSButton *) button {
-	NSRect frame = NSMakeRect(.0, .0, 32., 32.); // correct frame is set later on -resizeWithOldSuperviewSize:
-	NSButton * button = [[[NSButton alloc] initWithFrame:frame] autorelease];
+	NSButton * button = [[[NSButton alloc] initWithFrame:NSZeroRect] autorelease];
 	[button setButtonType: NSMomentaryLight];
 	[button setBezelStyle: NSTexturedRoundedBezelStyle];
 	return button;

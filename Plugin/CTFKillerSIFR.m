@@ -74,7 +74,7 @@ static NSString *sSifr3AddOnJSFilename = @"sifr3-addons";
 - (void) setup {
 	if ([CTFKillerSIFR shouldAutoLoadSIFR]) {
 //		_isLoadingFromWhitelist = YES;
-		[[self plugin] convertTypesForContainer];
+		[[self plugin] convertTypesForContainer:YES];
 	}
 	else if ([self shouldDeSIFR]) {
 //		_isLoadingFromWhitelist = YES;

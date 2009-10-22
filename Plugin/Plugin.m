@@ -94,8 +94,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 {
     self = [super init];
     if (self) {
-		_contextMenuIsVisible = NO;
-		_delayingTimer = nil;
+		isConverted = NO;
 		defaultWhitelist = [NSArray arrayWithObjects:	@"com.apple.frontrow",
 														@"com.apple.dashboard.client",
 														@"com.apple.ScreenSaver.Engine",
@@ -171,7 +170,6 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		// Set up the CTFKiller subclass, if appropriate.
 		[self setKiller: [CTFKiller killerForURL:[NSURL URLWithString:[self baseURL]] src:[self src] attributes:[self attributes] forPlugin:self]];
 		
-        _fromFlickr = [[self host] rangeOfString:@"flickr.com"].location != NSNotFound;
 		
 #if LOGGING_ENABLED
         NSLog( @"arguments = %@", arguments );
@@ -190,7 +188,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		if ([[[NSBundle mainBundle] infoDictionary] objectForKey:sCTFOptOutKey]) hostAppWhitelistedInInfoPlist = YES;
 		if ( (! pluginEnabled) || (hostAppIsInDefaultWhitelist || hostAppIsInUserWhitelist || hostAppWhitelistedInInfoPlist) ) {
             _isLoadingFromWhitelist = YES;
-			[self convertTypesForContainer];
+			[self convertTypesForContainer:NO];
 			return self;
 		}		
 		
@@ -208,7 +206,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 			&& [ self isConsideredInvisible ] ) {
 			// auto-loading is on and this view meets the size constraints
             _isLoadingFromWhitelist = YES;
-			[self convertTypesForContainer];
+			[self convertTypesForContainer:YES];
 			return self;
 		}
 		
@@ -230,7 +228,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
         
         if(loadFromWhiteList && ![self _isOptionPressed]) {
             _isLoadingFromWhitelist = YES;
-			[self convertTypesForContainer];
+			[self convertTypesForContainer:YES];
 
 			return self;
         }
@@ -434,6 +432,15 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 
 
 
+- (void)resizeWithOldSuperviewSize:(NSSize)oldBoundsSize {
+	NSLog(@"resizeWithOldSuperviewSize");
+	[super resizeWithOldSuperviewSize: oldBoundsSize];
+}
+
+- (void)resizeSubviewsWithOldSize:(NSSize)oldBoundsSize {
+	NSLog(@"resizeSubviewsWithOldSize");
+	[super resizeSubviewsWithOldSize: oldBoundsSize];
+}
 
 
 
@@ -517,16 +524,18 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 #pragma mark Loading
 
 - (IBAction) clicked: (id) sender {
-	if ([self _isCommandPressed]) {
-		if ([self _isOptionPressed]) {
-			[self removeFlash:self];
+	if (![self isConverted]) {
+		if ([self _isCommandPressed]) {
+			if ([self _isOptionPressed]) {
+				[self removeFlash:self];
+			} else {
+				[self hideFlash:self];
+			}
+		} else if ([self _isOptionPressed] && ![self _isHostWhitelisted]) {
+			[self _askToAddCurrentSiteToWhitelist];
 		} else {
-			[self hideFlash:self];
+			[self convertTypesForContainer:YES];
 		}
-	} else if ([self _isOptionPressed] && ![self _isHostWhitelisted]) {
-		[self _askToAddCurrentSiteToWhitelist];
-	} else {
-		[self convertTypesForContainer];
 	}
 }
 
@@ -556,19 +565,19 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 
 - (void) _loadContent: (NSNotification*) notification
 {
-    [self convertTypesForContainer];
+    [self convertTypesForContainer:YES];
 }
 
 - (void) _loadContentForWindow: (NSNotification*) notification
 {
 	if( [ notification object ] == [ self window ] )
-		[ self convertTypesForContainer ];
+		[ self convertTypesForContainer :YES];
 }
 
 - (void) _loadInvisibleContentForWindow: (NSNotification*) notification
 {
 	if( [ notification object ] == [ self window ] && [ self isConsideredInvisible ] ) {
-		[ self convertTypesForContainer ];
+		[ self convertTypesForContainer:YES ];
 	}
 }
 
@@ -668,6 +677,9 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 
 
 
+
+
+
 #pragma mark -
 #pragma mark DOM Conversion
 
@@ -682,15 +694,17 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 }
 
 
-- (void) convertTypesForContainer {
+- (void) convertTypesForContainer: (BOOL) keepIt {
 	BOOL success = NO;
-	if ([self killer]) {
+	if (keepIt && [self killer]) {
 		success = [[self killer] convertToContainer];
 	}
 
 	if (!success) {
         [self _convertTypesForFlashContainer];
 	}
+	
+	[self setIsConverted: YES];
 }
 
 
@@ -1165,6 +1179,19 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		[loader start];
 	}
 }
+
+
+- (BOOL) isConverted {
+	return isConverted;
+}
+
+- (void) setIsConverted: (BOOL) newIsConverted {
+	[[self mainButton] setHidden: newIsConverted];
+	isConverted = newIsConverted;
+}
+
+
+
 
 
 - (NSImage *) previewImage {

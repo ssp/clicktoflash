@@ -54,16 +54,13 @@ enum subviewTags {
     NSAlert* _activeAlert;
     BOOL mouseIsDown;
     BOOL _isLoadingFromWhitelist;
-    BOOL _fromYouTube;
-    BOOL _fromFlickr;
 	WebView *_webView;
 	NSString *_baseURL;
 	NSDictionary *_attributes;
 	NSDictionary *_originalOpacityAttributes;
 	NSString *_src;
 
-	BOOL _contextMenuIsVisible;
-	NSTimer *_delayingTimer;
+	BOOL isConverted;
 	
 	NSView * containerView;
 	CTFMainButton * mainButton;
@@ -90,7 +87,7 @@ enum subviewTags {
 - (IBAction)loadAllOnPage:(id)sender;
 - (IBAction)removeFlash: (id) sender;
 - (IBAction)hideFlash: (id) sender;
-- (void) convertTypesForContainer;
+- (void) convertTypesForContainer: (BOOL) keepIt;
 
 + (NSDictionary*) flashVarDictionary: (NSString*) flashvarString;
 + (NSString *)launchedAppBundleIdentifier;
@@ -133,6 +130,8 @@ enum subviewTags {
 - (void)setOriginalOpacityAttributes:(NSDictionary *)newValue;
 - (NSString *)src;
 - (void)setSrc:(NSString *)newValue;
+- (BOOL)isConverted;
+- (void)setIsConverted:(BOOL)newIsConverted;
 
 - (NSURL *) previewURL;
 - (void) setPreviewURL: (NSURL *) newPreviewURL;

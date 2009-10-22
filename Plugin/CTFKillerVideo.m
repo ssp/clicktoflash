@@ -182,8 +182,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 // Create a default principal menu item, so our subclasses don't need to. The menu item loads the MP4 video according the current settings. If the video is available in another size as well, holding the option key will reveal a command to load that version instead.
-- (void) addPrincipalMenuItemToContextualMenu;
-{
+- (void) addPrincipalMenuItemToContextualMenu {
 	NSMenuItem * menuItem;
 	
 	if ([self hasVideo]) {
@@ -215,8 +214,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  2. A command for fullscreen playback in QuickTime Player. If the video is available in another size as well, holding the option key will reveal a command to load that version in QuickTime Player instead.
  3. A command to download the video file. If the video is available in another size as well, holding the option key will reveal a command to download that version instead.
 */
-- (void) addAdditionalMenuItemsForContextualMenu;
-{
+- (void) addAdditionalMenuItemsForContextualMenu {
 	NSMenuItem * menuItem;
 	NSString * formatString;
 	NSString * labelString;
