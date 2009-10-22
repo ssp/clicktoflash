@@ -811,13 +811,13 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 	[myFullScreenWindow setContentView:[self containerView]];
 	[myFullScreenWindow setTitle: CtFLocalizedString(@"Video Playback", "-----")];
 	
-	[myFullScreenWindow makeKeyAndOrderFront:nil];
-    	
 	NSRect fullScreenFrame = [[myWindow screen] frame];
 	// Use animator to go to full screen as using the window's setFrame:display:animate: just jumps to the full screen size
 	[[myFullScreenWindow animator] setFrame:[myFullScreenWindow frameRectForContentRect:fullScreenFrame] display:YES];
+	[myFullScreenWindow makeKeyAndOrderFront:nil];
 
 	[[[self buttonsView] viewWithTag: CTFFullScreenButtonTag] setImage: [NSImage imageNamed: NSImageNameExitFullScreenTemplate]];
+	[[[self buttonsView] viewWithTag: CTFFullScreenButtonTag] setToolTip: CtFLocalizedString( @"Return to Web Page", @"Tooltip for fullscreenbutton while in fullscreen mode")];
 	[[[self containerView] viewWithTag: CTFActionButtonTag] setHidden: YES];
 	if ( [self killer] != nil ) {
 		[[self killer] startFullScreen];
@@ -844,6 +844,8 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		[[self window] makeKeyAndOrderFront:nil];
 		
 		[[[self buttonsView] viewWithTag: CTFFullScreenButtonTag] setImage: [NSImage imageNamed: NSImageNameEnterFullScreenTemplate]];
+		[[[self buttonsView] viewWithTag: CTFFullScreenButtonTag] setToolTip: CtFLocalizedString( @"Fill entire screen", @"Tooltip for fullscreen button while not in fullscreen mode")];
+
 		[[[self containerView] viewWithTag: CTFActionButtonTag] setHidden: NO];
 
 		SetSystemUIMode(kUIModeNormal, 0);

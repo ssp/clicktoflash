@@ -36,6 +36,10 @@
 	if ([theEvent keyCode] == 53) { // code for escape key 
 		[[self plugin] toggleFullScreen: self];
 	}
+	else {
+		[super keyDown: theEvent];
+	}
+
 }
 
 
