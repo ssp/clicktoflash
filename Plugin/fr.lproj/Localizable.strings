@@ -5,6 +5,17 @@
 /* Flash badge text */
 "Flash" = "Flash";
 
+/* Fullscreen Window Title */
+"ClickToFlash Fullscreen" = "ClickToFlash plein écran";
+
+/* Tooltip for fullscreen button while not in fullscreen mode */
+"Fill entire screen" = "Remplir tout l’écran";
+
+/* Tooltip for fullscreen button while in fullscreen mode */
+"Return to Web Page" = "Revenir à la page Web";
+
+
+
 
 
 /*
@@ -12,6 +23,7 @@
 */
 
 /* Title of Contextual Menu */
+/* Accessibility: CTFActionButton, Title of Contextual Menu */
 "ClickToFlash Contextual menu" = "Menu contextuel ClickToFlash";
 
 /* Load Flash contextual menu item */
@@ -31,6 +43,17 @@
 
 /* Preferences Contextual Menu Item */
 "ClickToFlash Preferences..." = "Préférences ClickToFlash…";
+
+
+
+
+/* 
+	Main Button (CTFMainButton)
+*/
+
+/* NSAccessibilityDescriptionAttribute for CTFMainButton */
+"Load Flash Content" = "Charger le contenu Flash";
+
 
 
 
@@ -83,18 +106,33 @@
 "Download HD H.264" = "Télécharger version plus grande en fichier film";
 
 
+
+/* CTFKillerVideo: Label for HD button */
+"HD" = "HD";
+
+/* CTFKillerVideo: Tooltip for HD button when it is turned ON */
+"Use smaller version of the movie" = "Utiliser une version plus petite de ce film";
+
+/* CTFKillerVideo: Tooltip for HD button when it is turned OFF */
+"Use larger version of the movie" = "Utiliser une version plus grande de ce film";
+
+
+
+
+
 /*
 	Additional Links for inserted QuickTime film
 */
 
 /* Text of link to Video Download appearing beneath the video */
+/* CTFKillerVideo: Tooltip for Video Download button */
 "Download video file" = "Télécharger le fichier film";
 
 /* Label for download links appearing beneath the video */
-"Download: " = "Download: ";
+"Download: " = "Télécharger : ";
 
 /* Text of link for downloading a version of the video in the current size; appearing beneath the video */
-"Current Size" = "Current Size";
+"Current Size" = "Taille actuelle";
 
 /* Text of link to additional Larger Size Video Download appearing beneath the video after the standard link */
 "Larger Size" = "Taille plus grande";
@@ -106,17 +144,15 @@
 
 
 
-
 /*
 	CTFKillerSIFR
 */
 
 /* sIFR Flash badge text */
-"sIFR Flash" = "sIFR Flash";
+"sIFR Flash" = "Remplacement de texte";
 
 /* Remove All Text Replacements */
-"Don't use Text Replacement" = "Remove All Text Replacements";
-
+"Don't use Text Replacement" = "Retirer tous les remplacements de texte";
 
 
 
@@ -128,8 +164,6 @@
 
 /* Successful uninstallation Sheet informational message with application name */
 "Please quit and relaunch '%@' for the change to take effect." = "Veuillez quitter et relancer « %@ » pour que le changement prenne effet.";
-
-
 
 
 

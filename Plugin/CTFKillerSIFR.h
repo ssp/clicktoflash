@@ -36,6 +36,7 @@
 
 
 + (BOOL) isSIFRText: (NSDictionary*) attributes;
++ (void) migrateDefaults;
 
 - (NSUInteger) sifrVersionInstalled;
 - (BOOL) shouldDeSIFR;

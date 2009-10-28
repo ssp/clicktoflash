@@ -33,6 +33,7 @@ THE SOFTWARE.
 #import "CTFGradient.h"
 #import "SparkleManager.h"
 #import "CTFKiller.h"
+#import "CTFKillerSIFR.h"
 #import "CTFLoader.h"
 #import "CTFActionButton.h"
 #import "CTFMainButton.h"
@@ -126,7 +127,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		[self _migratePrefsToExternalFile];
 		[self _uniquePrefsFileWhitelist];
 		[self _addApplicationWhitelistArrayToPrefsFile];
-        
+        [CTFKillerSIFR migrateDefaults];
 		
         // Get URL
         
@@ -809,7 +810,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 
 	[myFullScreenWindow setLevel:NSNormalWindowLevel];
 	[myFullScreenWindow setContentView:[self containerView]];
-	[myFullScreenWindow setTitle: CtFLocalizedString(@"Video Playback", "-----")];
+	[myFullScreenWindow setTitle: CtFLocalizedString(@"ClickToFlash Fullscreen", @"Fullscreen Window Title")];
 	
 	NSRect fullScreenFrame = [[myWindow screen] frame];
 	// Use animator to go to full screen as using the window's setFrame:display:animate: just jumps to the full screen size

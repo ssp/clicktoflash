@@ -33,13 +33,8 @@
 #import "Plugin.h"
 #import <WebKit/WebKit.h>
 
-typedef enum {
-	CTFSifrModeDoNothing	= 0, 
-	CTFSifrModeAutoLoadSifr	= 1, 
-	CTFSifrModeDeSifr		= 2
-} CTFSifrMode;
-
-static NSString *sSifrModeDefaultsKey = @"sifrMode";
+static NSString *sSifrAutoHandleDefaultsKey = @"autoHandleSIFR";
+static NSString *sSifrDeSifrDefaultsKey = @"deSIFR";
 
 static NSString *sSifr2Test		= @"sIFR != null && typeof sIFR == \"function\"";
 static NSString *sSifr3Test		= @"sIFR != null && typeof sIFR == \"object\"";
@@ -52,13 +47,8 @@ static NSString *sSifr3AddOnJSFilename = @"sifr3-addons";
 
 @implementation CTFKillerSIFR
 
+#pragma mark Class Methods
 
-# pragma mark CTFKiller subclassing
-
-+ (BOOL) canHandleFlashAtURL: (NSURL*) theURL src: (NSString*) theSrc attributes: (NSDictionary*) attributes forPlugin:(CTFClickToFlashPlugin*) thePlugin {
-	return [CTFKillerSIFR isSIFRText: attributes];
-}
-	
 + (BOOL) isSIFRText: (NSDictionary*) attributes
 {
     // Check for sIFR - http://www.mikeindustries.com/sifr/
@@ -70,23 +60,69 @@ static NSString *sSifr3AddOnJSFilename = @"sifr3-addons";
 }
 
 
+
++ (void) migrateDefaults {
+	typedef enum {
+		CTFSifrModeDoNothing	= 0, 
+		CTFSifrModeAutoLoadSifr	= 1, 
+		CTFSifrModeDeSifr		= 2
+	} CTFSifrMode;
+	
+	static NSString * sSifrModeDefaultsKey = @"sifrMode";
+	
+	BOOL autoHandle = NO;
+	BOOL deSIFR = NO;
+	
+	if (![[CTFUserDefaultsController standardUserDefaults] objectForKey: sSifrAutoHandleDefaultsKey]) {
+		// no new-style setting present: if there is an old-style setting, migrate it, otherwise go for defaults
+		NSNumber * SIFRMode = [[CTFUserDefaultsController standardUserDefaults] objectForKey:sSifrModeDefaultsKey];
+		if (SIFRMode != nil) {
+			switch ([SIFRMode intValue]) {
+				case CTFSifrModeAutoLoadSifr:
+					autoHandle = YES;
+					break;
+				case CTFSifrModeDeSifr:
+					autoHandle = YES;
+					deSIFR = YES;
+					break;
+				default:
+					break;
+			}
+		}
+	
+		[[CTFUserDefaultsController standardUserDefaults] setBool:autoHandle forKey: sSifrAutoHandleDefaultsKey];
+		[[CTFUserDefaultsController standardUserDefaults] setBool:deSIFR forKey: sSifrDeSifrDefaultsKey];
+	}	
+}
+
+
+
+
+
+# pragma mark CTFKiller subclassing
+
++ (BOOL) canHandleFlashAtURL: (NSURL*) theURL src: (NSString*) theSrc attributes: (NSDictionary*) attributes forPlugin:(CTFClickToFlashPlugin*) thePlugin {
+	return [CTFKillerSIFR isSIFRText: attributes];
+}
+
+
 	
 - (void) setup {
 	if ([CTFKillerSIFR shouldAutoLoadSIFR]) {
-//		_isLoadingFromWhitelist = YES;
 		[[self plugin] convertTypesForContainer:YES];
 	}
 	else if ([self shouldDeSIFR]) {
-//		_isLoadingFromWhitelist = YES;
 		[self performSelector:@selector(disableSIFR) withObject:nil afterDelay:0];
 	}
 
 }
 
 
+
 - (NSString*) badgeLabelText {
 	return CtFLocalizedString( @"sIFR Flash", @"sIFR Flash badge text" );
 }
+
 
 
 - (void) addPrincipalMenuItemToContextualMenu {
@@ -96,8 +132,6 @@ static NSString *sSifr3AddOnJSFilename = @"sifr3-addons";
 }
 
 
-// - (void) addAdditionalMenuItemsForContextualMenu {
-// }
 
 
 
@@ -123,7 +157,9 @@ static NSString *sSifr3AddOnJSFilename = @"sifr3-addons";
 - (BOOL) shouldDeSIFR {
     BOOL result = NO;
 
-	if ([[CTFUserDefaultsController standardUserDefaults] integerForKey: sSifrModeDefaultsKey] == CTFSifrModeDeSifr) {
+	if ([[CTFUserDefaultsController standardUserDefaults] boolForKey: sSifrAutoHandleDefaultsKey] 
+		&& [[CTFUserDefaultsController standardUserDefaults] boolForKey: sSifrDeSifrDefaultsKey]) {
+
 		result = ([self sifrVersionInstalled] != 0);
     }
     
@@ -132,7 +168,8 @@ static NSString *sSifr3AddOnJSFilename = @"sifr3-addons";
 
 
 + (BOOL) shouldAutoLoadSIFR {
-    return [[CTFUserDefaultsController standardUserDefaults] integerForKey: sSifrModeDefaultsKey] == CTFSifrModeAutoLoadSifr;
+    return [[CTFUserDefaultsController standardUserDefaults] boolForKey: sSifrAutoHandleDefaultsKey] 
+	&& ![[CTFUserDefaultsController standardUserDefaults] boolForKey: sSifrDeSifrDefaultsKey];
 }        
 
 

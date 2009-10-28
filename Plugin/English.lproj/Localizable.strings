@@ -2,9 +2,19 @@
 	PLUGIN
 */
 
-
 /* Standard Flash badge text */
 "Flash" = "Flash";
+
+/* Fullscreen Window Title */
+"ClickToFlash Fullscreen" = "ClickToFlash Fullscreen";
+
+/* Tooltip for fullscreen button while not in fullscreen mode */
+"Fill entire screen" = "Fill entire screen";
+
+/* Tooltip for fullscreen button while in fullscreen mode */
+"Return to Web Page" = "Return to web page";
+
+
 
 
 
@@ -13,6 +23,7 @@
 */
 
 /* Title of Contextual Menu */
+/* Accessibility: CTFActionButton, Title of Contextual Menu */
 "ClickToFlash Contextual menu" = "ClickToFlash Contextual Menu";
 
 /* Load Flash contextual menu item */
@@ -37,6 +48,16 @@
 
 
 /* 
+	Main Button (CTFMainButton)
+*/
+
+/* NSAccessibilityDescriptionAttribute for CTFMainButton */
+"Load Flash Content" = "Load Flash Content";
+
+
+
+
+/* 
 	Video Strings (CTFKillerVideo)
 */
 
@@ -51,6 +72,8 @@
 
 /* HD H.264 badge text */
 "HD H.264" = "QuickTime HD";
+
+
 
 /* Load H.264 context menu item */
 "Load H.264" = "Load with QuickTime";
@@ -83,11 +106,25 @@
 "Download HD H.264" = "Download Larger Version as Movie File";
 
 
+
+/* CTFKillerVideo: Label for HD button */
+"HD" = "HD";
+
+/* CTFKillerVideo: Tooltip for HD button when it is turned ON */
+"Use smaller version of the movie" = "Use smaller version of the movie";
+
+/* CTFKillerVideo: Tooltip for HD button when it is turned OFF */
+"Use larger version of the movie" = "Use larger version of the movie";
+
+
+
+
 /*
 	Additional Links for inserted QuickTime film
 */
 
 /* Text of link to Video Download appearing beneath the video */
+/* CTFKillerVideo: Tooltip for Video Download button */
 "Download video file" = "Download Movie File";
 
 /* Label for download links appearing beneath the video */
