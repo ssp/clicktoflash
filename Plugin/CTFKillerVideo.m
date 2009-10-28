@@ -69,6 +69,8 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 - (void) dealloc {
+	[self unbind:@"toolTip"];
+	[self unbind:@"value"];
 	[self setMovieView: nil];
 	[[self movie] stop];
 	[self setMovie:nil];
@@ -77,6 +79,20 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	[super dealloc];
 }
+
+
+
+/* This is 10.5 and higher only. Currently only used for QTMovie-style playback which requires 10.5 as well. */
++ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
+	NSSet * result = [super keyPathsForValuesAffectingValueForKey:key];
+	
+	if ([key isEqualToString:@"HDButtonTooltip"]) {
+		result = [result setByAddingObject: @"usingHD"];
+	}
+	
+	return result;
+}
+
 
 
 
@@ -151,7 +167,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 #pragma mark -
 #pragma mark Subclass override of CTFKiller
 
-// Create gemeric labels based on the Service's name, so our subclasses don't need to.
+// Create generic labels based on the Service's name, so our subclasses don't need to.
 - (NSString*) badgeLabelText {
 	NSString * label = nil;
 	if( [ self useVideoHD ] ) {
@@ -541,18 +557,20 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	
 	if ([self hasVideo] && [self hasVideoHD]) {
 		if ([[[self plugin] buttonsView] viewWithTag: CTFHDButtonTag] == nil) {
+			NSCellStateValue state = NSOnState;
+			if ( ![self useVideoHD] ) { state = NSOffState; }
+			[self setUsingHD: state];
+			
 			button = [CTFButtonsView button];
 			[button setTitle: CtFLocalizedString( @"HD", @"CTFKillerVideo: Label for HD button")];
-			[button setToolTip: CtFLocalizedString( @"Toggle High Definition", @"CTFKillerVideo: Tooltip for HD button" )];
 			[button sizeToFit];
 			[button setButtonType: NSPushOnPushOffButton];
 			[button setTag: CTFHDButtonTag];
-			if ( [self useVideoHD] ) {
-				[button setState: NSOnState];
-			}
 			[button setTarget: self];
 			[button setAction: @selector(toggleHD:)];
 			[[[self plugin] buttonsView] addButton: button];
+			[button bind:@"toolTip" toObject:self withKeyPath:@"HDButtonTooltip" options:nil];
+			[button bind:@"value" toObject:self withKeyPath:@"usingHD" options:nil];
 		}
 	}	
 	return button;
@@ -560,17 +578,29 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
+/* Used for tooltip in HD button via bindings */
+- (NSString *) HDButtonTooltip {
+	NSString * tooltip = @"";
+	
+	if ([self usingHD] == NSOnState) {
+		tooltip = CtFLocalizedString( @"Use smaller version of the movie", @"CTFKillerVideo: Tooltip for HD button when it is turned ON" );
+	}
+	else {
+		tooltip = CtFLocalizedString( @"Use larger version of the movie", @"CTFKillerVideo: Tooltip for HD button when it is turned OFF" );	
+	}
+	
+	return tooltip;
+}
+
+
+
 - (NSButton *) addDownloadButton {
-	NSButton * button = nil;
+	CTFDownloadButton * button = nil;
 	
 	if ([self hasVideo] || [self hasVideoHD]) {
 		if ([[[self plugin] buttonsView] viewWithTag: CTFDownloadButtonTag] == nil) {
-			button = [CTFButtonsView button];
-			NSImage * downloadImage = [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[CTFClickToFlashPlugin class]] pathForResource:@"download" ofType:@"png"]] autorelease];
-			[button setImage: downloadImage];
-			[button setToolTip: CtFLocalizedString( @"Download video file", @"CTFKillerVideo: Tooltip for Video Download button" )];
-			[button sizeToFit];
-			[button setTag: CTFDownloadButtonTag];
+			button = [CTFDownloadButton downloadButton];
+			[button setURLProvider: self];
 			[button setTarget: self];
 			[button setAction: @selector(downloadVideoUsingHD:)];
 			[[[self plugin] buttonsView] addButton: button];
@@ -592,8 +622,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 - (IBAction) toggleHD: (id) sender {
-	BOOL useHD = ([sender state] == NSOnState);
-	[self setupQuickTimeUsingHD: [NSNumber numberWithBool:useHD]];
+	[self setupQuickTimeUsingHD: [NSNumber numberWithBool: [self usingHD]]];
 }
 
 
@@ -605,11 +634,11 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		CGFloat movieAspectRatio = [[self movieView] movieBounds].size.width / [[self movieView] movieBounds].size.height;
 		CGFloat newWidth = [[self plugin] frame].size.width;
 		CGFloat newHeight = newWidth / movieAspectRatio + [[self movieView] controllerBarHeight];
-		[[self plugin] setFrameSize: NSMakeSize(newWidth,newHeight)];
+		[[[self plugin] animator] setFrameSize: NSMakeSize(newWidth,newHeight)];
 		[[self plugin] setNeedsDisplay:YES];
-		//		DOMCSSStyleDeclaration * style = [[[self plugin] container] style];
-		//		[style setProperty:@"height" value:@"100%" priority:nil];	
-		//		[style setProperty:@"width" value:@"100%" priority:nil];
+		// DOMCSSStyleDeclaration * style = [[[self plugin] container] style];
+		//[style setProperty:@"height" value:@"auto" priority:nil];	
+		// [style setProperty:@"width" value:@"100%" priority:nil];
 	}
 }
 
@@ -963,8 +992,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 - (void)setHasVideo:(BOOL)newHasVideo {
 	hasVideo = newHasVideo;
-	[[self plugin] addFullScreenButton];
-	[self addDownloadButton];
+	[self addButtons];
 	[[[self plugin] mainButton] setNeedsDisplay:YES];
 }
 
@@ -975,9 +1003,17 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 - (void)setHasVideoHD:(BOOL)newHasVideoHD {
 	hasVideoHD = newHasVideoHD;
-	[[self plugin] addFullScreenButton];
-	[self addDownloadButton];
+	[self addButtons];
 	[[[self plugin] mainButton] setNeedsDisplay: YES];
+}
+
+
+- (NSCellStateValue) usingHD {
+	return usingHD;
+}
+
+- (void) setUsingHD:(NSCellStateValue)newUsingHD {
+	usingHD = newUsingHD;
 }
 
 

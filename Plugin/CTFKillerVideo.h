@@ -44,6 +44,7 @@ enum CTFKVLookupStatus {
 	BOOL autoPlay;
 	BOOL hasVideo;
 	BOOL hasVideoHD;
+	NSCellStateValue usingHD;
 	
 	NSInteger activeLookups;
 	enum CTFKVLookupStatus lookupStatus;
@@ -132,6 +133,8 @@ enum CTFKVLookupStatus {
 - (void) setHasVideo:(BOOL)newHasVideo;
 - (BOOL) hasVideoHD;
 - (void) setHasVideoHD:(BOOL)newHasVideoHD;
+- (NSCellStateValue) usingHD;
+- (void) setUsingHD:(NSCellStateValue)newUsingHD;
 - (enum CTFKVLookupStatus) lookupStatus;
 - (void) setLookupStatus: (enum CTFKVLookupStatus) newLookupStatus;
 - (void) increaseActiveLookups;
