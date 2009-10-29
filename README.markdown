@@ -4,6 +4,16 @@ This is the ClickToFlash developer site.
 
 ##Version History
 
+* **1.5.3**
+
+	* [FIX] Whitelist now checks for duplicates, and removes them if they exist.  This fixes crashes and hangs caused by simX's bug from 1.5b4.
+
+	* [FIX] Embedded YouTube videos were showing a question mark when loaded using the VIDEO element.
+
+	* [CHANGE] Disables H.264 YouTube auto-play by default.
+
+	* [FIX] Rare crashers and memory leaks.
+
 * **1.5.2** [download](http://s3.amazonaws.com/clicktoflash/ClickToFlash-1.5.2.zip)
 
 	* [NEW] Start signing Sparkle updates. ([rentzsch](http://github.com/rentzsch/clicktoflash/commit/c8f4d7f897a039d5d04ea92e178a15238adcacab))
@@ -299,8 +309,7 @@ ClickToFlash has a few hidden preferences that can be used to control its functi
 
 To use these hidden preferences, open the Terminal and type the following command: `defaults write com.github.rentzsch.clicktoflash defaultName defaultValue`, replacing `defaultName` and `defaultValue` with the appropriate values, then press return.  To restore default functionality, use the following Terminal command: `defaults delete com.github.rentzsch.clicktoflash defaultName`, replacing `defaultName` with the appropriate value.
 
-* defaultName: **useYouTubeHDH264**; possible defaultValues: **"YES"**, **"NO"**; loads HD videos from YouTube by default, if the "Play H.264 Videos" option in the Preferences panel is also selected.
 * defaultName: **enableYouTubeAutoPlay**; possible defaultValues: **"YES"**, **"NO"**; autoplays videos on YouTube once you click on the ClickToFlash view, assuming you're either logged out of YouTube or are logged in and have enabled this feature in your YouTube account settings.
 * defaultName: **disableVideoElement**; possible defaultValues: **"YES"**, **"NO"**; disables the usage of the HTML 5 VIDEO tag, and uses the old QuickTime plug-in instead.  Note, the VIDEO tag usually exhibits much better performance and lower CPU usage because it supports hardware acceleration, whereas the old QuickTime plug-in does not.  However, some Macs seem to see an adverse effect on performance with the VIDEO tag.
 * defaultName: **drawGearImageOnlyOnMouseOver**; possible defaultValues: **"YES"**, **"NO"**; shows the gear menu only when you're mousing over the ClickToFlash view, reducing visual noise for Flash-heavy pages.
-* defaultName: **applicationWhitelist**; to use this hidden pref, use the following syntax: `defaults write com.github.rentzsch.clicktoflash applicationWhitelist -array-add bundleID` .  This whitelists Flash for a particular application, and causes ClickToFlash to automatically load all Flash inside the application whose bundle ID is "bundleID".
+* defaultName: **applicationWhitelist**; to use this hidden pref, use the following syntax: `defaults write com.github.rentzsch.clicktoflash applicationWhitelist -array-add bundleID` .  This whitelists Flash for a particular application, and causes ClickToFlash to automatically load all Flash inside the application whose bundle ID is "bundleID".  (This hidden pref *is* guaranteed to persist in future versions.)

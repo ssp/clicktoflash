@@ -61,8 +61,6 @@
 		79166CBD0FF69E1800B1F69B /* CTFGradient.m in Sources */ = {isa = PBXBuildFile; fileRef = 79166CBB0FF69E1800B1F69B /* CTFGradient.m */; };
 		79A21C4D0F30B735009424B8 /* CTFWhitelistWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79A21C490F30B735009424B8 /* CTFWhitelistWindowController.m */; };
 		79B1F5C0105D9CEE0081D0B0 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 79B1F5BF105D9CEE0081D0B0 /* dsa_pub.pem */; };
-		79C040700FF1CCE6002DA6A5 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 79A060EB0FF1CBF50035F03A /* Sparkle.framework */; };
-		79E2EB930F86AAD3005CF170 /* SparkleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E2EB920F86AAD3005CF170 /* SparkleManager.m */; };
 		845704550F4792320017F3F4 /* CTFWhitelist.m in Sources */ = {isa = PBXBuildFile; fileRef = 845704540F4792320017F3F4 /* CTFWhitelist.m */; };
 		8457045A0F47BC170017F3F4 /* CTFUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 845704590F47BC170017F3F4 /* CTFUtilities.m */; };
 		A40485A710629A3D00FDC4E2 /* AboutBox.xib in Resources */ = {isa = PBXBuildFile; fileRef = A40485A510629A3D00FDC4E2 /* AboutBox.xib */; };
@@ -70,6 +68,15 @@
 		A40485BA10629B0E00FDC4E2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A40485B410629B0E00FDC4E2 /* InfoPlist.strings */; };
 		A40485BB10629B0E00FDC4E2 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A40485B610629B0E00FDC4E2 /* Localizable.strings */; };
 		A40485E010629C4100FDC4E2 /* CTFAboutBoxWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = A40485DF10629C4100FDC4E2 /* CTFAboutBoxWindowController.m */; };
+		A44AA66F1097874C006F5FC1 /* ctf.icns in Resources */ = {isa = PBXBuildFile; fileRef = A494CC2B0F9F2446007D5EEB /* ctf.icns */; };
+		A44AA68710978945006F5FC1 /* SparkleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A44AA68610978945006F5FC1 /* SparkleManager.m */; };
+		A46A5A141096C5E600E1ABAA /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 79B1F5BF105D9CEE0081D0B0 /* dsa_pub.pem */; };
+		A46A5A5C1096C9C800E1ABAA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A46A5A5B1096C9C800E1ABAA /* main.m */; };
+		A46A5A5D1096C9CD00E1ABAA /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = A46A5A471096C98400E1ABAA /* MainMenu.xib */; };
+		A46A5A5E1096C9CE00E1ABAA /* CTFSparkleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A46A5A431096C95500E1ABAA /* CTFSparkleManager.m */; };
+		A46A5BE21096E60E00E1ABAA /* ClickToFlash Updater.app in Resources */ = {isa = PBXBuildFile; fileRef = A46A59FE1096C2A700E1ABAA /* ClickToFlash Updater.app */; };
+		A46A5DBD1096FE6700E1ABAA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55EB70560E04A8B80016593D /* Cocoa.framework */; };
+		A46A5E2B109700B400E1ABAA /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 79A060EB0FF1CBF50035F03A /* Sparkle.framework */; };
 		A494CC2C0F9F2446007D5EEB /* ctf.icns in Resources */ = {isa = PBXBuildFile; fileRef = A494CC2B0F9F2446007D5EEB /* ctf.icns */; };
 		A4DEFC7A0FF33F7400CCB6A8 /* CTFPreferencesDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = A4DEFC770FF33F7400CCB6A8 /* CTFPreferencesDictionary.m */; };
 		A4DEFC7B0FF33F7400CCB6A8 /* CTFUserDefaultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = A4DEFC790FF33F7400CCB6A8 /* CTFUserDefaultsController.m */; };
@@ -84,6 +91,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 55EB70410E04A8640016593D;
 			remoteInfo = ClickToFlash;
+		};
+		6CC33D5D1099F5AD0038899E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 79475E0C0F658D9A00FD82E3 /* Sparkle.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = Sparkle;
 		};
 		79A060EA0FF1CBF50035F03A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -113,12 +127,12 @@
 			remoteGlobalIDString = 612279D90DB5470200AB99EA;
 			remoteInfo = "Sparkle Unit Tests";
 		};
-		79E095390FF32596008A21AD /* PBXContainerItemProxy */ = {
+		A46A5BE01096E60400E1ABAA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 79475E0C0F658D9A00FD82E3 /* Sparkle.xcodeproj */;
+			containerPortal = 55EB70320E04A8410016593D /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = Sparkle;
+			remoteGlobalIDString = A46A59FD1096C2A700E1ABAA;
+			remoteInfo = "ClickToFlash Updater";
 		};
 		FADCD4250F421EBD00749805 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -136,7 +150,16 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				79C040700FF1CCE6002DA6A5 /* Sparkle.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A46A5A381096C8E500E1ABAA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A46A5E2B109700B400E1ABAA /* Sparkle.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -187,8 +210,6 @@
 		79A21C490F30B735009424B8 /* CTFWhitelistWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFWhitelistWindowController.m; path = Plugin/CTFWhitelistWindowController.m; sourceTree = "<group>"; };
 		79A21C4A0F30B735009424B8 /* CTFWhitelistWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFWhitelistWindowController.h; path = Plugin/CTFWhitelistWindowController.h; sourceTree = "<group>"; };
 		79B1F5BF105D9CEE0081D0B0 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dsa_pub.pem; path = Plugin/dsa_pub.pem; sourceTree = "<group>"; };
-		79E2EB910F86AAD3005CF170 /* SparkleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SparkleManager.h; path = Plugin/SparkleManager.h; sourceTree = "<group>"; };
-		79E2EB920F86AAD3005CF170 /* SparkleManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SparkleManager.m; path = Plugin/SparkleManager.m; sourceTree = "<group>"; };
 		845704530F4792320017F3F4 /* CTFWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFWhitelist.h; path = Plugin/CTFWhitelist.h; sourceTree = "<group>"; };
 		845704540F4792320017F3F4 /* CTFWhitelist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFWhitelist.m; path = Plugin/CTFWhitelist.m; sourceTree = "<group>"; };
 		845704580F47BC170017F3F4 /* CTFUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFUtilities.h; path = Plugin/CTFUtilities.h; sourceTree = "<group>"; };
@@ -198,7 +219,7 @@
 		A40485AB10629A9800FDC4E2 /* de */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = de; path = Plugin/de.lproj/AboutBox.xib; sourceTree = "<group>"; };
 		A40485AC10629AB800FDC4E2 /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = Plugin/fr.lproj/MenubarMenu.xib; sourceTree = "<group>"; };
 		A40485AD10629AB900FDC4E2 /* de */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = de; path = Plugin/de.lproj/MenubarMenu.xib; sourceTree = "<group>"; };
-		A40485AE10629ABD00FDC4E2 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = fr; path = Plugin/fr.lproj/Preferences.xib; sourceTree = "<group>"; };
+		A40485AE10629ABD00FDC4E2 /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = Plugin/fr.lproj/Preferences.xib; sourceTree = "<group>"; };
 		A40485AF10629ABF00FDC4E2 /* de */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = de; path = Plugin/de.lproj/Preferences.xib; sourceTree = "<group>"; };
 		A40485B110629B0E00FDC4E2 /* Credits.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = Credits.css; path = Plugin/Credits.css; sourceTree = "<group>"; };
 		A40485B310629B0E00FDC4E2 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = English; path = Plugin/English.lproj/Credits.html; sourceTree = "<group>"; };
@@ -212,6 +233,14 @@
 		A40485C410629B5100FDC4E2 /* de */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = de; path = Plugin/de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A40485DE10629C4100FDC4E2 /* CTFAboutBoxWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFAboutBoxWindowController.h; path = Plugin/CTFAboutBoxWindowController.h; sourceTree = "<group>"; };
 		A40485DF10629C4100FDC4E2 /* CTFAboutBoxWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFAboutBoxWindowController.m; path = Plugin/CTFAboutBoxWindowController.m; sourceTree = "<group>"; };
+		A44AA68510978945006F5FC1 /* SparkleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SparkleManager.h; path = Plugin/SparkleManager.h; sourceTree = "<group>"; };
+		A44AA68610978945006F5FC1 /* SparkleManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SparkleManager.m; path = Plugin/SparkleManager.m; sourceTree = "<group>"; };
+		A46A59FE1096C2A700E1ABAA /* ClickToFlash Updater.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ClickToFlash Updater.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A46A5A001096C2A700E1ABAA /* Info-Updater.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Updater.plist"; path = "Updater/Info-Updater.plist"; sourceTree = "<group>"; };
+		A46A5A421096C95500E1ABAA /* CTFSparkleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFSparkleManager.h; path = Updater/CTFSparkleManager.h; sourceTree = "<group>"; };
+		A46A5A431096C95500E1ABAA /* CTFSparkleManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFSparkleManager.m; path = Updater/CTFSparkleManager.m; sourceTree = "<group>"; };
+		A46A5A471096C98400E1ABAA /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = Updater/MainMenu.xib; sourceTree = "<group>"; };
+		A46A5A5B1096C9C800E1ABAA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Updater/main.m; sourceTree = "<group>"; };
 		A494CC2B0F9F2446007D5EEB /* ctf.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = ctf.icns; path = Plugin/ctf.icns; sourceTree = "<group>"; };
 		A4DEFC760FF33F7400CCB6A8 /* CTFPreferencesDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFPreferencesDictionary.h; path = Plugin/CTFPreferencesDictionary.h; sourceTree = "<group>"; };
 		A4DEFC770FF33F7400CCB6A8 /* CTFPreferencesDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFPreferencesDictionary.m; path = Plugin/CTFPreferencesDictionary.m; sourceTree = "<group>"; };
@@ -234,6 +263,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A46A59FC1096C2A700E1ABAA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A46A5DBD1096FE6700E1ABAA /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -241,6 +278,7 @@
 			isa = PBXGroup;
 			children = (
 				55EB70540E04A89C0016593D /* Plugin */,
+				A46A5A3D1096C93C00E1ABAA /* Updater */,
 				55EB70550E04A8A40016593D /* Frameworks */,
 				55EB70430E04A8640016593D /* Products */,
 				79475E0C0F658D9A00FD82E3 /* Sparkle.xcodeproj */,
@@ -251,6 +289,7 @@
 			isa = PBXGroup;
 			children = (
 				55EB70420E04A8640016593D /* ClickToFlash.webplugin */,
+				A46A59FE1096C2A700E1ABAA /* ClickToFlash Updater.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -294,8 +333,8 @@
 				845704530F4792320017F3F4 /* CTFWhitelist.h */,
 				79A21C490F30B735009424B8 /* CTFWhitelistWindowController.m */,
 				79A21C4A0F30B735009424B8 /* CTFWhitelistWindowController.h */,
-				79E2EB920F86AAD3005CF170 /* SparkleManager.m */,
-				79E2EB910F86AAD3005CF170 /* SparkleManager.h */,
+				A44AA68610978945006F5FC1 /* SparkleManager.m */,
+				A44AA68510978945006F5FC1 /* SparkleManager.h */,
 				D9FFA7650F3941C1008A8708 /* ClickToFlash_Prefix.pch */,
 				79166CBF0FF69E2900B1F69B /* 10.4 Support */,
 				55EB70610E04A8D00016593D /* Info-Plugin.plist */,
@@ -352,6 +391,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		A46A5A3D1096C93C00E1ABAA /* Updater */ = {
+			isa = PBXGroup;
+			children = (
+				A46A5A001096C2A700E1ABAA /* Info-Updater.plist */,
+				A46A5A421096C95500E1ABAA /* CTFSparkleManager.h */,
+				A46A5A431096C95500E1ABAA /* CTFSparkleManager.m */,
+				A46A5A471096C98400E1ABAA /* MainMenu.xib */,
+				A46A5A5B1096C9C800E1ABAA /* main.m */,
+			);
+			name = Updater;
+			sourceTree = "<group>";
+		};
 		D9566C2B0F37EA0800358646 /* deSIFR Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -369,20 +420,39 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 55EB70470E04A8650016593D /* Build configuration list for PBXNativeTarget "ClickToFlash" */;
 			buildPhases = (
+				794759ED0F6095D900FD82E3 /* CopyFiles */,
 				55EB703F0E04A8640016593D /* Sources */,
 				55EB70400E04A8640016593D /* Frameworks */,
 				55EB703E0E04A8640016593D /* Resources */,
-				794759ED0F6095D900FD82E3 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				79E0953A0FF32596008A21AD /* PBXTargetDependency */,
+				A46A5BE11096E60400E1ABAA /* PBXTargetDependency */,
 			);
 			name = ClickToFlash;
 			productName = ClickToFlash;
 			productReference = 55EB70420E04A8640016593D /* ClickToFlash.webplugin */;
 			productType = "com.apple.product-type.bundle";
+		};
+		A46A59FD1096C2A700E1ABAA /* ClickToFlash Updater */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A46A5A061096C2A800E1ABAA /* Build configuration list for PBXNativeTarget "ClickToFlash Updater" */;
+			buildPhases = (
+				A46A5A381096C8E500E1ABAA /* CopyFiles */,
+				A46A59FB1096C2A700E1ABAA /* Sources */,
+				A46A59FC1096C2A700E1ABAA /* Frameworks */,
+				A46A59FA1096C2A700E1ABAA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6CC33D5E1099F5AD0038899E /* PBXTargetDependency */,
+			);
+			name = "ClickToFlash Updater";
+			productName = "ClickToFlash Updater";
+			productReference = A46A59FE1096C2A700E1ABAA /* ClickToFlash Updater.app */;
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -411,6 +481,7 @@
 			);
 			projectRoot = "";
 			targets = (
+				A46A59FD1096C2A700E1ABAA /* ClickToFlash Updater */,
 				55EB70410E04A8640016593D /* ClickToFlash */,
 				2B9260570F36854B000F1583 /* Install plugin for user */,
 				FADCD4220F421EAE00749805 /* Build Package */,
@@ -467,6 +538,17 @@
 				A40485BA10629B0E00FDC4E2 /* InfoPlist.strings in Resources */,
 				A40485BB10629B0E00FDC4E2 /* Localizable.strings in Resources */,
 				6C7A9248108B95FD002CEDED /* download.png in Resources */,
+				A46A5BE21096E60E00E1ABAA /* ClickToFlash Updater.app in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A46A59FA1096C2A700E1ABAA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A46A5A141096C5E600E1ABAA /* dsa_pub.pem in Resources */,
+				A46A5A5D1096C9CD00E1ABAA /* MainMenu.xib in Resources */,
+				A44AA66F1097874C006F5FC1 /* ctf.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -527,7 +609,7 @@
 				6953E4360F3EDE9D0014ECF7 /* CTFMenubarMenuController.m in Sources */,
 				845704550F4792320017F3F4 /* CTFWhitelist.m in Sources */,
 				8457045A0F47BC170017F3F4 /* CTFUtilities.m in Sources */,
-				79E2EB930F86AAD3005CF170 /* SparkleManager.m in Sources */,
+				A44AA68710978945006F5FC1 /* SparkleManager.m in Sources */,
 				0038DE240FC0CCF0007B54E9 /* MATrackingArea.m in Sources */,
 				A4DEFC7A0FF33F7400CCB6A8 /* CTFPreferencesDictionary.m in Sources */,
 				A4DEFC7B0FF33F7400CCB6A8 /* CTFUserDefaultsController.m in Sources */,
@@ -546,6 +628,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A46A59FB1096C2A700E1ABAA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A46A5A5C1096C9C800E1ABAA /* main.m in Sources */,
+				A46A5A5E1096C9CE00E1ABAA /* CTFSparkleManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -554,10 +645,15 @@
 			target = 55EB70410E04A8640016593D /* ClickToFlash */;
 			targetProxy = 2B92605A0F368559000F1583 /* PBXContainerItemProxy */;
 		};
-		79E0953A0FF32596008A21AD /* PBXTargetDependency */ = {
+		6CC33D5E1099F5AD0038899E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Sparkle;
-			targetProxy = 79E095390FF32596008A21AD /* PBXContainerItemProxy */;
+			targetProxy = 6CC33D5D1099F5AD0038899E /* PBXContainerItemProxy */;
+		};
+		A46A5BE11096E60400E1ABAA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A46A59FD1096C2A700E1ABAA /* ClickToFlash Updater */;
+			targetProxy = A46A5BE01096E60400E1ABAA /* PBXContainerItemProxy */;
 		};
 		FADCD4260F421EBD00749805 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -654,7 +750,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
-				PRODUCT_VERSION = 1.6b1;
+				PRODUCT_VERSION = 1.6b3;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -670,7 +766,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
-				PRODUCT_VERSION = 1.6b1;
+				PRODUCT_VERSION = 1.6b3;
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Release;
@@ -737,6 +833,69 @@
 			};
 			name = Release;
 		};
+		A46A5A011096C2A800E1ABAA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)\"",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Updater/Info-Updater.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH_ACTUAL)";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Sparkle,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "ClickToFlash Updater";
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				VALID_ARCHS = "ppc i386 x86_64";
+			};
+			name = Debug;
+		};
+		A46A5A021096C2A800E1ABAA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					ppc,
+					i386,
+					x86_64,
+				);
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)\"",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Updater/Info-Updater.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Sparkle,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "ClickToFlash Updater";
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				VALID_ARCHS = "ppc i386 x86_64";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		FADCD4230F421EAE00749805 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -777,6 +936,15 @@
 			buildConfigurations = (
 				55EB70450E04A8640016593D /* Debug */,
 				55EB70460E04A8640016593D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A46A5A061096C2A800E1ABAA /* Build configuration list for PBXNativeTarget "ClickToFlash Updater" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A46A5A011096C2A800E1ABAA /* Debug */,
+				A46A5A021096C2A800E1ABAA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

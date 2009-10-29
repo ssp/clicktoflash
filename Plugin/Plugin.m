@@ -96,6 +96,8 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
     self = [super init];
     if (self) {
 		isConverted = NO;
+		_sparkleUpdateInProgress = NO;
+
 		defaultWhitelist = [NSArray arrayWithObjects:	@"com.apple.frontrow",
 														@"com.apple.dashboard.client",
 														@"com.apple.ScreenSaver.Engine",
@@ -118,6 +120,8 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 			// Default to enable the plugin
 			[[CTFUserDefaultsController standardUserDefaults] setBool:YES forKey:sPluginEnabled];
 		}
+
+		[self setLaunchedAppBundleIdentifier:[CTFClickToFlashPlugin launchedAppBundleIdentifier]];
 		
 		[self setWebView:[[[arguments objectForKey:WebPlugInContainerKey] webFrame] webView]];
 		
@@ -195,9 +199,16 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		
 		// Plugin is enabled and the host is not white-listed. Kick off Sparkle.
 		
-		NSString *pathToRelaunch = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:[CTFClickToFlashPlugin launchedAppBundleIdentifier]];
-		[[SparkleManager sharedManager] setPathToRelaunch:pathToRelaunch];
-		[[SparkleManager sharedManager] startAutomaticallyCheckingForUpdates];
+		if (! _sparkleUpdateInProgress) {
+			// sometimes many instances of the ClickToFlash plug-in are loaded
+			// at once, so we don't want to launch multiple copies of the
+			// Sparkle Updater
+			
+			_sparkleUpdateInProgress = YES;
+			[[SparkleManager sharedManager] automaticallyCheckForUpdates];
+			_sparkleUpdateInProgress = NO;
+		}
+		
 		
         // Set up main menus
         
@@ -652,6 +663,15 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 }
 
 
+
+- (void)setLaunchedAppBundleIdentifier:(NSString *)newValue {
+    [newValue retain];
+    [_launchedAppBundleIdentifier release];
+    _launchedAppBundleIdentifier = newValue;
+}
+
+
+
 - (BOOL) _isOptionPressed {
     BOOL isOptionPressed = (([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) != 0);
     return isOptionPressed;
@@ -666,6 +686,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 - (void) browseToURLString: (NSString*) URLString {
 	[_webView setMainFrameURL:URLString];
 }
+
 
 - (void) downloadURLString: (NSString*) URLString {
 	[[NSWorkspace sharedWorkspace] openURLs: [NSArray arrayWithObject:[NSURL URLWithString: URLString]]

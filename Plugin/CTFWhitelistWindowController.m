@@ -1,5 +1,4 @@
 #import "CTFWhitelistWindowController.h"
-#import "SparkleManager.h"
 #import "Plugin.h"
 #import "CTFUtilities.h"
 
@@ -24,12 +23,12 @@ NSString *kCTFCheckForUpdates = @"CTFCheckForUpdates";
 
 - (void)windowDidLoad
 {
-    [_checkNowButton setEnabled:[[SparkleManager sharedManager] canUpdate]];
+    //[_checkNowButton setEnabled:[[SparkleManager sharedManager] canUpdate]];
 }
 
 - (IBAction)checkForUpdates:(id)sender;
 {
-	[[SparkleManager sharedManager] checkForUpdates];
+	[[SparkleManager sharedManager] checkForUpdatesNow];
 }
 
 - (IBAction)automaticallyCheckForUpdatesDidChange:(id)sender;
