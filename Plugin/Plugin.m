@@ -480,13 +480,13 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 	
 	[self setMenu: [[[NSMenu alloc] initWithTitle:CtFLocalizedString( @"ClickTo Flash Contextual menu", @"Title of Contextual Menu")] autorelease]];
 	
-	[self addContextualMenuItemWithTitle:CtFLocalizedString( @"Load Flash", @"Contextual Menu Item: Load Flash" ) 
-								  action: @selector( loadFlash: )];
-	
 	if ([self killer] != nil) {
 		[[self killer] addPrincipalMenuItemToContextualMenu];
 	}
 	
+	[self addContextualMenuItemWithTitle:CtFLocalizedString( @"Load Flash", @"Contextual Menu Item: Load Flash" ) 
+								  action: @selector( loadFlash: )];
+		
 	if ([[CTFMenubarMenuController sharedController] multipleFlashViewsExistForWindow:[self window]]) {
 		[self addContextualMenuItemWithTitle: CtFLocalizedString( @"Load All on this Page", @"Load All on this Page contextual menu item" )
 									  action: @selector( loadAllOnPage: )];
