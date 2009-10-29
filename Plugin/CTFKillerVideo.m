@@ -595,12 +595,20 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 - (NSButton *) addDownloadButton {
-	CTFDownloadButton * button = nil;
+	// CTFDownloadButton * button = nil;
+	NSButton * button = nil;
 	
 	if ([self hasVideo] || [self hasVideoHD]) {
 		if ([[[self plugin] buttonsView] viewWithTag: CTFDownloadButtonTag] == nil) {
-			button = [CTFDownloadButton downloadButton];
-			[button setURLProvider: self];
+			// button = [CTFDownloadButton downloadButton];
+			button = [CTFButtonsView button];
+			
+			NSImage * downloadImage = [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[CTFClickToFlashPlugin class]] pathForResource:@"download" ofType:@"png"]] autorelease];
+			[button setImage: downloadImage];
+			[button setToolTip: CtFLocalizedString( @"Download video file", @"CTFKillerVideo: Tooltip for Video Download button" )];
+			[button sizeToFit];
+			[button setTag: CTFDownloadButtonTag];
+			// [button setURLProvider: self];
 			[button setTarget: self];
 			[button setAction: @selector(downloadVideoUsingHD:)];
 			[[[self plugin] buttonsView] addButton: button];
