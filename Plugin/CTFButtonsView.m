@@ -13,7 +13,6 @@
 static CGFloat interButtonGap = 4.;
 static CGFloat topMargin = 4.;
 static CGFloat rightMargin = 6.;
-static CGFloat bottomMargin = 4.;
 static CGFloat leftMargin = 32.;
 static CGFloat height = 32.;
 
@@ -113,7 +112,7 @@ static CGFloat height = 32.;
 	NSSize mySize = [self bounds].size;
 	CGFloat currentPosition = mySize.width;
 	
-	for (NSInteger i = 0; i < [buttons count]; i++) {
+	for (NSUInteger i = 0; i < [buttons count]; i++) {
 		NSControl * button = [buttons objectAtIndex: i];
 		NSRect buttonFrame = [button frame];
 
