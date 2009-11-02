@@ -373,6 +373,8 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 - (void)webPlugInDestroy {
 	[NSObject cancelPreviousPerformRequestsWithTarget:self];
 	
+	[[self killer] pluginDestroy];
+	
 	[self _abortAlert];        // to be on the safe side
 	
 	// notify that this ClickToFlash plugin is going away

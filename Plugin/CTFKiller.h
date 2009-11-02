@@ -44,6 +44,8 @@
 + (CTFKiller*) killerForURL: (NSURL*) theURL src: (NSString*) theSrc attributes: (NSDictionary*) attributes forPlugin:(CTFClickToFlashPlugin*) thePlugin;
 // Initialiser method doing the basic setup. There should be no need to use this. The +killerForULR:src:attributes:forPlugin class method should handle everything.
 - (id) initWithURL: (NSURL*) theURL src:(NSString*) theSrc attributes: (NSDictionary*) attributes forPlugin:(CTFClickToFlashPlugin*) thePlugin;
+// Called when our plug-in is destroyed, so pending actions can be stopped in a controlled way
+- (void) pluginDestroy;
 
 // To be implemented by subclasses
 

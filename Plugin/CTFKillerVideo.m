@@ -69,21 +69,14 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 - (void) dealloc {
-	[self unbind:@"toolTip"];
-	[self unbind:@"value"];
-	[self setMovieView: nil];
-	[[self movie] stop];
-	[self setMovie:nil];
-	[[self movieSetupThread] cancel];
-	[self setMovieSetupThread: nil];
-	[[NSNotificationCenter defaultCenter] removeObserver: self];
+	[self pluginDestroy]; // just in case, should have been called already
 	[super dealloc];
 }
 
 
 
 /* This is 10.5 and higher only. Currently only used for QTMovie-style playback which requires 10.5 as well. */
-+ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
++ (NSSet *) keyPathsForValuesAffectingValueForKey: (NSString *) key {
 	NSSet * result = [super keyPathsForValuesAffectingValueForKey:key];
 	
 	if ([key isEqualToString:@"HDButtonTooltip"]) {
@@ -166,6 +159,23 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 					
 #pragma mark -
 #pragma mark Subclass override of CTFKiller
+
+// Called when our plug-in is destroyed, so pending actions can be stopped in a controlled way
+- (void) pluginDestroy {
+	NSButton * button = [[[self plugin] buttonsView] viewWithTag: CTFHDButtonTag];
+	if (button != nil) {
+		[button unbind:@"toolTip"];
+		[button unbind:@"value"];		
+	}
+	[self setMovieView: nil];
+	[[self movie] stop];
+	[self setMovie:nil];
+	[[self movieSetupThread] cancel];
+	[self setMovieSetupThread: nil];
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
+}
+
+
 
 // Create generic labels based on the Service's name, so our subclasses don't need to.
 - (NSString*) badgeLabelText {
@@ -557,7 +567,8 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	NSButton * button = nil;
 	
 	if ([self hasVideo] && [self hasVideoHD]) {
-		if ([[[self plugin] buttonsView] viewWithTag: CTFHDButtonTag] == nil) {
+		button = [[[self plugin] buttonsView] viewWithTag: CTFHDButtonTag];
+		if (button == nil) {
 			NSCellStateValue state = NSOnState;
 			if ( ![self useVideoHD] ) { state = NSOffState; }
 			[self setUsingHD: state];
@@ -600,7 +611,8 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	NSButton * button = nil;
 	
 	if ([self hasVideo] || [self hasVideoHD]) {
-		if ([[[self plugin] buttonsView] viewWithTag: CTFDownloadButtonTag] == nil) {
+		button = [[[self plugin] buttonsView] viewWithTag: CTFDownloadButtonTag];
+		if (button == nil) {
 			// button = [CTFDownloadButton downloadButton];
 			button = [CTFButtonsView button];
 			
