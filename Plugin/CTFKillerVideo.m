@@ -523,7 +523,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	
 	NSDictionary * movieAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
 									  movieURL, QTMovieURLAttribute, 
-									  [NSNumber numberWithBool:NO], QTMovieOpenAsyncOKAttribute,
+									  [NSNumber numberWithBool:YES], QTMovieOpenAsyncOKAttribute,
 									  volumeNumber, QTMovieVolumeAttribute,
 									  nil];
 	
@@ -887,6 +887,25 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	}
 	
 	return URLString;
+}
+
+
+
+// Return the NSURL of the video that would currently be used. Called by CTFDownloadButton
+- (NSURL *) downloadURL {
+	BOOL useHD;
+	
+	NSButton * HDButton = [[[self plugin] buttonsView] viewWithTag: CTFHDButtonTag];
+	if (HDButton != nil) {
+		useHD = ([HDButton state] == NSOnState);
+	}
+	else {
+		useHD = [self useVideoHD];
+	}
+	
+	NSString * URLString = [self videoURLStringForHD: useHD];
+	NSURL * result = [NSURL URLWithString:URLString];
+	return result;
 }
 
 
