@@ -211,7 +211,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 - (void) addPrincipalMenuItemToContextualMenu {
 	NSMenuItem * menuItem;
 	
-	if ([self hasVideo]) {
+	if ([self hasVideo] && [self movieView] == nil) {
 		[[self plugin] addContextualMenuItemWithTitle: CtFLocalizedString( @"Load H.264", @"Load H.264 contextual menu item" ) 
 											   action: @selector( loadVideo: )
 											   target: self ];
