@@ -496,7 +496,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	[self setMovieSetupThread: nil];
 
 	// not doing this on the main thread seems to hang the application
-	[self performSelectorOnMainThread:@selector(resizeToFitMovie) withObject:nil waitUntilDone:NO];
+	// [self performSelectorOnMainThread:@selector(resizeToFitMovie) withObject:nil waitUntilDone:NO];
 	
 	[pool release];	
 }
@@ -542,6 +542,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	
 	return myMovie;	
 }
+
 
 
 
