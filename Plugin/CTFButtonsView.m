@@ -8,6 +8,8 @@
 
 #import "CTFButtonsView.h"
 #import "Plugin.h"
+#import "CTFButton.h"
+
 
 
 static CGFloat interButtonGap = 4.;
@@ -45,7 +47,7 @@ static CGFloat height = 32.;
 
 
 + (NSButton *) button {
-	NSButton * button = [[[NSButton alloc] initWithFrame:NSZeroRect] autorelease];
+	NSButton * button = [[[CTFButton alloc] initWithFrame:NSZeroRect] autorelease];
 	[button setButtonType: NSMomentaryLight];
 	[button setBezelStyle: NSTexturedRoundedBezelStyle];
 	return button;

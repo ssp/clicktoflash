@@ -7,11 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "CTFButton.h"
+
 
 @class CTFClickToFlashPlugin;
 
 
-@interface CTFActionButton : NSButton {
+@interface CTFActionButton : CTFButton {
 	CTFClickToFlashPlugin * plugin;
 }
 
