@@ -491,6 +491,14 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	if ( myMovie != nil && ![[self movieSetupThread] isCancelled] ) {
 		[self setMovie: myMovie];
 		[myMovieView setMovie: myMovie];
+		
+		// It seems like QTMovieView has two subviews: one displaying the film, one for the controller. The controller view seems to end up _not_ wanting the layer. This can cause the controller to disappear after switching tags. So we sneakily set all subviews of the QTMovieView to want a layer here.
+		NSEnumerator * viewEnumerator = [[myMovieView subviews] objectEnumerator];
+		NSView * view;
+		while ( view = [viewEnumerator nextObject] ) {
+			[view setWantsLayer:YES];
+		}
+		
 		if (needToInsertMovieView) {
 			[mainContainer addSubview: myMovieView positioned: NSWindowBelow relativeTo: nil];
 			[[self plugin] setNextKeyView: myMovieView];
