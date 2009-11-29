@@ -327,16 +327,51 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	if ( [self movieView] != nil ) {
 		[[self movieView] setFillColor: [NSColor blackColor]];
 	}
+	[[[self plugin] buttonsContainer] setAutoresizingMask: NSViewNotSizable];
+	[self adjustButtonPositions:YES];
 }
+
 
 
 // In the web page: To minimise distraction, if there is extra background space, fill it transparently.
-- (void) stopFullScreen { 
+- (NSRect) stopFullScreen { 	
 	if ( [self movieView] != nil ) {
 		[[self movieView] setFillColor: [NSColor clearColor]];
 	}
+	[[[self plugin] buttonsContainer] setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	NSRect pluginRect;
+	pluginRect.origin = [[[self plugin] window] convertBaseToScreen:[[self plugin] convertPoint:NSZeroPoint toView:nil]];
+	pluginRect.size = [[self plugin] frame].size;
+	
+	NSRect newRect = NSZeroRect;
+	
+	if ([self movieView]) {
+		NSSize movieSize = [[self movieView] movieBounds].size;
+		CGFloat aspectRatio = movieSize.width / movieSize.height;
+		CGFloat effectivePluginHeight = pluginRect.size.height - [[self movieView] controllerBarHeight];
+		CGFloat pluginAspectRatio = pluginRect.size.width / effectivePluginHeight;
+		
+		newRect = pluginRect;
+		
+		if (aspectRatio > pluginAspectRatio) {
+			newRect.size.height = pluginRect.size.width / aspectRatio + [[self movieView] controllerBarHeight];
+			newRect.origin.y += floor((pluginRect.size.height - newRect.size.height) * .5);
+		}
+		else {
+			newRect.size.width = (pluginRect.size.height - [[self movieView] controllerBarHeight]) * aspectRatio;
+			newRect.origin.x += floor((pluginRect.size.width - newRect.size.width) * .5);
+		}		
+	}
+	
+	return newRect;
 }
+ 
 
+
+// Called when the plug-in's view resizes.
+- (void) pluginResized {
+	[self adjustButtonPositions:NO];
+}
 
 
 
@@ -563,7 +598,6 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
-
 - (void) movieVolumeChanged: (NSNotification *) notification {
 	NSNumber * volumeNumber = [NSNumber numberWithFloat:[[self movie] volume]];
 	[[CTFUserDefaultsController standardUserDefaults] setObject:volumeNumber forKey: sVideoVolumeLevelDefaultsKey];
@@ -581,6 +615,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
     }
 	if (loadState >= QTMovieLoadStateLoaded) {
         // the movie atom has loaded; it's safe to query movie properties
+		[self adjustButtonPositions:YES];
     }
     else if (loadState == -1) {
         NSLog(@"CTFKillerVideo -movieLoadStateChanged: An error occurred when trying to load the movie\n%@", [[[self movie] movieAttributes] description]);
@@ -588,6 +623,39 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 }
 
 
+
+/* 
+ Move the buttons container around if necessary.  
+ We want:
+ * standard display behaviour before the film is loaded
+ * The buttons container to be full width at the top of the screen in fullscreen mode 
+ * The buttons container fitting into the bounds of the displayed movie when the movie view is present
+*/
+- (void) adjustButtonPositions:(BOOL) smoothly {
+	NSRect movieRect;
+	
+	if ([self movieView]) {
+		if ([[self plugin] isFullScreen]) {
+			movieRect = [[[[self plugin] window] screen] frame];
+		}
+		else {
+			movieRect = [[self movieView] movieBounds];
+			movieRect.size.height += [[self movieView] controllerBarHeight];
+			movieRect.origin.y -= [[self movieView] controllerBarHeight];		
+		}
+	
+		if (smoothly && (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_5)) {
+			[[[[self plugin] buttonsContainer] animator] setFrame: movieRect];
+		}
+		else {
+			[[[self plugin] buttonsContainer] setFrame: movieRect];
+		}
+	}
+}
+
+
+
+/* Adds button to toggle between the SD and HD version of a film. Only appears when two versions are available and serves as an indicator for the currently playing version */
 - (NSButton *) addHDButton {
 	NSButton * button = nil;
 	
@@ -631,6 +699,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
+/* Adds button to download the currently playing movie as a file */
 - (NSButton *) addDownloadButton {
 	// CTFDownloadButton * button = nil;
 	NSButton * button = nil;
@@ -666,12 +735,9 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
-
 - (IBAction) toggleHD: (id) sender {
 	[self setupQuickTimeUsingHD: [NSNumber numberWithBool: [self usingHD]]];
 }
-
-
 
 
 // Resize the plugin view to keep its width and have the aspect ratio of the movie

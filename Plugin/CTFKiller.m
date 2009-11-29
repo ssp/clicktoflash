@@ -113,11 +113,14 @@
 // Called when the user clicks the CtF view. Replace content here.
 - (BOOL) convertToContainer { return NO; }
 
-// Called when full screen mode starts and ends.
+// Called when full screen mode starts.
 - (void) startFullScreen { }
 
-- (void) stopFullScreen { }
+// Called when full screen mode ends. If the killer has resized the plug-in's containerView, it can return the appropriate frame it needs to have inside the plug-in's view. Return NSZeroRect to not change anything.
+- (NSRect) stopFullScreen { return NSZeroRect; }
 
+// Called when the plug-in's view resizes.
+- (void) pluginResized { }
 
 
 

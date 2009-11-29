@@ -100,6 +100,8 @@ enum subviewTags {
 - (void) browseToURLString: (NSString*) URLString;
 - (void) downloadURLString: (NSString*) URLString;
 
+- (IBAction) enterFullScreen: (id) sender;
+- (IBAction) exitFullScreen: (id) sender;
 - (IBAction) toggleFullScreen: (id) sender;
 - (NSButton*) addFullScreenButton;
 

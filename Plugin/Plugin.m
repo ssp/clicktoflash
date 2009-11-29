@@ -342,6 +342,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		
 		// Add view containing all of the buttons
 		NSView * theButtonsContainer = [[[NSView alloc] initWithFrame:[self bounds]] autorelease];
+		[theButtonsContainer setWantsLayer: YES];
 		[theButtonsContainer setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
 		[myContainerView addSubview: theButtonsContainer];
 		[self setButtonsContainer: theButtonsContainer];
@@ -380,7 +381,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 	[NSObject cancelPreviousPerformRequestsWithTarget:self];
 	
 	[[self killer] pluginDestroy];
-	
+	[self exitFullScreen: self];
 	[self _abortAlert];        // to be on the safe side
 	
 	// notify that this ClickToFlash plugin is going away
@@ -455,15 +456,15 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 
 
 
-- (void)resizeWithOldSuperviewSize:(NSSize)oldBoundsSize {
-	NSLog(@"resizeWithOldSuperviewSize");
-	[super resizeWithOldSuperviewSize: oldBoundsSize];
-}
-
 - (void)resizeSubviewsWithOldSize:(NSSize)oldBoundsSize {
 	NSLog(@"resizeSubviewsWithOldSize");
 	[super resizeSubviewsWithOldSize: oldBoundsSize];
+	if ([self killer]) {
+		[killer pluginResized];
+	}
 }
+
+
 
 
 
@@ -843,6 +844,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 	[myFullScreenWindow setLevel:NSNormalWindowLevel];
 	[myFullScreenWindow setContentView:[self containerView]];
 	[myFullScreenWindow setTitle: CtFLocalizedString(@"ClickToFlash Fullscreen", @"Fullscreen Window Title")];
+	[myFullScreenWindow setHasShadow:YES];
 	
 	NSRect fullScreenFrame = [[myWindow screen] frame];
 	// Use animator to go to full screen as using the window's setFrame:display:animate: just jumps to the full screen size
@@ -851,26 +853,39 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 
 	[[[self buttonsView] viewWithTag: CTFFullScreenButtonTag] setImage: [NSImage imageNamed: NSImageNameExitFullScreenTemplate]];
 	[[[self buttonsView] viewWithTag: CTFFullScreenButtonTag] setToolTip: CtFLocalizedString( @"Return to Web Page", @"Tooltip for fullscreenbutton while in fullscreen mode")];
-	[[[self containerView] viewWithTag: CTFActionButtonTag] setHidden: YES];
+	[[self actionButton] setHidden: YES];
+
 	if ( [self killer] != nil ) {
 		[[self killer] startFullScreen];
 	}
+	[NSCursor setHiddenUntilMouseMoves:YES];
 }
-
 
 
 
 - (IBAction) exitFullScreen: (id) sender {
 	if ( [self isFullScreen] ) {
 		// destination rect in screen coordinates
+		SetSystemUIMode(kUIModeNormal, 0);
 		NSRect onScreenRect;
 		onScreenRect.origin = [[self window] convertBaseToScreen:[self convertPoint:NSZeroPoint toView:nil]];
 		onScreenRect.size = [self frame].size;
 		
-		// move to new location (don't use an animator here as it works asynchronously and we'd need to to time the transfer of the view separately then)
+		if ( [self killer] != nil ) {
+			NSRect killerRect = [[self killer] stopFullScreen];
+			if ( !NSIsEmptyRect(killerRect) ) {
+				onScreenRect = killerRect;
+			}
+		}
+
+		// move to new location (don't use an animator here as it works asynchronously and we'd need to time the transfer of the view separately then)
 		[[self fullScreenWindow] setFrame:onScreenRect display:YES animate:YES];
-		 
-		// transfer the view ba
+		
+		// transfer the view back into the browser window
+		NSPoint insertionPoint = NSZeroPoint;
+		insertionPoint.x = round(([self bounds].size.width - [[fullScreenWindow contentView] bounds].size.width) * 0.5);
+		insertionPoint.y = round(([self bounds].size.height - [[fullScreenWindow contentView] bounds].size.height) * 0.5);
+		[[fullScreenWindow contentView] setFrameOrigin: insertionPoint];
 		[self addSubview:[fullScreenWindow contentView]];
 		[[self fullScreenWindow] close];
 		[self setFullScreenWindow: nil];
@@ -879,14 +894,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		[[[self buttonsView] viewWithTag: CTFFullScreenButtonTag] setImage: [NSImage imageNamed: NSImageNameEnterFullScreenTemplate]];
 		[[[self buttonsView] viewWithTag: CTFFullScreenButtonTag] setToolTip: CtFLocalizedString( @"Fill entire screen", @"Tooltip for fullscreen button while not in fullscreen mode")];
 
-		[[[self containerView] viewWithTag: CTFActionButtonTag] setHidden: NO];
-
-		SetSystemUIMode(kUIModeNormal, 0);
-
-		if ( [self killer] != nil ) {
-			[[self killer] stopFullScreen];
-		}
-		
+		[[self actionButton] setHidden: NO];
 	}
 }
 

@@ -47,6 +47,8 @@
 // Called when our plug-in is destroyed, so pending actions can be stopped in a controlled way
 - (void) pluginDestroy;
 
+
+
 // To be implemented by subclasses
 
 // Return whether this class can handle the Flash for the given URL and other data.
@@ -61,9 +63,13 @@
 - (void) addAdditionalMenuItemsForContextualMenu;
 // Called when the user clicks the CtF view. Replace content here.
 - (BOOL) convertToContainer;
-// Called when full screen mode starts and ends.
+// Called when full screen mode starts.
 - (void) startFullScreen;
-- (void) stopFullScreen;
+// Called when full screen mode ends. If the killer has resized the plug-in's containerView, it can return the appropriate frame it needs to have inside the plug-in's view. Return NSZeroRect to not change anything.
+- (NSRect) stopFullScreen;
+// Called when the plug-in's view resizes.
+- (void) pluginResized;
+
 
 
 // Accessors
