@@ -11,7 +11,7 @@
 #import "Plugin.h"
 #import "CTFUtilities.h"
 #import "NSBezierPath-RoundedRectangle.h"
-
+// #import "NSBezierPath+ESPoints.h"
 
 
 @implementation CTFMainButton
@@ -75,14 +75,13 @@
     [NSBezierPath setDefaultLineCapStyle:NSSquareLineCapStyle];
     [[NSBezierPath bezierPathWithRect:bounds] stroke];
 	
-    // Draw label
-    [self drawBadgeForBounds: bounds];
-    
 	// Draw 'glossy' overlay which can give some visual feedback on clicks when an preview image is set.
 	if ([[self plugin] previewImage] != nil) {
-		[self drawGlossForBounds2: bounds];		
+		[self drawGlossForBounds3: bounds];		
 	}
 	
+    // Draw label
+    [self drawBadgeForBounds: bounds];	
 }
 
 
@@ -355,6 +354,47 @@
 	[gradient drawInBezierPath:bP angle:90 + gradientRotation];
 }
 
+
+
+
+
+
+
+// More glossy gloss. Thanks to Henrik Cederblad for the recommendations on how to do this.
+- (void) drawGlossForBounds3: (NSRect) bounds {
+	const CGFloat glowStartFraction = .7;
+	const CGFloat cP1XFraction = .0;
+	const CGFloat cP2XFraction = .35;
+	const CGFloat middleY = NSMidY(bounds) - 8.;
+	
+	CGFloat startY = bounds.size.height;
+	CGFloat gradientRotation = .0;
+	
+	NSBezierPath * bP = [NSBezierPath bezierPath];
+	[bP moveToPoint: NSMakePoint( .0, startY ) ];
+	[bP lineToPoint: NSMakePoint( .0, NSMaxY(bounds) * glowStartFraction )];
+	[bP curveToPoint: NSMakePoint( NSMidX(bounds), middleY )
+	   controlPoint1: NSMakePoint( cP1XFraction * NSMaxX(bounds), middleY)
+	   controlPoint2: NSMakePoint( cP2XFraction * NSMaxX(bounds), middleY) ];
+	[bP curveToPoint: NSMakePoint( NSMaxX(bounds), glowStartFraction * NSMaxY(bounds) )
+	   controlPoint1: NSMakePoint( (1. - cP2XFraction) * NSMaxX(bounds), middleY ) 
+	   controlPoint2: NSMakePoint( (1. - cP1XFraction) * NSMaxX(bounds), middleY ) ];
+	[bP lineToPoint: NSMakePoint( NSMaxX(bounds), startY ) ];
+	[bP closePath];
+	
+//	[bP drawPointsAndHandles];
+	
+	NSColor * startColor = [NSColor colorWithCalibratedWhite:1.0 alpha:0.5];
+	NSColor * endColor = [NSColor colorWithCalibratedWhite:1.0 alpha:0.00];
+	if ([self isHighlighted]) {
+		startColor = [NSColor colorWithCalibratedWhite:1. alpha:0.7];
+		endColor = [NSColor colorWithCalibratedWhite:1. alpha:0.1];
+	}
+	
+	
+	NSGradient * gradient = [[[NSGradient alloc] initWithColorsAndLocations: startColor, .0, endColor, 1.0, nil] autorelease];
+	[gradient drawInBezierPath:bP angle:90 + gradientRotation];
+}
 
 
 

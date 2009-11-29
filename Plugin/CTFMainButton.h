@@ -32,6 +32,7 @@
 - (void) drawBadgeForBounds: (NSRect) bounds;
 - (void) drawGlossForBounds: (NSRect) bounds;
 - (void) drawGlossForBounds2: (NSRect) bounds;
+- (void) drawGlossForBounds3: (NSRect) bounds;
 
 - (NSString*) badgeLabelText;
 
