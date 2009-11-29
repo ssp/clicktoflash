@@ -551,6 +551,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	}	
 	else {
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieVolumeChanged:) name:QTMovieVolumeDidChangeNotification object:myMovie];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieLoadStateChanged:) name:QTMovieLoadStateDidChangeNotification object:myMovie];
 		if ([self autoPlay]) {
 			[myMovie autoplay];
 		}		
@@ -567,6 +568,23 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	[[CTFUserDefaultsController standardUserDefaults] setObject:volumeNumber forKey: sVideoVolumeLevelDefaultsKey];
 }
 
+
+
+- (void) movieLoadStateChanged: (NSNotification *) notification {
+    long loadState = [[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
+	NSLog(@"movieLoadStateChanged: %i", loadState);
+
+    if (loadState >= QTMovieLoadStatePlayable) {
+        // the movie has loaded enough media data to begin playing
+		[[self movie] play];
+    }
+	if (loadState >= QTMovieLoadStateLoaded) {
+        // the movie atom has loaded; it's safe to query movie properties
+    }
+    else if (loadState == -1) {
+        NSLog(@"CTFKillerVideo -movieLoadStateChanged: An error occurred when trying to load the movie\n%@", [[[self movie] movieAttributes] description]);
+    }
+}
 
 
 - (NSButton *) addHDButton {
