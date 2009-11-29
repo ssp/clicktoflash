@@ -317,11 +317,10 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		}
 		
 		[self setOriginalOpacityAttributes:originalOpacityDict];
-		
-		NSRect myBounds = [self bounds];
+		[self setFrameSize:NSMakeSize(1., 1.)];
 		
 		// Add a full size subview which will contain everything. We need this so we can move it to full-screen without removing the plug-in from the web page.
-		NSView * myContainerView = [[[NSView alloc] initWithFrame:myBounds] autorelease];
+		NSView * myContainerView = [[[NSView alloc] initWithFrame: [self bounds]] autorelease];
 		[myContainerView setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
 		[self addSubview: myContainerView];
 		[self setContainerView: myContainerView];
@@ -330,7 +329,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		[myContainerView setWantsLayer:YES];
 		
 		// Add main control button, covering the full view. This does the main drawing.
-		CTFMainButton * myMainButton = [[[CTFMainButton alloc] initWithFrame: myBounds] autorelease];
+		CTFMainButton * myMainButton = [[[CTFMainButton alloc] initWithFrame: [self bounds]] autorelease];
 		[myMainButton setTag: CTFMainButtonTag];
 		[myMainButton setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
 		[myMainButton setButtonType: NSMomentaryPushInButton];
@@ -341,25 +340,32 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		[myContainerView addSubview: myMainButton];		
 		[self setMainButton: myMainButton];
 		
+		// Add view containing all of the buttons
+		NSView * theButtonsContainer = [[[NSView alloc] initWithFrame:[self bounds]] autorelease];
+		[theButtonsContainer setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
+		[myContainerView addSubview: theButtonsContainer];
+		[self setButtonsContainer: theButtonsContainer];
+		
 		// Add action button control
-		CTFActionButton * actionButton = [CTFActionButton actionButton];
-		[actionButton setTag: CTFActionButtonTag];
-		[actionButton setWantsLayer: YES];
-		[actionButton setPlugin: self];
-		[actionButton setAutoresizingMask: NSViewMaxXMargin | NSViewMinYMargin];
-		[myContainerView addSubview: actionButton];
+		CTFActionButton * theActionButton = [CTFActionButton actionButton];
+		[theActionButton setTag: CTFActionButtonTag];
+		[theActionButton setWantsLayer: YES];
+		[theActionButton setPlugin: self];
+		[theActionButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin) ];
+		[theButtonsContainer addSubview: theActionButton];
+		[self setActionButton: theActionButton];
 		
 		// Add view for additional buttons (proper sizing is done by view itself)
-		CTFButtonsView * theButtonsView = [[[CTFButtonsView alloc] initWithFrame: myBounds] autorelease];
+		CTFButtonsView * theButtonsView = [[[CTFButtonsView alloc] initWithFrame: NSZeroRect] autorelease];
 		[theButtonsView setWantsLayer: YES];
 		[theButtonsView setAutoresizingMask: NSViewWidthSizable];
-		[myContainerView addSubview: theButtonsView];
+		[theButtonsContainer addSubview: theButtonsView];
 		[self setButtonsView: theButtonsView];
 		
 		// attempt to construct a key loop: Plugin -> main button -> actionButton -> buttonsView -> Plugin. Is this the right philosophy?
 		[self setNextKeyView: myMainButton];
-		[myMainButton setNextKeyView: actionButton];
-		[actionButton setNextKeyView: buttonsView];
+		[myMainButton setNextKeyView: theActionButton];
+		[theActionButton setNextKeyView: buttonsView];
 		[buttonsView setNextKeyView: self];
 		
 		[self setFullScreenWindow: nil];
@@ -390,6 +396,8 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 	[self setKiller:nil];
 	[self setContainerView:nil];
 	[self setMainButton:nil];
+	[self setButtonsContainer:nil];
+	[self setActionButton:nil];
 	[self setButtonsView:nil];
 	[self setFullScreenWindow:nil];
 	[self setPreviewURL:nil];
@@ -956,7 +964,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		value = NSAccessibilityUnignoredAncestor([[[self webView] mainFrame] frameView]); 
 	}
 	else if ( [attribute isEqualToString: NSAccessibilityChildrenAttribute] ){
-		value = [NSArray arrayWithObjects: [self viewWithTag: CTFMainButtonTag], [self viewWithTag:CTFActionButtonTag], nil];
+		value = [NSArray arrayWithObjects: [self viewWithTag: CTFMainButtonTag], [self actionButton], nil];
 	} 
 	else if ( [attribute isEqualToString: NSAccessibilityRoleAttribute] ) {
 		value = NSAccessibilityGroupRole;
@@ -1165,6 +1173,16 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 	mainButton = newMainButton;
 }
 
+
+- (NSView *) buttonsContainer {
+	return buttonsContainer;
+}
+
+- (void) setButtonsContainer: (NSView *) newButtonsContainer {
+	[newButtonsContainer retain];
+	[buttonsContainer release];
+	buttonsContainer = newButtonsContainer;
+}
 
 
 - (CTFActionButton *)actionButton {
