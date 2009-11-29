@@ -326,8 +326,8 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 - (void) startFullScreen { 
 	if ( [self movieView] != nil ) {
 		[[self movieView] setFillColor: [NSColor blackColor]];
+		[[[self plugin] buttonsContainer] setAutoresizingMask: NSViewNotSizable];
 	}
-	[[[self plugin] buttonsContainer] setAutoresizingMask: NSViewNotSizable];
 	[self adjustButtonPositions:YES];
 }
 
