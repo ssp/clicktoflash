@@ -63,7 +63,7 @@ static CGFloat height = 32.;
 - (void) resizeWithOldSuperviewSize: (NSSize) oldBoundsSize {
 	NSRect superRect = [[self superview] bounds];
 	CGFloat width = superRect.size.width - rightMargin - leftMargin;
-	CGFloat bottom = superRect.size.height - topMargin - height;
+	CGFloat bottom = superRect.size.height - height;
 	
 	if ( bottom > 8. && width > 16.) {
 		NSRect newFrame = NSMakeRect(leftMargin, bottom, width, height);
@@ -119,7 +119,7 @@ static CGFloat height = 32.;
 		NSRect buttonFrame = [button frame];
 
 		CGFloat buttonLeft = currentPosition - buttonFrame.size.width;
-		CGFloat buttonBottom = mySize.height - buttonFrame.size.height;
+		CGFloat buttonBottom = mySize.height - topMargin - buttonFrame.size.height;
 		[button setFrameOrigin:NSMakePoint(buttonLeft, buttonBottom)];
 		
 		// completely hide buttons that would be cut off
@@ -142,7 +142,6 @@ static CGFloat height = 32.;
 	if ( [buttons count] == 0) {
 		[self setNextKeyView: (CTFClickToFlashPlugin *)[[self superview] superview]];
 	}
-	
 	
 }
 
