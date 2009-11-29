@@ -1200,7 +1200,9 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 }
 
 - (BOOL) isFullScreen {
-	return (fullScreenWindow != nil);
+	SystemUIMode outMode;
+	GetSystemUIMode(&outMode, NULL);
+	return (outMode != kUIModeNormal);
 }
 
 
