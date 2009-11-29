@@ -8,7 +8,7 @@
 
 #import "CTFActionButton.h"
 #import "CTFUtilities.h"
-
+#import "Plugin.h"
 
 
 @implementation CTFActionButton
@@ -63,18 +63,16 @@
 
 
 - (void) resizeWithOldSuperviewSize:(NSSize) oldBoundsSize {
-	NSPoint newOrigin;
-	
-	if ( [[self cell] gearVisible] ) {
-		NSSize superSize = [[self superview] bounds].size;
+	if ( [[self cell] gearVisible] && ![[self plugin] isFullScreen]) {
+		[self setHidden:NO];
 		NSRect myRect = [self bounds];
-		newOrigin = NSMakePoint(myRect.origin.x, superSize.height - myRect.size.height);
+		NSSize superSize = [[self superview] bounds].size;
+		NSPoint	newOrigin = NSMakePoint(.0, superSize.height - myRect.size.height);
+		[self setFrameOrigin: newOrigin];
 	}
 	else {
-		newOrigin = NSMakePoint( -1000. , -1000. );
+		[self setHidden:YES];
 	}
-	
-	[self setFrameOrigin: newOrigin];
 }
 
 
