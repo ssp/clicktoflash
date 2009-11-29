@@ -59,8 +59,6 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		[self setMovieView: nil];
 		[self setMovie: nil];
 		[self setMovieSetupThread: nil];
-		
-		videoSize = NSZeroSize;
 	}
 	
 	return self;

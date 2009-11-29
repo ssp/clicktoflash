@@ -167,7 +167,7 @@
 			node = [nodes objectAtIndex:0];
 			[self setClipExpires: [node stringValue]];
 		}
-		CGFloat width = .0;
+/*		CGFloat width = .0;
 		nodes = [XML nodesForXPath:@"//width" error:&error];
 		if ([nodes count] > 0) {
 			node = [nodes objectAtIndex:0];
@@ -179,7 +179,8 @@
 			node = [nodes objectAtIndex:0];
 			height = [[node stringValue] floatValue];
 		}
-		videoSize = NSMakeSize(width, height);
+		NSSize videoSize = NSMakeSize(width, height);
+*/
 		nodes = [XML nodesForXPath:@"//thumbnail" error:&error];
 		if ([nodes count] > 0) {
 			node = [nodes objectAtIndex:0];

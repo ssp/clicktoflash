@@ -53,8 +53,6 @@ enum CTFKVLookupStatus {
 	QTMovieView * movieView;
 	QTMovie * movie;
 	NSThread * movieSetupThread;
-	
-	NSSize videoSize;
 }
 
 
