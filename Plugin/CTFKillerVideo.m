@@ -577,17 +577,23 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 									  movieURL, QTMovieURLAttribute, 
 									  [NSNumber numberWithBool:YES], QTMovieOpenAsyncOKAttribute,
 									  volumeNumber, QTMovieVolumeAttribute,
+//									  [NSNumber numberWithBool:YES], QTMovieOpenForPlaybackAttribute,
 									  nil];
 	
 	myMovie = [QTMovie movieWithAttributes:movieAttributes error:&error];
 //	NSLog(@"%@", [[myMovie movieAttributes] description]);
 	if ( myMovie == nil ) {
+		// If we get nil, just try again. This seems to cover a bunch of the random loading problems. It would probably be better to load the 'hash' or other extra info again before retrying to also cover timeout problems
+		myMovie = [QTMovie movieWithAttributes:movieAttributes error:&error];
+	}
+	if (myMovie == nil){
 		// It seems like we occasionally get an error "The file is not a movie file" here. No idea why as the same URL appears to work again a bit later. Some clever retrying or reasonable handling of that might be nice.
 		NSLog(@"ClickToFlash CTFKillerVideo -movieForHD: Error: %@ (%@)", [error localizedDescription], movieURLString);
 	}	
 	else {
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieVolumeChanged:) name:QTMovieVolumeDidChangeNotification object:myMovie];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieLoadStateChanged:) name:QTMovieLoadStateDidChangeNotification object:myMovie];
+
 		if ([self autoPlay]) {
 			[myMovie autoplay];
 		}		
