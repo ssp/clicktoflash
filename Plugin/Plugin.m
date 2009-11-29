@@ -827,7 +827,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 #pragma mark Full screen
 
 - (IBAction) enterFullScreen: (id) sender {
-	SetSystemUIMode(kUIModeAllSuppressed, kUIOptionAutoShowMenuBar);
+	SetSystemUIMode(kUIModeAllSuppressed, 0);
 	
 	NSWindow * myWindow = [self window];
 	NSRect originRect;
