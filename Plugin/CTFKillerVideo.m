@@ -160,17 +160,18 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 // Called when our plug-in is destroyed, so pending actions can be stopped in a controlled way
 - (void) pluginDestroy {
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	NSButton * button = [[[self plugin] buttonsView] viewWithTag: CTFHDButtonTag];
 	if (button != nil) {
 		[button unbind:@"toolTip"];
 		[button unbind:@"value"];		
 	}
-	[self setMovieView: nil];
 	[[self movie] stop];
+	[[self movieView] setMovie:nil];
 	[self setMovie:nil];
+	[self setMovieView: nil];
 	[[self movieSetupThread] cancel];
 	[self setMovieSetupThread: nil];
-	[[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
 
