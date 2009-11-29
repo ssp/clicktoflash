@@ -41,6 +41,7 @@ enum subviewTags {
 
 @class CTFKiller;
 @class CTFMainButton;
+@class CTFActionButton;
 @class CTFButtonsView;
 @class CTFFullScreenWindow;
 
@@ -64,6 +65,7 @@ enum subviewTags {
 	
 	NSView * containerView;
 	CTFMainButton * mainButton;
+	CTFActionButton * actionButton;
 	CTFButtonsView * buttonsView;
 	CTFKiller * killer;
 	
@@ -114,6 +116,8 @@ enum subviewTags {
 - (NSView *) containerView;
 - (void) setContainerView: (NSView *) newContainerView;
 - (void)setMainButton:(CTFMainButton *) newMainButton;
+- (CTFActionButton *) actionButton;
+- (void) setActionButton: (CTFActionButton *) newActionButton;
 - (CTFButtonsView *) buttonsView;
 - (void) setButtonsView: (CTFButtonsView *) newButtonsView;
 - (CTFFullScreenWindow *) fullScreenWindow;

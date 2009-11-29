@@ -1166,6 +1166,18 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 }
 
 
+
+- (CTFActionButton *)actionButton {
+	return actionButton;
+}
+
+- (void)setActionButton:(CTFActionButton *)newActionButton {
+	[newActionButton retain];
+	[actionButton release];
+	actionButton = newActionButton;
+}
+
+
 - (CTFButtonsView *) buttonsView {
 	return buttonsView;
 }
