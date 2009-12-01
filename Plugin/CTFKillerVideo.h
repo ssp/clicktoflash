@@ -51,6 +51,8 @@ enum CTFKVLookupStatus {
 	enum CTFKVLookupStatus lookupStatus;
 	BOOL requiresConversion;
 	
+	NSProgressIndicator * progressIndicator;
+	
 	QTMovieView * movieView;
 	QTMovie * movie;
 	NSThread * movieSetupThread;
@@ -110,6 +112,8 @@ enum CTFKVLookupStatus {
 - (void) setupQuickTimeUsingHD: (NSNumber*) useHDNumber;
 - (void) reallySetupQuickTimeUsingHD: (NSNumber *) useHDNumber;
 - (QTMovie *) movieForHD: (NSNumber *) useHDNumber;
+- (void) addProgressIndicator;
+- (void) removeProgressIndicator;
 - (void) adjustButtonPositions: (BOOL) smoothly;
 - (NSButton *) addHDButton;
 - (NSButton *) addDownloadButton;
@@ -151,6 +155,8 @@ enum CTFKVLookupStatus {
 - (void) decreaseActiveLookups;
 - (BOOL) requiresConversion;
 - (void) setRequiresConversion: (BOOL) newRequiresConversion;
+- (NSProgressIndicator *) progressIndicator;
+- (void) setProgressIndicator: (NSProgressIndicator *) newProgressIndicator;
 - (QTMovieView *) movieView;
 - (void) setMovieView: (QTMovieView *) newMovieView;
 - (QTMovie *) movie;

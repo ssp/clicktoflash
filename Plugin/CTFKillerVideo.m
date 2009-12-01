@@ -57,6 +57,8 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		lookupStatus = nothing;
 		requiresConversion = NO;
 		
+		[self setProgressIndicator: nil];
+		
 		[self setMovieView: nil];
 		[self setMovie: nil];
 		[self setMovieSetupThread: nil];
@@ -178,6 +180,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	[self setMovieView: nil];
 	[[self movieSetupThread] cancel];
 	[self setMovieSetupThread: nil];
+	[self setProgressIndicator: nil];
 }
 
 
@@ -518,14 +521,8 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		needToInsertMovieView = YES;
 	}
 	
-	CGFloat pIDiameter = 32.;
-	NSRect pIRect = NSMakeRect(NSMidX(bounds) - pIDiameter*.5, NSMidY(bounds) - pIDiameter*.5, pIDiameter, pIDiameter);
-	NSProgressIndicator * progressIndicator = [[NSProgressIndicator alloc] initWithFrame:pIRect];
-	[progressIndicator setAutoresizingMask: NSViewMinXMargin | NSViewMaxXMargin | NSViewMinYMargin | NSViewMaxYMargin];
-	[progressIndicator setStyle: NSProgressIndicatorSpinningStyle];
-	[progressIndicator startAnimation: self];
-	[progressIndicator setWantsLayer: YES];
-	[mainContainer addSubview:progressIndicator];
+	// Add progress indicator. It will be removed when the film has loaded sufficiently or when loading fails.
+	[self addProgressIndicator];
 	
 	QTMovie * myMovie = [self movieForHD: useHDNumber];
 	if ( myMovie != nil && ![[self movieSetupThread] isCancelled] ) {
@@ -548,9 +545,6 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		[[[self plugin] window] makeFirstResponder: myMovieView];
 	}
 	
-	[progressIndicator stopAnimation: self];
-	[progressIndicator removeFromSuperview];
-	[progressIndicator release];
 	[self setMovieSetupThread: nil];
 
 	// not doing this on the main thread seems to hang the application
@@ -622,6 +616,9 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	NSLog(@"movieLoadStateChanged: %i", loadState);
 
     if (loadState >= QTMovieLoadStatePlayable) {
+        // The movie has loaded enough media data to begin playing. Remove the progress indicator first and then start playing, if appropriate.
+		[self removeProgressIndicator];
+
 		// Sometimes loading is slow and the load state keeps toggling between Playable and PlaythroughOK. This can cause the film to toggle stopping and starting many times in a row. To prevent that from happening, make sure we only autoPlay once.
 		if ([self autoPlay] && ![self hasAutoPlayed]) {
 			[[self movie] play];
@@ -629,7 +626,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		}
     }
 	if (loadState >= QTMovieLoadStateLoaded) {
-        // the movie atom has loaded; it's safe to query movie properties
+        // The movie atom has loaded. It's safe to query movie properties like the size now.
 		[self adjustButtonPositions:YES];
 		
 		// Set refresh status back to NO in case a HD toggle is coming and could use a refresh again.
@@ -645,10 +642,48 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 			[self setHasRefreshedURLs: YES];
 		}
 		else {
+			// Refreshing the URL did not do the trick. Remove progress indicator.
+			[self removeProgressIndicator];
 			// It'd be nice to do something helpful here (fall back to Flash? display error message?)
 			NSLog(@"CTFKillerVideo -movieLoadStateChanged: An error occurred when trying to load the movie\n%@", [[[self movie] movieAttributes] description]);
 		}
     }
+}
+
+
+
+// Adds the progress indicator shown used while loading the video
+- (void) addProgressIndicator {
+	// We only want a single progress indicator, so make sure we don't create a new one in case it already exists.
+	if ([self progressIndicator] == nil) {
+		const CGFloat pISize = 32.;
+		
+		NSRect pIRect = NSMakeRect(NSMidX([[self plugin] bounds]) - pISize*.5,
+								   NSMidY([[self plugin] bounds]) - pISize*.5,
+								   pISize,
+								   pISize);
+		
+		NSProgressIndicator * theProgressIndicator = [[NSProgressIndicator alloc] initWithFrame:pIRect];
+		[self setProgressIndicator: theProgressIndicator];
+		
+		[theProgressIndicator setAutoresizingMask: NSViewMinXMargin | NSViewMaxXMargin | NSViewMinYMargin | NSViewMaxYMargin];
+		[theProgressIndicator setStyle: NSProgressIndicatorSpinningStyle];
+		[theProgressIndicator setWantsLayer: YES];
+		
+		[theProgressIndicator startAnimation: self];
+		[[[self plugin] containerView] addSubview:theProgressIndicator];
+	}
+}
+
+
+
+// Removes the progress indicator shown while loading the video
+- (void) removeProgressIndicator {
+	if ([self progressIndicator]) {
+		[[self progressIndicator] stopAnimation: self];
+		[progressIndicator removeFromSuperview];
+		[self setProgressIndicator: nil];
+	}
 }
 
 
@@ -1218,6 +1253,17 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 - (void) setRequiresConversion: (BOOL) newRequiresConversion {
 	requiresConversion = newRequiresConversion;
+}
+
+
+- (NSProgressIndicator *) progressIndicator {
+	return progressIndicator;
+}
+
+- (void) setProgressIndicator: (NSProgressIndicator *) newProgressIndicator {
+	[newProgressIndicator retain];
+	[progressIndicator release];
+	progressIndicator = newProgressIndicator;
 }
 
 
