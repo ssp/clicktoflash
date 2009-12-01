@@ -59,6 +59,8 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		[self setMovieView: nil];
 		[self setMovie: nil];
 		[self setMovieSetupThread: nil];
+		
+		hasRefreshedURLs = NO;
 	}
 	
 	return self;
@@ -96,6 +98,9 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 // URL to the video file used for loading it in the player.
 - (NSString*) videoURLString { return nil;} 
 - (NSString*) videoHDURLString { return nil; }
+
+// If lookups are required to determine the correct URL to the video, redo them. When returning, the URLs should be refreshed and ready to use.
+- (void) refreshVideoURLs { }
 
 // Text used for video file download link. Return nil to use standard text.
 - (NSString *) videoDownloadLinkText { return nil; }
@@ -622,9 +627,23 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	if (loadState >= QTMovieLoadStateLoaded) {
         // the movie atom has loaded; it's safe to query movie properties
 		[self adjustButtonPositions:YES];
+		
+		// Set refresh status back to NO in case a HD toggle is coming and could use a refresh again.
+		hasRefreshedURLs = NO;
     }
     else if (loadState == -1) {
-        NSLog(@"CTFKillerVideo -movieLoadStateChanged: An error occurred when trying to load the movie\n%@", [[[self movie] movieAttributes] description]);
+		// Loading the movie failed.
+
+		// Try refreshing the URL once. It may just be that the hash/token used in our URL has expired because it has been a while since we set things up.
+		if ( ![self hasRefreshedURLs] ) {
+			[self refreshVideoURLs];
+			[self setupQuickTimeUsingHD: nil];
+			[self setHasRefreshedURLs: YES];
+		}
+		else {
+			// It'd be nice to do something helpful here (fall back to Flash? display error message?)
+			NSLog(@"CTFKillerVideo -movieLoadStateChanged: An error occurred when trying to load the movie\n%@", [[[self movie] movieAttributes] description]);
+		}
     }
 }
 
@@ -1219,6 +1238,15 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	[newMovieSetupThread retain];
 	[movieSetupThread release];
 	movieSetupThread = newMovieSetupThread;
+}
+
+
+- (BOOL) hasRefreshedURLs {
+	return hasRefreshedURLs;
+}
+
+- (void) setHasRefreshedURLs: (BOOL) newHasRefreshedURLs {
+	hasRefreshedURLs = newHasRefreshedURLs;
 }
 
 @end

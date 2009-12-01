@@ -53,6 +53,8 @@ enum CTFKVLookupStatus {
 	QTMovieView * movieView;
 	QTMovie * movie;
 	NSThread * movieSetupThread;
+	
+	BOOL hasRefreshedURLs;
 }
 
 
@@ -69,6 +71,9 @@ enum CTFKVLookupStatus {
 // URL to the video file used for loading it in the player.
 - (NSString*) videoURLString;
 - (NSString*) videoHDURLString;
+
+// If lookups are required to determine the correct URL to the video, redo them. When returning, the URLs should be refreshed and ready to use.
+- (void) refreshVideoURLs;
 
 // Text used for video file download link. Return nil to use standard text.
 - (NSString *) videoDownloadLinkText;
@@ -149,4 +154,7 @@ enum CTFKVLookupStatus {
 - (void) setMovie: (QTMovie *) newMovie;
 - (NSThread *) movieSetupThread;
 - (void) setMovieSetupThread: (NSThread *) newMovieSetupThread;
+- (BOOL) hasRefreshedURLs;
+- (void) setHasRefreshedURLs: (BOOL) newHasRefreshedURLs;
+
 @end
