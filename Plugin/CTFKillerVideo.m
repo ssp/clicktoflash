@@ -49,6 +49,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	self = [super init];
 	if (self != nil) {
 		autoPlay = NO;
+		hasAutoPlayed = NO;
 		hasVideo = NO;
 		hasVideoHD = NO;
 		
@@ -621,8 +622,11 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	NSLog(@"movieLoadStateChanged: %i", loadState);
 
     if (loadState >= QTMovieLoadStatePlayable) {
-        // the movie has loaded enough media data to begin playing
-		[[self movie] play];
+		// Sometimes loading is slow and the load state keeps toggling between Playable and PlaythroughOK. This can cause the film to toggle stopping and starting many times in a row. To prevent that from happening, make sure we only autoPlay once.
+		if ([self autoPlay] && ![self hasAutoPlayed]) {
+			[[self movie] play];
+			[self setHasAutoPlayed:YES];
+		}
     }
 	if (loadState >= QTMovieLoadStateLoaded) {
         // the movie atom has loaded; it's safe to query movie properties
@@ -1139,6 +1143,15 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 - (void)setAutoPlay:(BOOL)newAutoPlay {
 	autoPlay = newAutoPlay;
+}
+
+
+- (BOOL)hasAutoPlayed {
+	return hasAutoPlayed;
+}
+
+- (void)setHasAutoPlayed:(BOOL)newHasAutoPlayed {
+	hasAutoPlayed = newHasAutoPlayed;
 }
 
 

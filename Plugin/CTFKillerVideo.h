@@ -42,6 +42,7 @@ enum CTFKVLookupStatus {
 
 @interface CTFKillerVideo : CTFKiller {
 	BOOL autoPlay;
+	BOOL hasAutoPlayed;
 	BOOL hasVideo;
 	BOOL hasVideoHD;
 	NSCellStateValue usingHD;
@@ -136,6 +137,8 @@ enum CTFKVLookupStatus {
 // Accessors
 - (BOOL) autoPlay;
 - (void) setAutoPlay:(BOOL)newAutoPlay;
+- (BOOL) hasAutoPlayed;
+- (void) setHasAutoPlayed:(BOOL)newHasAutoPlayed;
 - (BOOL) hasVideo;
 - (void) setHasVideo:(BOOL)newHasVideo;
 - (BOOL) hasVideoHD;
