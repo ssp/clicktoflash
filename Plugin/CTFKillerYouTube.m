@@ -178,6 +178,13 @@
 
 
 
+// If lookups are required to determine the correct URL to the video, redo them. When returning, the URLs should be refreshed and ready to use.
+- (void) refreshVideoURLs {
+	[self _retrieveEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId: [self videoID]];
+}
+
+
+
 // URL of the web page displaying the video. Return nil if there is none.
 - (NSString *) videoPageURLString
 {
@@ -261,7 +268,7 @@
 	if ( myVideoID != nil ) {
 		if ( ![myVideoID isEqualToString: [self videoID]] ) {
 			if ([self videoID] != nil) {
-				NSLog(@"ClickToFlash: YouTube video with ambiguous IDs at %@ (%@, %@)", [self pageURL], [self videoID], myVideoID);
+				NSLog(@"ClickToFlashKillerYouTube -setInfoFromFlashVars: YouTube video with ambiguous IDs at %@ (%@, %@)", [self pageURL], [self videoID], myVideoID);
 			}
 			[self setVideoID: myVideoID];
 		}
@@ -272,42 +279,38 @@
 			[self _checkForH264VideoVariants];
 		}
 		else {
-		//	NSLog(@"ClickToFlash: No 't' parameter found for video %@", [self videoID]);
+			NSLog(@"ClickToFlashKillerYouTube -setInfoFromFlashVars: No 't' parameter found for video %@", [self videoID]);
 		}
 	}
 }
 
 
 
-- (void)_didRetrieveEmbeddedPlayerFlashVars:(NSDictionary *) playerFlashVars {
-	if (playerFlashVars != nil) {
-		[self setFlashVars: playerFlashVars];
-		[self setInfoFromFlashVars];
-		[self decreaseActiveLookups];
-	}
-}
-
-
-- (void)_retrieveEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId:(NSString *)videoId
-{
+- (void)_retrieveEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId:(NSString *)videoId {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
+	[self increaseActiveLookups];
+
 	NSURL *YouTubePageURL = [NSURL URLWithString: [self videoPageURLString]];
 	NSError *pageSourceError = nil;
 	NSString *pageSourceString = [NSString stringWithContentsOfURL:YouTubePageURL
 													  usedEncoding:nil
 															 error:&pageSourceError];
 	NSDictionary *myFlashVars = nil;
-	if (pageSourceString && !pageSourceError) {
+	if (pageSourceString != nil) {
 		myFlashVars = [self _flashVarDictionaryFromYouTubePageHTML:pageSourceString];
+		[self setFlashVars: myFlashVars];
+		[self setInfoFromFlashVars];
 	}
-	
-	[self performSelectorOnMainThread:@selector(_didRetrieveEmbeddedPlayerFlashVars:)
-						   withObject:myFlashVars
-						waitUntilDone:NO];
-	
+	else {
+		if (pageSourceError != nil) {
+			NSLog(@"ClickToFlashKillerYouTube, Error in -_retrieveEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId: %@", [pageSourceError localizedDescription]);
+		}
+	}
+
+	[self decreaseActiveLookups];
 	[pool drain];
 }
+
 
 
 - (NSDictionary*) _flashVarDictionaryFromYouTubePageHTML: (NSString*) youTubePageHTML
@@ -361,9 +364,7 @@
 }
 
 
-- (void)_getEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId:(NSString *)videoId
-{
-	[self increaseActiveLookups];
+- (void)_getEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId:(NSString *)videoId {
 	[NSThread detachNewThreadSelector:@selector(_retrieveEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId:)
 							 toTarget:self
 						   withObject:videoId];

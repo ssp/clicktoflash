@@ -43,7 +43,6 @@
 - (void) _checkForH264VideoVariants;
 
 - (void) setInfoFromFlashVars;
-- (void) _didRetrieveEmbeddedPlayerFlashVars:(NSDictionary *)flashVars;
 - (void) _retrieveEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId:(NSString *)videoId;
 - (NSDictionary*) _flashVarDictionaryFromYouTubePageHTML: (NSString*) youTubePageHTML;
 - (void) _getEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId:(NSString *)videoId;

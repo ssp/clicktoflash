@@ -26,6 +26,7 @@
  */ 
 
 #import "CTFLoader.h"
+#import "CTFUtilities.h"
 
 
 @implementation CTFLoader
@@ -51,13 +52,21 @@
 
 
 
+// Calls -reallyStart on the main thread. -reallyStart opens an NSURLConnection which calls its delegate methods on the same thread it was initialised on (and does nothing when that thread doesn't exist anymore). As this method can be called on a different thread, we make sure that the delegate methods can be called when they are due.
 - (void) start {
+	[self performSelectorOnMainThread:@selector(reallyStart) withObject:nil waitUntilDone:YES];
+}
+
+
+
+// Starts the NSURLConnection to do the fetching. This should be invoked by calling the -start method.
+- (void) reallyStart {
 	NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL: URL];
 	if ([self HEADOnly]) {
 		[request setHTTPMethod:@"HEAD"];
 	}
 	[[[NSURLConnection alloc] initWithRequest:request delegate:self] autorelease];
-}	
+}
 
 
 
@@ -152,6 +161,10 @@
 }
 
 - (void)setURL:(NSURL *)newURL {
+#if LOGGING_ENABLED
+	NSLog(@"CTFLoader setURL: %@", newURL);
+#endif
+	
 	[newURL retain];
 	[URL release];
 	URL = newURL;
