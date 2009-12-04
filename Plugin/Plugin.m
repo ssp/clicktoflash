@@ -176,9 +176,9 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		[self setKiller: [CTFKiller killerForURL:[NSURL URLWithString:[self baseURL]] src:[self src] attributes:[self attributes] forPlugin:self]];
 		
 		
-#if LOGGING_ENABLED
-        NSLog( @"arguments = %@", arguments );
-        NSLog( @"flashvars = %@", _flashVars );
+#if LOGGING_ENABLED > 1
+		NSLog( @"ClickToFlash Plugin arguments = %@", arguments );
+		NSLog( @"ClickToFlash Plugin flashvars = %@", _flashVars );
 #endif
 		
 		
@@ -417,7 +417,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 	[self webPlugInDestroy];
 	
 #if LOGGING_ENABLED
-	NSLog(@"ClickToFlash:\tdealloc");
+	NSLog(@"ClickToFlash Plugin: -dealloc");
 #endif
 	
     [super dealloc];
@@ -457,7 +457,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 
 
 - (void)resizeSubviewsWithOldSize:(NSSize)oldBoundsSize {
-	NSLog(@"resizeSubviewsWithOldSize");
+//	NSLog(@"ClickToFlash Plugin -resizeSubviewsWithOldSize:");
 	[super resizeSubviewsWithOldSize: oldBoundsSize];
 	if ([self killer]) {
 		[killer pluginResized];
@@ -877,6 +877,8 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 				onScreenRect = killerRect;
 			}
 		}
+		
+//		NSLog(@"ClickToFlash Plugin -exitFullScreen: resize to: %f %f %f %f", onScreenRect.origin.x, onScreenRect.origin.y, onScreenRect.size.width, onScreenRect.size.height);
 
 		// move to new location (don't use an animator here as it works asynchronously and we'd need to time the transfer of the view separately then)
 		[[self fullScreenWindow] setFrame:onScreenRect display:YES animate:YES];

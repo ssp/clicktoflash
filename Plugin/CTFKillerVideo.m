@@ -513,7 +513,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		}
 
 		if ( myMovieView == nil ) { // ERROR
-			NSLog(@"Could not create view in CTFKillerVideo -setupQuickTime");
+			NSLog(@"CTFKillerVideo: Could not create movie view in -reallySetupQuickTimeUsingHD:");
 			return; 
 		}
 		
@@ -581,7 +581,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 									  nil];
 	
 	myMovie = [QTMovie movieWithAttributes:movieAttributes error:&error];
-//	NSLog(@"%@", [[myMovie movieAttributes] description]);
+//	NSLog(@"CTFKillerVideo -movieForHD: movie attributes %@", [[myMovie movieAttributes] description]);
 	if ( myMovie == nil ) {
 		// If we get nil, just try again. This seems to cover a bunch of the random loading problems. It would probably be better to load the 'hash' or other extra info again before retrying to also cover timeout problems
 		myMovie = [QTMovie movieWithAttributes:movieAttributes error:&error];
@@ -613,8 +613,10 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 - (void) movieLoadStateChanged: (NSNotification *) notification {
     long loadState = [[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
-	NSLog(@"movieLoadStateChanged: %i", loadState);
-
+#if LOGGING_ENABLED
+	NSLog(@"CTFKillerVideo -movieLoadStateChanged: %i", loadState);
+#endif
+	
     if (loadState >= QTMovieLoadStatePlayable) {
         // The movie has loaded enough media data to begin playing. Remove the progress indicator first and then start playing, if appropriate.
 		[self removeProgressIndicator];
