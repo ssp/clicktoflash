@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
-		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">10B504</string>
-		<string key="IBDocument.InterfaceBuilderVersion">732</string>
-		<string key="IBDocument.AppKitVersion">1038.2</string>
-		<string key="IBDocument.HIToolboxVersion">437.00</string>
+		<int key="IBDocument.SystemTarget">1040</int>
+		<string key="IBDocument.SystemVersion">10C540</string>
+		<string key="IBDocument.InterfaceBuilderVersion">740</string>
+		<string key="IBDocument.AppKitVersion">1038.25</string>
+		<string key="IBDocument.HIToolboxVersion">458.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">732</string>
+			<string key="NS.object.0">740</string>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -42,7 +42,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{476, 337}, {263, 262}}</string>
 				<int key="NSWTFlags">-529005568</int>
-				<string key="NSWindowTitle">About ClickToFlash</string>
+				<string key="NSWindowTitle">Über ClickToFlash</string>
 				<string key="NSWindowClass">NSPanel</string>
 				<nil key="NSViewClass"/>
 				<string key="NSWindowContentMaxSize">{1.79769e+308, 1.79769e+308}</string>
@@ -168,7 +168,7 @@
 										<object class="NSTextView" id="122819054">
 											<reference key="NSNextResponder" ref="195791783"/>
 											<int key="NSvFlags">2322</int>
-											<string key="NSFrameSize">{223, 0}</string>
+											<string key="NSFrameSize">{223, 16}</string>
 											<reference key="NSSuperview" ref="195791783"/>
 											<object class="NSTextContainer" key="NSTextContainer" id="274899641">
 												<object class="NSLayoutManager" key="NSLayoutManager">
@@ -257,10 +257,11 @@
 									</object>
 									<string key="NSFrameSize">{223, 66}</string>
 									<reference key="NSSuperview" ref="708363234"/>
+									<reference key="NSNextKeyView" ref="122819054"/>
 									<reference key="NSDocView" ref="122819054"/>
 									<reference key="NSBGColor" ref="463080601"/>
 									<object class="NSCursor" key="NSCursor">
-										<string key="NSHotSpot">{4, 4}</string>
+										<string key="NSHotSpot">{1, -1}</string>
 										<int key="NSCursorType">0</int>
 									</object>
 									<int key="NScvFlags">4</int>
@@ -289,6 +290,7 @@
 							</object>
 							<string key="NSFrame">{{20, 47}, {223, 66}}</string>
 							<reference key="NSSuperview" ref="1006"/>
+							<reference key="NSNextKeyView" ref="195791783"/>
 							<int key="NSsFlags">512</int>
 							<reference key="NSVScroller" ref="911603026"/>
 							<reference key="NSHScroller" ref="132284501"/>
@@ -405,8 +407,8 @@
 							<reference ref="111049868"/>
 							<reference ref="906987577"/>
 							<reference ref="121574608"/>
-							<reference ref="708363234"/>
 							<reference ref="608875349"/>
+							<reference ref="708363234"/>
 						</object>
 						<reference key="parent" ref="1005"/>
 					</object>
@@ -522,10 +524,10 @@
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>{{40, 379}, {263, 262}}</string>
+					<string>{{313, 379}, {263, 262}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
-					<string>{{40, 379}, {263, 262}}</string>
+					<string>{{313, 379}, {263, 262}}</string>
 					<integer value="1"/>
 					<string>{196, 240}</string>
 					<string>{{202, 428}, {480, 270}}</string>
@@ -658,7 +660,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">24</int>
+			<int key="maxID">25</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -747,6 +749,10 @@
 			</object>
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
+		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
+			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
+			<integer value="1040" key="NS.object.0"/>
+		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
 			<integer value="1050" key="NS.object.0"/>
