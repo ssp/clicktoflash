@@ -313,7 +313,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 // Implement default container conversion: If there is a film, use it.
-- (BOOL) convertToContainer {
+- (BOOL) convert {
 	BOOL result = NO;
 	
 	if ([self lookupStatus] == finished && [self hasVideo] && [CTFKillerVideo isActive]) {
@@ -1138,7 +1138,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 // Called when asynchronous lookups are finished. This will convert the element if it has been marked for conversion previously but the kind of conversion wasn't clear yet because of the pending lookups.
 - (void) finishedLookups {
 	if ([self requiresConversion]) {
-		[self convertToContainer];
+		[self convert];
 	}
 }
 

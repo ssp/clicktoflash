@@ -111,7 +111,7 @@
 - (void) addAdditionalMenuItemsForContextualMenu { }
 
 // Called when the user clicks the CtF view. Replace content here.
-- (BOOL) convertToContainer { return NO; }
+- (BOOL) convert { return NO; }
 
 // Called when full screen mode starts.
 - (void) startFullScreen { }

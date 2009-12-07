@@ -62,7 +62,7 @@
 // Called when building the contextual menu to add further items afte the basic Load/Hide Flash items. 
 - (void) addAdditionalMenuItemsForContextualMenu;
 // Called when the user clicks the CtF view. Replace content here.
-- (BOOL) convertToContainer;
+- (BOOL) convert;
 // Called when full screen mode starts.
 - (void) startFullScreen;
 // Called when full screen mode ends. If the killer has resized the plug-in's containerView, it can return the appropriate frame it needs to have inside the plug-in's view. Return NSZeroRect to not change anything.

@@ -731,7 +731,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 - (void) convertTypesForContainer: (BOOL) keepIt {
 	BOOL success = NO;
 	if (keepIt && [self killer]) {
-		success = [[self killer] convertToContainer];
+		success = [[self killer] convert];
 	}
 
 	if (!success) {
