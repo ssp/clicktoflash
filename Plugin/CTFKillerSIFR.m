@@ -56,7 +56,7 @@ static NSString *sSifr3AddOnJSFilename = @"sifr3-addons";
     NSString* classValue = [attributes objectForKey: @"class"];
     NSString* sifrValue = [attributes objectForKey: @"sifr"];
 	
-    return [classValue isEqualToString: @"sIFR-flash"] || (sifrValue && [sifrValue boolValue]);
+    return [classValue isEqualToString: @"sIFR-flash"] || (sifrValue && ([sifrValue intValue] != 0));
 }
 
 

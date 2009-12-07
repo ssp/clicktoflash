@@ -78,7 +78,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
-/* This is 10.5 and higher only. Currently only used for QTMovie-style playback which requires 10.5 as well. */
+/* This is 10.5 and higher only. It is only used for QTMovie-style playback which requires 10.5 as well. */
 + (NSSet *) keyPathsForValuesAffectingValueForKey: (NSString *) key {
 	NSSet * result = [super keyPathsForValuesAffectingValueForKey:key];
 	
@@ -178,7 +178,6 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	[[self movieView] setMovie:nil];
 	[self setMovie:nil];
 	[self setMovieView: nil];
-	[[self movieSetupThread] cancel];
 	[self setMovieSetupThread: nil];
 	[self setProgressIndicator: nil];
 }
@@ -471,15 +470,12 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 #pragma mark -
-#pragma mark Insert Video using QTKit
+#pragma mark Insert Video using QTKit - 10.5 and higher only
 
 - (void) setupQuickTimeUsingHD: (NSNumber*) useHDNumber {
-	if ( [self movieSetupThread] != nil ) {
-		[[self movieSetupThread] cancel];
-	}
 	NSThread * thread = [[[NSThread alloc] initWithTarget:self selector:@selector(reallySetupQuickTimeUsingHD:) object:useHDNumber] autorelease];
-	[thread start];
 	[self setMovieSetupThread: thread];
+	[thread start];
 }
 
 
@@ -532,7 +528,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		// It seems like QTMovieView has two subviews: one displaying the film, one for the controller. The controller view seems to end up _not_ wanting the layer. This can cause the controller to disappear after switching tags. So we sneakily set all subviews of the QTMovieView to want a layer here.
 		NSEnumerator * viewEnumerator = [[myMovieView subviews] objectEnumerator];
 		NSView * view;
-		while ( view = [viewEnumerator nextObject] ) {
+		while ( ( view = [viewEnumerator nextObject] ) ) {
 			[view setWantsLayer:YES];
 		}
 		
@@ -1297,6 +1293,10 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 - (void) setMovieSetupThread: (NSThread *) newMovieSetupThread {
 	[newMovieSetupThread retain];
+	// Cancelling threads requires 10.5. We only use QTKit video playback on 10.5 and higher, so we should be fine.
+	if ( [movieSetupThread respondsToSelector: @selector(cancel)] ) {
+		[movieSetupThread performSelector:@selector(cancel)];
+	}
 	[movieSetupThread release];
 	movieSetupThread = newMovieSetupThread;
 }

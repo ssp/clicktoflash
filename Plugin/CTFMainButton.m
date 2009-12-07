@@ -349,9 +349,17 @@
 	
 	NSColor * startColor = [NSColor colorWithCalibratedWhite:1.0 alpha:0.2];
 	NSColor * endColor = [NSColor colorWithCalibratedWhite:1.0 alpha:0.00];
-	
-	NSGradient * gradient = [[[NSGradient alloc] initWithColorsAndLocations: startColor, .0, endColor, .8, nil] autorelease];
-	[gradient drawInBezierPath:bP angle:90 + gradientRotation];
+
+	id gradient = [NSClassFromString(@"NSGradient") alloc];
+	if ( gradient != nil ) {
+		[[gradient initWithColorsAndLocations: startColor, .0, endColor, .8, nil] autorelease];
+		[gradient drawInBezierPath: bP angle: 90. + gradientRotation];
+	}
+	else {
+		gradient = [CTFGradient gradientWithBeginningColor:startColor endingColor:endColor];
+		[(CTFGradient*)gradient addColorStop: endColor atPosition: .8];
+		[(CTFGradient*)gradient fillBezierPath: bP angle: -(90. + gradientRotation)];
+	}
 }
 
 
@@ -391,9 +399,15 @@
 		endColor = [NSColor colorWithCalibratedWhite:1. alpha:0.1];
 	}
 	
-	
-	NSGradient * gradient = [[[NSGradient alloc] initWithColorsAndLocations: startColor, .0, endColor, 1.0, nil] autorelease];
-	[gradient drawInBezierPath:bP angle:90 + gradientRotation];
+	id gradient = [NSClassFromString(@"NSGradient") alloc];
+	if ( gradient != nil ) {
+		[[gradient initWithColorsAndLocations: startColor, .0, endColor, 1., nil] autorelease];
+		[gradient drawInBezierPath: bP angle: 90. + gradientRotation];
+	}
+	else {
+		gradient = [CTFGradient gradientWithBeginningColor: startColor endingColor: endColor];
+		[(CTFGradient*)gradient fillBezierPath: bP angle: -(90. + gradientRotation)];
+	}
 }
 
 

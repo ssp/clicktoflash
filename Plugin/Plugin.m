@@ -51,6 +51,7 @@ static NSString *sFlashNewMIMEType = @"application/futuresplash";
 static NSString *sAutoLoadInvisibleFlashViewsKey = @"autoLoadInvisibleViews";
 static NSString *sPluginEnabled = @"pluginEnabled";
 static NSString *sApplicationWhitelist = @"applicationWhitelist";
+static NSString *sUseNewStyleUIDefaultsKey =@"use new style UI";
 // static NSString *sDrawGearImageOnlyOnMouseOverHiddenPref = @"drawGearImageOnlyOnMouseOver";
 
 // Info.plist key for app developers
@@ -319,60 +320,87 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		[self setOriginalOpacityAttributes:originalOpacityDict];
 		[self setFrameSize:NSMakeSize(1., 1.)];
 		
-		// Add a full size subview which will contain everything. We need this so we can move it to full-screen without removing the plug-in from the web page.
-		NSView * myContainerView = [[[NSView alloc] initWithFrame: [self bounds]] autorelease];
-		[myContainerView setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
-		[self addSubview: myContainerView];
-		[self setContainerView: myContainerView];
-
-		// Need layers so buttons can be drawn on top of movies.
-		[myContainerView setWantsLayer:YES];
-		
-		// Add main control button, covering the full view. This does the main drawing.
-		CTFMainButton * myMainButton = [[[CTFMainButton alloc] initWithFrame: [self bounds]] autorelease];
-		[myMainButton setTag: CTFMainButtonTag];
-		[myMainButton setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
-		[myMainButton setButtonType: NSMomentaryPushInButton];
-		[myMainButton setWantsLayer: YES];
-		[myMainButton setTarget: self];
-		[myMainButton setAction: @selector(clicked:)];
-		[myMainButton setPlugin: self];
-		[myContainerView addSubview: myMainButton];		
-		[self setMainButton: myMainButton];
-		
-		// Add view containing all of the buttons
-		NSView * theButtonsContainer = [[[NSView alloc] initWithFrame:[self bounds]] autorelease];
-		[theButtonsContainer setWantsLayer: YES];
-		[theButtonsContainer setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
-		[myContainerView addSubview: theButtonsContainer];
-		[self setButtonsContainer: theButtonsContainer];
-		
-		// Add action button control
-		CTFActionButton * theActionButton = [CTFActionButton actionButton];
-		[theActionButton setTag: CTFActionButtonTag];
-		[theActionButton setWantsLayer: YES];
-		[theActionButton setPlugin: self];
-		[theActionButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin) ];
-		[theButtonsContainer addSubview: theActionButton];
-		[self setActionButton: theActionButton];
-		
-		// Add view for additional buttons (proper sizing is done by view itself)
-		CTFButtonsView * theButtonsView = [[[CTFButtonsView alloc] initWithFrame: NSZeroRect] autorelease];
-		[theButtonsView setWantsLayer: YES];
-		[theButtonsView setAutoresizingMask: NSViewWidthSizable];
-		[theButtonsContainer addSubview: theButtonsView];
-		[self setButtonsView: theButtonsView];
-		
-		// attempt to construct a key loop: Plugin -> main button -> actionButton -> buttonsView -> Plugin. Is this the right philosophy?
-		[self setNextKeyView: myMainButton];
-		[myMainButton setNextKeyView: theActionButton];
-		[theActionButton setNextKeyView: buttonsView];
-		[buttonsView setNextKeyView: self];
-		
+		[self setupSubviews];
 		[self setFullScreenWindow: nil];
 	}
 
     return self;
+}
+
+
+
+/*
+ Set up the subviews we are using. They are structured as follows:
+ 
+ self (CTFClickToFlashPlugin)
+ -> containerView (NSView)
+    -> mainButton (CTFMainButton)
+	-> buttonsContainer (NSView)
+	   -> actionButton (CTFActionButton)
+       -> buttonsView (CTFButtonsView) - new style display only
+          -> array of buttons (CTFButton) added as needed by CTFKiller classes
+ 
+ This setup can be changed by CTFKillers, e.g. CTFVideoKiller hides the mainButton when clicked and adds a QTMovieView.
+ The layout is made in a way that also supports zooming to full screen (used in 'new style' UI only).
+ In the 'new style' UI, set these views up with layers, so they draw properly above a playing movie.
+*/
+- (void) setupSubviews {
+	// Add a full size subview which will contain everything. We need this so we can move it to full-screen without removing the plug-in from the web page.
+	NSView * myContainerView = [[[NSView alloc] initWithFrame: [self bounds]] autorelease];
+	[myContainerView setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
+	[self addSubview: myContainerView];
+	[self setContainerView: myContainerView];
+	
+	// Add main control button, covering the full view. This does the main drawing.
+	CTFMainButton * myMainButton = [[[CTFMainButton alloc] initWithFrame: [self bounds]] autorelease];
+	[myMainButton setTag: CTFMainButtonTag];
+	[myMainButton setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
+	[myMainButton setButtonType: NSMomentaryPushInButton];
+	[myMainButton setTarget: self];
+	[myMainButton setAction: @selector(clicked:)];
+	[myMainButton setPlugin: self];
+	[myContainerView addSubview: myMainButton];
+	[self setMainButton: myMainButton];
+	
+	// Add view containing all of the buttons
+	NSView * theButtonsContainer = [[[NSView alloc] initWithFrame:[self bounds]] autorelease];
+	[theButtonsContainer setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
+	[myContainerView addSubview: theButtonsContainer];
+	[self setButtonsContainer: theButtonsContainer];
+	
+	// Add action button control
+	CTFActionButton * theActionButton = [CTFActionButton actionButton];
+	[theActionButton setTag: CTFActionButtonTag];
+	[theActionButton setPlugin: self];
+	[theActionButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin) ];
+	[theButtonsContainer addSubview: theActionButton];
+	[self setActionButton: theActionButton];
+	
+	// attempt to construct a key loop: Plugin -> main button -> actionButton -> buttonsView -> Plugin. Is this the right philosophy?
+	[self setNextKeyView: myMainButton];
+	[myMainButton setNextKeyView: theActionButton];
+	[theActionButton setNextKeyView: self];
+	
+	
+	// the new style UI also adds buttons at the right hand side of the container and displays QuickTime itself.
+	if ( [self useNewStyleUI] ) {
+		// Add view for additional buttons (proper sizing is done by view itself)
+		CTFButtonsView * theButtonsView = [[[CTFButtonsView alloc] initWithFrame: NSZeroRect] autorelease];
+		[theButtonsView setAutoresizingMask: NSViewWidthSizable];
+		[theButtonsContainer addSubview: theButtonsView];
+		[self setButtonsView: theButtonsView];
+		
+		// adapt key loop to contain the buttons view
+		[theActionButton setNextKeyView: buttonsView];
+		[buttonsView setNextKeyView: self];
+		
+		// Our views need layers in case we are using QuickTime so they won't become erased.
+		[myMainButton setWantsLayer: YES];
+		[theButtonsContainer setWantsLayer: YES];
+		[theActionButton setWantsLayer: YES];
+		[theButtonsView setWantsLayer: YES];
+		[myContainerView setWantsLayer: YES];
+	}
 }
 
 
@@ -710,6 +738,17 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 
 
 
+- (BOOL) useNewStyleUI {
+	BOOL result = NO;
+	
+	if ( NSAppKitVersionNumber >= NSAppKitVersionNumber10_5 ) {
+		result = [[CTFUserDefaultsController standardUserDefaults] boolForKey: sUseNewStyleUIDefaultsKey];
+	}
+	
+	return result;
+}
+
+
 
 
 
@@ -824,7 +863,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 
 
 #pragma mark -
-#pragma mark Full screen
+#pragma mark Full screen - for X.5 and higher only
 
 - (IBAction) enterFullScreen: (id) sender {
 	SetSystemUIMode(kUIModeAllSuppressed, 0);

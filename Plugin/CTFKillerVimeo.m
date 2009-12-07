@@ -189,7 +189,7 @@
 		nodes = [XML nodesForXPath:@"//isHD" error:&error];
 		if ([nodes count] > 0) {
 			node = [nodes objectAtIndex:0];
-			clipIsHD = ([[node stringValue] integerValue] != 0);
+			clipIsHD = ([[node stringValue] intValue] != 0);
 		}
 
 		// Now we collected the data but vimeo seem to have two video formats in the background flv/mp4. The only way I see so far to tell those apart is from the MIME Type of the video file's URL. Any better way to do this would be great.		

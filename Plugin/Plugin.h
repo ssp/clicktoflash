@@ -26,6 +26,8 @@ THE SOFTWARE.
 
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
+#import "CTFUtilities.h"
+
 
 
 // Subview Tags
@@ -80,6 +82,7 @@ enum subviewTags {
 }
 
 + (NSView *)plugInViewWithArguments:(NSDictionary *)arguments;
+- (void) setupSubviews;
 
 - (void) revertToOriginalOpacityAttributes;
 - (void) prepareForConversion;
@@ -99,6 +102,7 @@ enum subviewTags {
 + (NSString *)launchedAppBundleIdentifier;
 - (void) browseToURLString: (NSString*) URLString;
 - (void) downloadURLString: (NSString*) URLString;
+- (BOOL) useNewStyleUI;
 
 - (IBAction) enterFullScreen: (id) sender;
 - (IBAction) exitFullScreen: (id) sender;
