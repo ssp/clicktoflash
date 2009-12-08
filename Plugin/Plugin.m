@@ -31,7 +31,6 @@ THE SOFTWARE.
 #import "CTFUtilities.h"
 #import "CTFWhitelist.h"
 #import "CTFGradient.h"
-#import "SparkleManager.h"
 #import "CTFKiller.h"
 #import "CTFKillerVideo.h"
 #import "CTFKillerSIFR.h"
@@ -162,7 +161,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		[self setWebView:[[[arguments objectForKey:WebPlugInContainerKey] webFrame] webView]];
 		
         [self setContainer:[arguments objectForKey:WebPlugInContainingElementKey]];
-		
+        
         // Get URL
         
         NSURL *base = [arguments objectForKey:WebPlugInBaseURLKey];
@@ -229,16 +228,9 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		
 		// Plugin is enabled and the host is not white-listed. Kick off Sparkle.
 		
-		if (! _sparkleUpdateInProgress) {
-			// sometimes many instances of the ClickToFlash plug-in are loaded
-			// at once, so we don't want to launch multiple copies of the
-			// Sparkle Updater
-			
-			_sparkleUpdateInProgress = YES;
-			[[SparkleManager sharedManager] automaticallyCheckForUpdates];
-			_sparkleUpdateInProgress = NO;
-		}
-		
+		/*NSString *pathToRelaunch = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:[CTFClickToFlashPlugin launchedAppBundleIdentifier]];
+		[[SparkleManager sharedManager] setPathToRelaunch:pathToRelaunch];
+		[[SparkleManager sharedManager] startAutomaticallyCheckingForUpdates];*/
 		
         // Set up main menus
         
@@ -352,7 +344,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		[self setupSubviews];
 		[self setFullScreenWindow: nil];
 	}
-
+		
     return self;
 }
 
@@ -372,14 +364,14 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
  This setup can be changed by CTFKillers, e.g. CTFVideoKiller hides the mainButton when clicked and adds a QTMovieView.
  The layout is made in a way that also supports zooming to full screen (used in 'new style' UI only).
  In the 'new style' UI, set these views up with layers, so they draw properly above a playing movie.
-*/
+		*/
 - (void) setupSubviews {
 	// Add a full size subview which will contain everything. We need this so we can move it to full-screen without removing the plug-in from the web page.
 	NSView * myContainerView = [[[NSView alloc] initWithFrame: [self bounds]] autorelease];
 	[myContainerView setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
 	[self addSubview: myContainerView];
 	[self setContainerView: myContainerView];
-	
+		
 	// Add main control button, covering the full view. This does the main drawing.
 	CTFMainButton * myMainButton = [[[CTFMainButton alloc] initWithFrame: [self bounds]] autorelease];
 	[myMainButton setTag: CTFMainButtonTag];
@@ -397,14 +389,14 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	[myContainerView addSubview: theButtonsContainer];
 	[self setButtonsContainer: theButtonsContainer];
 	
-	// Add action button control
+		// Add action button control
 	CTFActionButton * theActionButton = [CTFActionButton actionButton];
 	[theActionButton setTag: CTFActionButtonTag];
 	[theActionButton setPlugin: self];
 	[theActionButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin) ];
 	[theButtonsContainer addSubview: theActionButton];
 	[self setActionButton: theActionButton];
-	
+
 	// attempt to construct a key loop: Plugin -> main button -> actionButton -> buttonsView -> Plugin. Is this the right philosophy?
 	[self setNextKeyView: myMainButton];
 	[myMainButton setNextKeyView: theActionButton];
@@ -429,7 +421,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		[theActionButton setWantsLayer: YES];
 		[theButtonsView setWantsLayer: YES];
 		[myContainerView setWantsLayer: YES];
-	}
+}
 }
 
 
@@ -606,18 +598,18 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 - (IBAction) clicked: (id) sender {
 	if (![self isConverted]) {
-		if ([self _isCommandPressed]) {
-			if ([self _isOptionPressed]) {
-				[self removeFlash:self];
-			} else {
-				[self hideFlash:self];
-			}
-		} else if ([self _isOptionPressed] && ![self _isHostWhitelisted]) {
-			[self _askToAddCurrentSiteToWhitelist];
+	if ([self _isCommandPressed]) {
+		if ([self _isOptionPressed]) {
+			[self removeFlash:self];
 		} else {
-			[self convertTypesForContainer:YES];
+			[self hideFlash:self];
 		}
+	} else if ([self _isOptionPressed] && ![self _isHostWhitelisted]) {
+		[self _askToAddCurrentSiteToWhitelist];
+	} else {
+			[self convertTypesForContainer:YES];
 	}
+}
 }
 
 
@@ -761,7 +753,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 - (BOOL) useNewStyleUI {
 	BOOL result = NO;
-	
+
 	if ( NSAppKitVersionNumber >= NSAppKitVersionNumber10_5 ) {
 		result = [[CTFUserDefaultsController standardUserDefaults] boolForKey: sUseNewStyleUIDefaultsKey];
 	}

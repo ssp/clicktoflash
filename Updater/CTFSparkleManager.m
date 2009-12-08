@@ -23,6 +23,26 @@
 												 name:@"CTFSparkleUpdaterShouldActivate"
 											   object:nil];
 	[[SUUpdater sharedUpdater] setDelegate:self];
+    
+    {
+        //  Truth table:
+        //
+        //  isBeta	useBetaAppcast
+        //  ------  --------------
+        //  true	true            Beta in a beta land. Easy: check beta appcast.
+        //  false	true            Golden, but opted into betas by previously running a beta. Check beta appcast.
+        //  true	false           Beta with a beta-virgin user. Set useBetaAppcast user default to true and check beta appcast.
+        //  false	false           Golden boy -- never tried a beta. Check golden appcast.
+        
+        NSDictionary *infoPlist = [[NSBundle mainBundle] infoDictionary];
+        BOOL isBeta = [[infoPlist objectForKey:@"CFBundleVersion"] rangeOfString:@"b"].location != NSNotFound;
+        BOOL useBetaAppcast = [[NSUserDefaults standardUserDefaults] boolForKey:@"useBetaAppcast"];
+        NSString *feedURLKey = (!isBeta && !useBetaAppcast) ? @"SUFeedURL" : @"SUBetaFeedURL";
+        if (isBeta && !useBetaAppcast) {
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"useBetaAppcast"];
+        }
+        [[SUUpdater sharedUpdater] setFeedURL:[NSURL URLWithString:[infoPlist objectForKey:feedURLKey]]];
+    }
 	
 	NSArray *launchArgs = [[NSProcessInfo processInfo] arguments];
 	NSString *checkInBackground = nil;
@@ -56,12 +76,24 @@
 	return pathToRelaunch;
 }
 
+- (NSInteger)PIDToListenForRelaunch:(SUUpdater *)updater;
+{
+	return (NSInteger)[[[NSProcessInfo processInfo] arguments] objectAtIndex:3];
+}
+
 - (BOOL)updater:(SUUpdater *)updater
 shouldPostponeRelaunchForUpdate:(SUAppcastItem *)update
   untilInvoking:(NSInvocation *)invocation;
 {
+	[NSApp activateIgnoringOtherApps:YES];
 	NSString *hostAppBundleIdentifier = [[[NSProcessInfo processInfo] arguments] objectAtIndex:1];
-	NSString *appNameString = [[[NSBundle bundleWithIdentifier:hostAppBundleIdentifier] infoDictionary] objectForKey:@"CFBundleName"];
+	
+	// bundleWithIdentifier: doesn't work if the bundle hasn't been previously loaded, it seems
+	NSString *pathToRelaunch = [[NSWorkspace sharedWorkspace]
+								absolutePathForAppBundleWithIdentifier:hostAppBundleIdentifier];
+	NSString *appNameString = [[[NSBundle bundleWithPath:pathToRelaunch] infoDictionary] objectForKey:@"CFBundleName"];
+	
+	
 	int relaunchResult = NSRunAlertPanel([NSString stringWithFormat:@"Relaunch %@ now?",appNameString],
 										 [NSString stringWithFormat:@"To use the new features of ClickToFlash, %@ needs to be relaunched.",appNameString],
 										 @"Relaunch",
@@ -70,7 +102,20 @@ shouldPostponeRelaunchForUpdate:(SUAppcastItem *)update
 	
 	BOOL shouldPostpone = YES;
 	if (relaunchResult == NSAlertDefaultReturn) {
-		// we want to relaunch now, so don't postpone the relaunch
+		// we want to relaunch now, so quit the host app and don't postpone the relaunch
+		
+		NSAppleEventDescriptor *target = [NSAppleEventDescriptor descriptorWithDescriptorType:typeApplicationBundleID
+																						 data:[hostAppBundleIdentifier dataUsingEncoding:NSUTF8StringEncoding]];
+		NSAppleEventDescriptor *quitEvent = [NSAppleEventDescriptor appleEventWithEventClass:kCoreEventClass
+																					 eventID:kAEQuitApplication
+																			targetDescriptor:target
+																					returnID:kAutoGenerateReturnID
+																			   transactionID:kAnyTransactionID];
+		OSStatus err = AESendMessage([quitEvent aeDesc],    //  theAppleEvent
+									 NULL,                  //  reply
+									 kAENoReply,            //  sendMode
+									 0);                    //  sendPriority
+		NSAssert1( err == noErr, @"AESendMessage failed: %d", err );
 		
 		shouldPostpone = NO;
 	} else {
