@@ -897,52 +897,56 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 - (void) _convertToMP4ContainerUsingHD: (BOOL) useHD {
 	if ( [[CTFUserDefaultsController standardUserDefaults] boolForKey: sUseQTKitDefaultsKey ] ) {
-		[self setupQuickTimeUsingHD:nil];
+		// use QTKit
+		[self setupQuickTimeUsingHD: nil];
 	}
 	else {
-	DOMElement * container = [[self plugin] container];
-	DOMDocument* document = [container ownerDocument];
-	NSString * URLString = [self videoURLStringForHD: useHD];
+		// replace element in DOM
+		DOMElement * container = [[self plugin] container];
+		DOMDocument * document = [container ownerDocument];
+		NSString * URLString = [self videoURLStringForHD: useHD];
 
-	DOMElement* videoElement;
-	if ([ self isVideoElementAvailable ]) {
-		videoElement = [document createElement:@"video"];
-		[ self _convertElementForVideoElement: videoElement atURL: URLString ];
-    } else {
-		videoElement = (DOMElement*) [container cloneNode: NO ];
-		[ self _convertElementForMP4: videoElement atURL: URLString ];
-	}
-	
-	
-	DOMNode * widthNode = [[container attributes ] getNamedItem:@"width"];
-	NSString * width = @"100%"; // default to 100% width
-	if (widthNode != nil) {
-		// width is already set explicitly, preserve that
-		width = [widthNode nodeValue];
-		if ( [[NSCharacterSet decimalDigitCharacterSet] characterIsMember:[width characterAtIndex:[width length] - 1]] ) {
-			// add 'px' if existing width is just a number (ends with a digit)
-			width = [width stringByAppendingString:@"px"];
+		DOMElement * videoElement;
+		if ([ self isVideoElementAvailable ]) {
+			// replace with HTML 5 video element
+			videoElement = [document createElement:@"video"];
+			[ self _convertElementForVideoElement: videoElement atURL: URLString ];
+		} else {
+			// replace with <embed> tag for QuickTime video
+			videoElement = (DOMElement*) [container cloneNode: NO ];
+			[ self _convertElementForMP4: videoElement atURL: URLString ];
 		}
-	}
-	NSString * widthCSS = [NSString stringWithFormat:@"%@width:%@;", divCSS, width];
 	
-	DOMElement* CtFContainerElement = [document createElement: @"div"]; 
-	[CtFContainerElement setAttribute: @"style" value: widthCSS];
-	[CtFContainerElement setAttribute: @"class" value: @"clicktoflash-container"];
-	[CtFContainerElement appendChild: videoElement];
 	
-	DOMElement* linkContainerElement = [self linkContainerElementUsingHD: useHD];
-	if ( linkContainerElement != nil ) {
-		[CtFContainerElement appendChild: linkContainerElement];		
-	}
+		DOMNode * widthNode = [[container attributes ] getNamedItem:@"width"];
+		NSString * width = @"100%"; // default to 100% width
+		if (widthNode != nil) {
+			// width is already set explicitly, preserve that
+			width = [widthNode nodeValue];
+			if ( [[NSCharacterSet decimalDigitCharacterSet] characterIsMember:[width characterAtIndex:[width length] - 1]] ) {
+				// add 'px' if existing width is just a number (ends with a digit)
+				width = [width stringByAppendingString:@"px"];
+			}
+		}
+		NSString * widthCSS = [NSString stringWithFormat:@"%@width:%@;", divCSS, width];
 	
-    // Just to be safe, since we are about to replace our containing element
-    [[self retain] autorelease];
-    
-    // Replace self with element.
-	[[container parentNode] replaceChild: CtFContainerElement oldChild: container];
-	
-    [[self plugin] setContainer:nil];
+		DOMElement * CtFContainerElement = [document createElement: @"div"];
+		[CtFContainerElement setAttribute: @"style" value: widthCSS];
+		[CtFContainerElement setAttribute: @"class" value: @"clicktoflash-container"];
+		[CtFContainerElement appendChild: videoElement];
+		
+		DOMElement * linkContainerElement = [self linkContainerElementUsingHD: useHD];
+		if ( linkContainerElement != nil ) {
+			[CtFContainerElement appendChild: linkContainerElement];
+		}
+		
+		// Just to be safe, since we are about to replace our containing element
+		[[self retain] autorelease];
+		
+		// Replace self with element.
+		[[container parentNode] replaceChild: CtFContainerElement oldChild: container];
+		
+		[[self plugin] setContainer:nil];
 	}
 }
 
