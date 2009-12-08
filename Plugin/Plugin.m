@@ -84,8 +84,6 @@ nil]
 
 - (void) _loadContent: (NSNotification*) notification;
 - (void) _loadContentForWindow: (NSNotification*) notification;
-
-- (NSString *)launchedAppBundleIdentifier;
 @end
 
 
@@ -160,7 +158,6 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
     if (self) {
 		isConverted = NO;
 		_sparkleUpdateInProgress = NO;
-		[self setLaunchedAppBundleIdentifier:[CTFClickToFlashPlugin launchedAppBundleIdentifier]];
 		
 		[self setWebView:[[[arguments objectForKey:WebPlugInContainerKey] webFrame] webView]];
 		
@@ -732,14 +729,6 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	}
 	
 	return appBundleIdentifier;
-}
-
-
-
-- (void)setLaunchedAppBundleIdentifier:(NSString *)newValue {
-    [newValue retain];
-    [_launchedAppBundleIdentifier release];
-    _launchedAppBundleIdentifier = newValue;
 }
 
 

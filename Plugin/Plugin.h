@@ -75,7 +75,6 @@ enum subviewTags {
 	NSURL * previewURL;
 	NSImage * previewImage;
 
-	NSString *_launchedAppBundleIdentifier;
 	BOOL _sparkleUpdateInProgress;
 }
 
@@ -149,7 +148,6 @@ enum subviewTags {
 - (BOOL)isConverted;
 - (void)setIsConverted:(BOOL)newIsConverted;
 + (NSString *)launchedAppBundleIdentifier;
-- (void)setLaunchedAppBundleIdentifier:(NSString *)newValue;
 
 - (NSURL *) previewURL;
 - (void) setPreviewURL: (NSURL *) newPreviewURL;
