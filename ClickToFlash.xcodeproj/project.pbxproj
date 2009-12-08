@@ -23,7 +23,6 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = FADCD4270F421EDB00749805 /* Build configuration list for PBXAggregateTarget "Build Package" */;
 			buildPhases = (
-				6C2C5B081068D09300A90A54 /* Clean Sparkle */,
 				FADCD4210F421EAE00749805 /* Build Installer */,
 			);
 			dependencies = (
@@ -77,7 +76,6 @@
 		A486EE6D10A818560051FFD7 /* SparkleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A486EE6C10A818560051FFD7 /* SparkleManager.m */; };
 		A494CC2C0F9F2446007D5EEB /* ctf.icns in Resources */ = {isa = PBXBuildFile; fileRef = A494CC2B0F9F2446007D5EEB /* ctf.icns */; };
 		A4D8074710A4129C0024454E /* ctf.icns in Resources */ = {isa = PBXBuildFile; fileRef = A494CC2B0F9F2446007D5EEB /* ctf.icns */; };
-		A4D808EE10A7D7870024454E /* ClickToFlash Updater.app in Resources */ = {isa = PBXBuildFile; fileRef = A46A59FE1096C2A700E1ABAA /* ClickToFlash Updater.app */; };
 		A4DEFC7A0FF33F7400CCB6A8 /* CTFPreferencesDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = A4DEFC770FF33F7400CCB6A8 /* CTFPreferencesDictionary.m */; };
 		A4DEFC7B0FF33F7400CCB6A8 /* CTFUserDefaultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = A4DEFC790FF33F7400CCB6A8 /* CTFUserDefaultsController.m */; };
 		D9566D8C0F380C9F00358646 /* sifr2-addons.js in Resources */ = {isa = PBXBuildFile; fileRef = D9566C2C0F37EA0800358646 /* sifr2-addons.js */; };
@@ -447,6 +445,7 @@
 				A46A59FB1096C2A700E1ABAA /* Sources */,
 				A46A59FC1096C2A700E1ABAA /* Frameworks */,
 				A46A59FA1096C2A700E1ABAA /* Resources */,
+				6C268D7F10CEA5900025815C /* Kill Sparkle */,
 			);
 			buildRules = (
 			);
@@ -542,7 +541,6 @@
 				A40485BA10629B0E00FDC4E2 /* InfoPlist.strings in Resources */,
 				A40485BB10629B0E00FDC4E2 /* Localizable.strings in Resources */,
 				6C7A9248108B95FD002CEDED /* download.png in Resources */,
-				A46A5BE21096E60E00E1ABAA /* ClickToFlash Updater.app in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -572,19 +570,19 @@
 			shellPath = /bin/sh;
 			shellScript = "rm -Rf \"$HOME/Library/Internet Plug-Ins/ClickToFlash.plugin\"\nrm -Rf \"$HOME/Library/Internet Plug-Ins/ClickToFlash.webplugin\"\ncp -R \"$BUILT_PRODUCTS_DIR/ClickToFlash.webplugin\" \"$HOME/Library/Internet Plug-Ins/ClickToFlash.webplugin\"\nexit 0";
 		};
-		6C2C5B081068D09300A90A54 /* Clean Sparkle */ = {
+		6C268D7F10CEA5900025815C /* Kill Sparkle */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Clean Sparkle";
+			name = "Kill Sparkle";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$BUILT_PRODUCTS_DIR\"\ncd \"ClickToFlash.webplugin/Contents/Resources/ClickToFlash Updater.app/Contents\"\n\n# Sparkle cleanup\n\n# kill headers\ncd \"Frameworks/Sparkle.framework/\"\nls | grep Headers | xargs rm\ncd \"Versions/A\"\nls | grep Headers | xargs rm -r \n\n# kill unused localisations\ncd \"Resources\"\nls | grep lproj | grep -v -E '(de|en|fr).lproj' | xargs rm -r";
+			shellScript = "cd \"$BUILT_PRODUCTS_DIR\"\ncd \"ClickToFlash Updater.app/Contents/\"\n\n# Sparkle cleanup\n\n# kill headers\ncd \"Frameworks/Sparkle.framework/\"\nls | grep Headers | xargs rm\ncd \"Versions/A\"\nls | grep Headers | xargs rm -r \n\n# kill unused localisations\ncd \"Resources\"\nls | grep lproj | grep -v -E '(de|en|fr).lproj' | xargs rm -r";
 		};
 		FADCD4210F421EAE00749805 /* Build Installer */ = {
 			isa = PBXShellScriptBuildPhase;
