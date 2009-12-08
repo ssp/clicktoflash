@@ -49,7 +49,7 @@ static NSString *sFlashNewMIMEType = @"application/futuresplash";
 
 // CTFUserDefaultsController keys
 static NSString *sAutoLoadInvisibleFlashViewsDefaultsKey = @"autoLoadInvisibleViews";
-static NSString *sPluginEnabled = @"pluginEnabled";
+static NSString *sPluginEnabledDefaultsKey = @"pluginEnabled";
 static NSString *sApplicationWhitelist = @"applicationWhitelist";
 static NSString *sUseNewStyleUIDefaultsKey =@"use new style UI";
 // static NSString *sDrawGearImageOnlyOnMouseOverHiddenPref = @"drawGearImageOnlyOnMouseOver";
@@ -115,7 +115,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	
 	// set up initial defaults
 	// be enabled
-	CTFInitialDefault( [NSNumber numberWithBool: YES], sPluginEnabled, )
+	CTFInitialDefault( [NSNumber numberWithBool: YES], sPluginEnabledDefaultsKey, )
 	// do not automatically load smaill Flash views
 	CTFInitialDefault( [NSNumber numberWithBool: NO], sAutoLoadInvisibleFlashViewsDefaultsKey, )
 	// use 'new style' UI if possible
@@ -215,7 +215,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		// check whether plugin is disabled, load all content as normal if so
 		
 		CTFUserDefaultsController *standardUserDefaults = [CTFUserDefaultsController standardUserDefaults];
-		BOOL pluginEnabled = [standardUserDefaults boolForKey:sPluginEnabled ];
+		BOOL pluginEnabled = [standardUserDefaults boolForKey:sPluginEnabledDefaultsKey ];
 		NSString *hostAppBundleID = [[NSBundle mainBundle] bundleIdentifier];
 		BOOL hostAppIsInDefaultWhitelist = [CTFDefaultWhitelist containsObject:hostAppBundleID];
 		BOOL hostAppIsInUserWhitelist = [[standardUserDefaults arrayForKey:sApplicationWhitelist] containsObject:hostAppBundleID];
@@ -1065,7 +1065,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 										   @"ClickToFlash_siteInfo",
 										   nil];
 	
-	NSArray *externalDefaultsNameArray = [NSArray arrayWithObjects:sPluginEnabled,
+	NSArray *externalDefaultsNameArray = [NSArray arrayWithObjects:sPluginEnabledDefaultsKey,
 										  sUseYouTubeH264DefaultsKey,
 										  sAutoLoadInvisibleFlashViewsDefaultsKey,
 										  @"sifrMode",
