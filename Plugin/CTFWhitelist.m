@@ -109,7 +109,7 @@ static NSDictionary* whitelistItemForSite( NSString* site )
 
 @implementation CTFClickToFlashPlugin( Whitelist )
 
-- (void) _migrateWhitelist
++ (void) _migrateWhitelist
 {
     // Migrate from the old location to the new location.  We'll leave
     // this in for a couple builds (being added for 1.4) and then remove

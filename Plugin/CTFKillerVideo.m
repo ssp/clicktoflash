@@ -34,12 +34,12 @@
 #import "CTFButtonsView.h"
 
 static NSString * divCSS = @"margin:auto;padding:0px;border:0px none;text-align:center;display:block;float:none;";
-static NSString * sDisableVideoElement = @"disableVideoElement";
-static NSString * sUseYouTubeH264DefaultsKey = @"useYouTubeH264";
-static NSString * sUseYouTubeHDH264DefaultsKey = @"useYouTubeHDH264";
-static NSString * sYouTubeAutoPlay = @"enableYouTubeAutoPlay";
-static NSString * sUseQTKitDefaultsKey = @"use QTKit";
-static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
+NSString * sDisableVideoElementDefaultsKey = @"disableVideoElement";
+NSString * sUseYouTubeH264DefaultsKey = @"useYouTubeH264";
+NSString * sUseYouTubeHDH264DefaultsKey = @"useYouTubeHDH264";
+NSString * sYouTubeAutoPlayDefaultsKey = @"enableYouTubeAutoPlay";
+NSString * sUseQTKitDefaultsKey = @"use QTKit";
+NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 @implementation CTFKillerVideo
 
@@ -1078,7 +1078,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 - (BOOL) isVideoElementAvailable
 {
-	if ( [[CTFUserDefaultsController standardUserDefaults] boolForKey:sDisableVideoElement] )
+	if ( [[CTFUserDefaultsController standardUserDefaults] boolForKey:sDisableVideoElementDefaultsKey] )
 		return NO;
 	
 	/* <video> element compatibility was added to WebKit in or shortly before version 525. */
@@ -1170,7 +1170,7 @@ static NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 - (BOOL)autoPlay {
 	BOOL result = autoPlay;
-	result = result && [[CTFUserDefaultsController standardUserDefaults] objectForKey:sYouTubeAutoPlay];
+	result = result && [[CTFUserDefaultsController standardUserDefaults] objectForKey:sYouTubeAutoPlayDefaultsKey];
 	return result;
 }
 

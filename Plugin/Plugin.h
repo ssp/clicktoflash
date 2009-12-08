@@ -48,8 +48,6 @@ enum subviewTags {
 @class CTFFullScreenWindow;
 
 @interface CTFClickToFlashPlugin : NSView <WebPlugInViewFactory> {
-	NSArray *defaultWhitelist;
-	
     DOMElement *_container;
     NSString *_host;
     NSDictionary* _flashVars;
@@ -112,11 +110,13 @@ enum subviewTags {
 - (BOOL) isConsideredInvisible;
 
 - (id) initWithArguments:(NSDictionary *)arguments;
-- (void)_migratePrefsToExternalFile;
-- (void)_uniquePrefsFileWhitelist;
-- (void) _addApplicationWhitelistArrayToPrefsFile;
+
++ (void) _migratePrefsToExternalFile;
++ (void) _uniquePrefsFileWhitelist;
++ (void) _addApplicationWhitelistArrayToPrefsFile;
 
 
+#pragma mark Accessors
 - (CTFKiller *) killer;
 - (void)setKiller:(CTFKiller *)newKiller;
 - (NSView *) containerView;

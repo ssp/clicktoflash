@@ -33,8 +33,8 @@
 #import "Plugin.h"
 #import <WebKit/WebKit.h>
 
-static NSString *sSifrAutoHandleDefaultsKey = @"autoHandleSIFR";
-static NSString *sSifrDeSifrDefaultsKey = @"deSIFR";
+NSString *sSifrAutoHandleDefaultsKey = @"autoHandleSIFR";
+NSString *sSifrDeSifrDefaultsKey = @"deSIFR";
 
 static NSString *sSifr2Test		= @"sIFR != null && typeof sIFR == \"function\"";
 static NSString *sSifr3Test		= @"sIFR != null && typeof sIFR == \"object\"";

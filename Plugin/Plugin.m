@@ -33,6 +33,7 @@ THE SOFTWARE.
 #import "CTFGradient.h"
 #import "SparkleManager.h"
 #import "CTFKiller.h"
+#import "CTFKillerVideo.h"
 #import "CTFKillerSIFR.h"
 #import "CTFLoader.h"
 #import "CTFActionButton.h"
@@ -42,13 +43,12 @@ THE SOFTWARE.
 
 #import <Carbon/Carbon.h>
 
-
 // MIME types
 static NSString *sFlashOldMIMEType = @"application/x-shockwave-flash";
 static NSString *sFlashNewMIMEType = @"application/futuresplash";
 
 // CTFUserDefaultsController keys
-static NSString *sAutoLoadInvisibleFlashViewsKey = @"autoLoadInvisibleViews";
+static NSString *sAutoLoadInvisibleFlashViewsDefaultsKey = @"autoLoadInvisibleViews";
 static NSString *sPluginEnabled = @"pluginEnabled";
 static NSString *sApplicationWhitelist = @"applicationWhitelist";
 static NSString *sUseNewStyleUIDefaultsKey =@"use new style UI";
@@ -56,6 +56,22 @@ static NSString *sUseNewStyleUIDefaultsKey =@"use new style UI";
 
 // Info.plist key for app developers
 static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
+
+#define CTFDefaultWhitelist [NSArray arrayWithObjects:\
+@"com.apple.frontrow",\
+@"com.apple.dashboard.client",\
+@"com.apple.ScreenSaver.Engine",\
+@"com.hulu.HuluDesktop",\
+@"com.riverfold.WiiTransfer",\
+@"com.bitcartel.pandorajam",\
+@"com.adobe.flexbuilder",\
+@"com.Zattoo.prefs",\
+@"fr.understudy.HuluPlayer",\
+@"com.apple.iWeb",\
+@"com.realmacsoftware.rapidweaverpro",\
+@"com.realmacsoftware.littlesnapper",\
+nil]
+
 
 
 @interface CTFClickToFlashPlugin (Internal)
@@ -86,6 +102,52 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 
 
 
+#define CTFInitialDefault( initialValue, defaultName, bla) \
+if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName] == nil ) { \
+[[CTFUserDefaultsController standardUserDefaults] setObject: initialValue forKey: defaultName]; \
+}
+
+
++ (void) initialize {
+	[CTFClickToFlashPlugin _migratePrefsToExternalFile];
+	[CTFClickToFlashPlugin _migrateWhitelist];
+	[CTFClickToFlashPlugin _uniquePrefsFileWhitelist];
+	[CTFClickToFlashPlugin _addApplicationWhitelistArrayToPrefsFile];
+	[CTFKillerSIFR migrateDefaults];
+	
+	// set up initial defaults
+	// be enabled
+	CTFInitialDefault( [NSNumber numberWithBool: YES], sPluginEnabled, )
+	// do not automatically load smaill Flash views
+	CTFInitialDefault( [NSNumber numberWithBool: NO], sAutoLoadInvisibleFlashViewsDefaultsKey, )
+	// use 'new style' UI if possible
+	CTFInitialDefault( [NSNumber numberWithBool: YES], sUseNewStyleUIDefaultsKey, )
+
+	// for CTFKillerVideo
+	// use non-Flash video if possible
+	CTFInitialDefault( [NSNumber numberWithBool: YES], sUseYouTubeH264DefaultsKey, )
+	// use HD video if possible
+	CTFInitialDefault( [NSNumber numberWithBool: NO], sUseYouTubeHDH264DefaultsKey, )
+	// use HTML5 video element or QuickTime plug-in?
+	CTFInitialDefault( [NSNumber numberWithBool: NO], sDisableVideoElementDefaultsKey, )
+	// start playback of videos automatically
+	CTFInitialDefault( [NSNumber numberWithBool: YES], sYouTubeAutoPlayDefaultsKey, )
+									  
+	// for QTKit usage in CTFKillerVideo
+	// use QTKit
+	CTFInitialDefault( [NSNumber numberWithBool: YES], sUseQTKitDefaultsKey, )
+	// default volume level when using QTKit for playback
+	CTFInitialDefault( [NSNumber numberWithFloat: 1.0], sVideoVolumeLevelDefaultsKey, )
+									  
+	// for CTFKillerSIFR
+	// automatically handle SiFR?
+	CTFInitialDefault( [NSNumber numberWithBool: YES], sSifrAutoHandleDefaultsKey, )
+	// automatically remove SiFR (and use normal text instead)?
+	CTFInitialDefault( [NSNumber numberWithBool: NO], sSifrDeSifrDefaultsKey, )
+}
+
+
+
 
 
 #pragma mark -
@@ -98,41 +160,11 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
     if (self) {
 		isConverted = NO;
 		_sparkleUpdateInProgress = NO;
-
-		defaultWhitelist = [NSArray arrayWithObjects:	@"com.apple.frontrow",
-														@"com.apple.dashboard.client",
-														@"com.apple.ScreenSaver.Engine",
-														@"com.hulu.HuluDesktop",
-														@"com.riverfold.WiiTransfer",
-														@"com.bitcartel.pandorajam",
-														@"com.adobe.flexbuilder",
-														@"com.Zattoo.prefs",
-														@"fr.understudy.HuluPlayer",
-														@"com.apple.iWeb",
-														@"com.realmacsoftware.rapidweaverpro",
-														@"com.realmacsoftware.littlesnapper",
-							nil];
-		
-        if (![[CTFUserDefaultsController standardUserDefaults] objectForKey:sAutoLoadInvisibleFlashViewsKey]) {
-            //  Default to auto-loading invisible flash views.
-            [[CTFUserDefaultsController standardUserDefaults] setBool:YES forKey:sAutoLoadInvisibleFlashViewsKey];
-        }
-		if (![[CTFUserDefaultsController standardUserDefaults] objectForKey:sPluginEnabled]) {
-			// Default to enable the plugin
-			[[CTFUserDefaultsController standardUserDefaults] setBool:YES forKey:sPluginEnabled];
-		}
-
 		[self setLaunchedAppBundleIdentifier:[CTFClickToFlashPlugin launchedAppBundleIdentifier]];
 		
 		[self setWebView:[[[arguments objectForKey:WebPlugInContainerKey] webFrame] webView]];
 		
         [self setContainer:[arguments objectForKey:WebPlugInContainingElementKey]];
-        
-        [self _migrateWhitelist];
-		[self _migratePrefsToExternalFile];
-		[self _uniquePrefsFileWhitelist];
-		[self _addApplicationWhitelistArrayToPrefsFile];
-        [CTFKillerSIFR migrateDefaults];
 		
         // Get URL
         
@@ -188,7 +220,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 		CTFUserDefaultsController *standardUserDefaults = [CTFUserDefaultsController standardUserDefaults];
 		BOOL pluginEnabled = [standardUserDefaults boolForKey:sPluginEnabled ];
 		NSString *hostAppBundleID = [[NSBundle mainBundle] bundleIdentifier];
-		BOOL hostAppIsInDefaultWhitelist = [defaultWhitelist containsObject:hostAppBundleID];
+		BOOL hostAppIsInDefaultWhitelist = [CTFDefaultWhitelist containsObject:hostAppBundleID];
 		BOOL hostAppIsInUserWhitelist = [[standardUserDefaults arrayForKey:sApplicationWhitelist] containsObject:hostAppBundleID];
 		BOOL hostAppWhitelistedInInfoPlist = NO;
 		if ([[[NSBundle mainBundle] infoDictionary] objectForKey:sCTFOptOutKey]) hostAppWhitelistedInInfoPlist = YES;
@@ -215,7 +247,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
         
 		[ CTFMenubarMenuController sharedController ];	// trigger the menu items to be added
 
-		if ( [ [ CTFUserDefaultsController standardUserDefaults ] boolForKey: sAutoLoadInvisibleFlashViewsKey ]
+		if ( [ [ CTFUserDefaultsController standardUserDefaults ] boolForKey: sAutoLoadInvisibleFlashViewsDefaultsKey ]
 			&& [ self isConsideredInvisible ] ) {
 			// auto-loading is on and this view meets the size constraints
             _isLoadingFromWhitelist = YES;
@@ -1034,7 +1066,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 #pragma mark -
 #pragma mark Preferences
 
-- (void) _migratePrefsToExternalFile
++ (void) _migratePrefsToExternalFile
 {
 	NSArray *parasiticDefaultsNameArray = [NSArray arrayWithObjects:@"ClickToFlash_pluginEnabled",
 										   @"ClickToFlash_useYouTubeH264",
@@ -1044,9 +1076,9 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 										   @"ClickToFlash_siteInfo",
 										   nil];
 	
-	NSArray *externalDefaultsNameArray = [NSArray arrayWithObjects:@"pluginEnabled",
-										  @"useYouTubeH264",
-										  @"autoLoadInvisibleViews",
+	NSArray *externalDefaultsNameArray = [NSArray arrayWithObjects:sPluginEnabled,
+										  sUseYouTubeH264DefaultsKey,
+										  sAutoLoadInvisibleFlashViewsDefaultsKey,
 										  @"sifrMode",
 										  @"checkForUpdatesOnFirstLoad",
 										  @"siteInfo",
@@ -1086,7 +1118,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 }
 
 
-- (void) _uniquePrefsFileWhitelist
++ (void) _uniquePrefsFileWhitelist
 {
 	NSArray *siteInfoArray = [[CTFUserDefaultsController standardUserDefaults] arrayForKey:@"siteInfo"];
 	NSSet *siteInfoSet = [NSSet setWithArray:siteInfoArray];
@@ -1095,7 +1127,7 @@ static NSString *sCTFOptOutKey = @"ClickToFlashOptOut";
 }
 
 
-- (void) _addApplicationWhitelistArrayToPrefsFile
++ (void) _addApplicationWhitelistArrayToPrefsFile
 {
 	CTFUserDefaultsController *standardUserDefaults = [CTFUserDefaultsController standardUserDefaults];
 	NSArray *applicationWhitelist = [standardUserDefaults arrayForKey:sApplicationWhitelist];

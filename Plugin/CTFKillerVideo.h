@@ -39,6 +39,14 @@ enum CTFKVLookupStatus {
 	failed = 3
 };
 
+extern NSString * sDisableVideoElementDefaultsKey;
+extern NSString * sUseYouTubeH264DefaultsKey;
+extern NSString * sUseYouTubeHDH264DefaultsKey;
+extern NSString * sYouTubeAutoPlayDefaultsKey;
+extern NSString * sUseQTKitDefaultsKey;
+extern NSString * sVideoVolumeLevelDefaultsKey;
+
+
 
 @interface CTFKillerVideo : CTFKiller {
 	BOOL autoPlay;
@@ -133,6 +141,7 @@ enum CTFKVLookupStatus {
 - (BOOL) useVideo;
 - (BOOL) useVideoHD;
 - (NSString *) videoURLStringForHD: (BOOL) useHD;
+- (NSURL *) downloadURL;
 - (NSString *) cleanURLString: (NSString*) URLString;
 - (BOOL) isVideoElementAvailable;
 - (void) finishedLookups;

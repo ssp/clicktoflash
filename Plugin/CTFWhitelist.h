@@ -33,7 +33,7 @@ THE SOFTWARE.
 - (IBAction) addToWhitelist: (id) sender;
 - (IBAction) editWhitelist: (id) sender;
 
-- (void) _migrateWhitelist;
++ (void) _migrateWhitelist;
 - (void) _addWhitelistObserver;
 - (BOOL) _isHostWhitelisted;
 - (BOOL) _isWhiteListedForHostString:(NSString *)hostString;
