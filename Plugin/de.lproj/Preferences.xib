@@ -40,13 +40,13 @@
 			<object class="NSWindowTemplate" id="1005">
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{80, 257}, {445, 446}}</string>
-				<int key="NSWTFlags">-534248448</int>
+				<string key="NSWindowRect">{{80, 258}, {445, 445}}</string>
+				<int key="NSWTFlags">1613235200</int>
 				<string key="NSWindowTitle">ClickToFlash Einstellungen</string>
 				<string key="NSWindowClass">NSPanel</string>
 				<nil key="NSViewClass"/>
-				<string key="NSWindowContentMaxSize">{462, 2535}</string>
-				<string key="NSWindowContentMinSize">{462, 447}</string>
+				<string key="NSWindowContentMaxSize">{445, 2535}</string>
+				<string key="NSWindowContentMinSize">{445, 445}</string>
 				<object class="NSView" key="NSWindowView" id="1006">
 					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">274</int>
@@ -55,7 +55,7 @@
 						<object class="NSButton" id="43744226">
 							<reference key="NSNextResponder" ref="1006"/>
 							<int key="NSvFlags">288</int>
-							<string key="NSFrame">{{169, 131}, {22, 20}}</string>
+							<string key="NSFrame">{{169, 130}, {22, 20}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="13544439">
@@ -83,7 +83,7 @@
 						<object class="NSButton" id="241393621">
 							<reference key="NSNextResponder" ref="1006"/>
 							<int key="NSvFlags">288</int>
-							<string key="NSFrame">{{148, 131}, {22, 20}}</string>
+							<string key="NSFrame">{{148, 130}, {22, 20}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="811527510">
@@ -245,13 +245,13 @@
 						<object class="NSButton" id="596693856">
 							<reference key="NSNextResponder" ref="1006"/>
 							<int key="NSvFlags">264</int>
-							<string key="NSFrame">{{146, 410}, {226, 18}}</string>
+							<string key="NSFrame">{{146, 409}, {144, 18}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="410759951">
 								<int key="NSCellFlags">-2080244224</int>
 								<int key="NSCellFlags2">0</int>
-								<string key="NSContents">Anzeige von Flash unterdrücken</string>
+								<string key="NSContents">Flash unterdrücken</string>
 								<object class="NSFont" key="NSSupport" id="906693409">
 									<string key="NSName">LucidaGrande</string>
 									<double key="NSSize">13</double>
@@ -276,7 +276,7 @@
 						<object class="NSTextField" id="972818591">
 							<reference key="NSNextResponder" ref="1006"/>
 							<int key="NSvFlags">264</int>
-							<string key="NSFrame">{{101, 371}, {42, 17}}</string>
+							<string key="NSFrame">{{101, 370}, {42, 17}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="1061234246">
@@ -335,13 +335,13 @@
 						<object class="NSButton" id="90714319">
 							<reference key="NSNextResponder" ref="1006"/>
 							<int key="NSvFlags">264</int>
-							<string key="NSFrame">{{146, 309}, {159, 18}}</string>
+							<string key="NSFrame">{{146, 309}, {163, 18}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="688316371">
 								<int key="NSCellFlags">-2080244224</int>
 								<int key="NSCellFlags2">0</int>
-								<string key="NSContents">Kleine Flash Elemente</string>
+								<string key="NSContents">Kleine Flash-Elemente</string>
 								<reference key="NSSupport" ref="906693409"/>
 								<reference key="NSControlView" ref="90714319"/>
 								<int key="NSButtonFlags">1211912703</int>
@@ -409,13 +409,13 @@
 						<object class="NSButton" id="124868638">
 							<reference key="NSNextResponder" ref="1006"/>
 							<int key="NSvFlags">288</int>
-							<string key="NSFrame">{{146, 89}, {218, 18}}</string>
+							<string key="NSFrame">{{146, 89}, {192, 18}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="548281549">
 								<int key="NSCellFlags">-2080244224</int>
 								<int key="NSCellFlags2">0</int>
-								<string key="NSContents">Einmal wöchentlich überprüfen</string>
+								<string key="NSContents">Einmal wöchentlich suchen</string>
 								<reference key="NSSupport" ref="906693409"/>
 								<reference key="NSControlView" ref="124868638"/>
 								<int key="NSButtonFlags">1211912703</int>
@@ -489,13 +489,13 @@
 						<object class="NSButton" id="645110922">
 							<reference key="NSNextResponder" ref="1006"/>
 							<int key="NSvFlags">264</int>
-							<string key="NSFrame">{{146, 289}, {87, 18}}</string>
+							<string key="NSFrame">{{146, 289}, {91, 18}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="657437119">
 								<int key="NSCellFlags">-2080244224</int>
 								<int key="NSCellFlags2">0</int>
-								<string key="NSContents">Flash Text</string>
+								<string key="NSContents">Flash-Text</string>
 								<reference key="NSSupport" ref="906693409"/>
 								<reference key="NSControlView" ref="645110922"/>
 								<int key="NSButtonFlags">1211912703</int>
@@ -531,11 +531,11 @@
 							</object>
 						</object>
 					</object>
-					<string key="NSFrameSize">{445, 446}</string>
+					<string key="NSFrameSize">{445, 445}</string>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
-				<string key="NSMinSize">{462, 469}</string>
-				<string key="NSMaxSize">{462, 2557}</string>
+				<string key="NSMinSize">{445, 467}</string>
+				<string key="NSMaxSize">{445, 2557}</string>
 				<string key="NSFrameAutosaveName">ClickToFlash_settingsWindow</string>
 			</object>
 			<object class="NSArrayController" id="258102979">
@@ -918,7 +918,7 @@
 						<object class="NSButton" id="126965170">
 							<reference key="NSNextResponder" ref="263062107"/>
 							<int key="NSvFlags">256</int>
-							<string key="NSFrame">{{203, 12}, {99, 32}}</string>
+							<string key="NSFrame">{{176, 12}, {126, 32}}</string>
 							<reference key="NSSuperview" ref="263062107"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="1049518529">
@@ -1327,7 +1327,6 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="619486495"/>
-							<reference ref="596693856"/>
 							<reference ref="951890354"/>
 							<reference ref="43744226"/>
 							<reference ref="241393621"/>
@@ -1343,6 +1342,7 @@
 							<reference ref="645110922"/>
 							<reference ref="124868638"/>
 							<reference ref="912083957"/>
+							<reference ref="596693856"/>
 						</object>
 						<reference key="parent" ref="1005"/>
 					</object>
@@ -1950,6 +1950,7 @@
 					<string>199.IBPluginDependency</string>
 					<string>199.ImportedFromIB2</string>
 					<string>2.IBPluginDependency</string>
+					<string>2.IBUserGuides</string>
 					<string>20.IBAttributePlaceholdersKey</string>
 					<string>20.IBPluginDependency</string>
 					<string>200.IBPluginDependency</string>
@@ -2036,16 +2037,16 @@
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{160, 167}, {445, 446}}</string>
+					<string>{{160, 168}, {445, 445}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{160, 167}, {445, 446}}</string>
+					<string>{{160, 168}, {445, 445}}</string>
 					<integer value="1"/>
 					<string>{196, 240}</string>
 					<string>{{202, 428}, {480, 270}}</string>
 					<boolean value="YES"/>
 					<boolean value="YES"/>
-					<string>{462, 2535}</string>
-					<string>{462, 447}</string>
+					<string>{445, 2535}</string>
+					<string>{445, 445}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableDictionary">
@@ -2105,10 +2106,10 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{97, 461}, {461, 124}}</string>
+					<string>{{97, 461}, {434, 129}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
-					<string>{{97, 461}, {461, 124}}</string>
+					<string>{{97, 461}, {434, 129}}</string>
 					<boolean value="YES"/>
 					<boolean value="YES"/>
 					<string>{1.79769e+308, 1.79769e+308}</string>
@@ -2122,12 +2123,20 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableArray">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="IBUserGuide">
+							<reference key="view" ref="1006"/>
+							<double key="location">139</double>
+							<int key="affinity">0</int>
+						</object>
+					</object>
 					<object class="NSMutableDictionary">
 						<string key="NS.key.0">AccessibilityDescription</string>
 						<object class="IBAccessibilityAttribute" key="NS.object.0">
 							<string key="name">AccessibilityDescription</string>
 							<reference key="object" ref="43744226"/>
-							<string key="accessibilityValue">Ausgewählte Website löschen</string>
+							<string key="accessibilityValue">Ausgewählte Website entfernen</string>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2141,10 +2150,10 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{104, 481}, {445, 146}}</string>
+					<string>{{104, 481}, {461, 146}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
-					<string>{{104, 481}, {445, 146}}</string>
+					<string>{{104, 481}, {461, 146}}</string>
 					<boolean value="YES"/>
 					<boolean value="YES"/>
 					<string>{1.79769e+308, 1.79769e+308}</string>
@@ -2163,10 +2172,10 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{135, 453}, {414, 132}}</string>
+					<string>{{135, 453}, {411, 132}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="NO"/>
-					<string>{{135, 453}, {414, 132}}</string>
+					<string>{{135, 453}, {411, 132}}</string>
 					<boolean value="YES"/>
 					<boolean value="YES"/>
 					<string>{1.79769e+308, 1.79769e+308}</string>
@@ -2190,7 +2199,7 @@
 						<object class="IBToolTipAttribute" key="NS.object.0">
 							<string key="name">ToolTip</string>
 							<reference key="object" ref="579722444"/>
-							<string key="toolTip">sIFR (Scalable Inman Flash Replacement) replaces text on HTML pages with Flash equivalents to provide better typography.</string>
+							<string key="toolTip">sIFR (Scalable Inman Flash Replacement) stellt Text auf Webseiten mit Flash dar, um die Verwendung zusätzlicher Schriftarten zu ermöglichen.</string>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2210,8 +2219,8 @@
 							<string type="base64-UTF8" key="toolTip">RmFsbHMgVmlkZW8tU2l0ZXMgZWluZSBncm/Dn2Ug4oCeSETigJwtVmVyc2lvbiBlaW5lcyBGaWxtcyB6
 dXIgVmVyZsO8Z3VuZyBzdGVsbGVuLCBrYW5uIGRpZXNlIGdlbnV0enQgd2VyZGVuLgoKRGllcyBlcmjD
 tmh0IGRpZSBNZW5nZSBkZXIgenUgbGFkZW5kZW4gRGF0ZW4gdW5kIGRlciBiZW7DtnRpZ3RlbiBSZWNo
-ZW5sZWlzdHVuZyB6dW0gQWJzcGllbGVuIGRlcyBGaWxtcyBlcmhlYmxpY2ggdW5kIGhhdCBiZWkga2xl
-aW5lciBEYXJzdGVsbHVuZ3NncsO2w59lIG3DtmdsaWNoZXJ3ZWlzZSBrZWluZW4gc2ljaHRiYXJlbiBW
+ZW5sZWlzdHVuZyB6dW0gQWJzcGllbGVuIGRlcyBGaWxtcyBlcmhlYmxpY2guIEJlaSBrbGVpbmVyIERh
+cnN0ZWxsdW5nc2dyw7bDn2UgaGF0IGVzIG3DtmdsaWNoZXJ3ZWlzZSBrZWluZW4gc2ljaHRiYXJlbiBW
 b3J0ZWlsLg</string>
 						</object>
 					</object>
@@ -2222,7 +2231,11 @@ b3J0ZWlsLg</string>
 						<object class="IBToolTipAttribute" key="NS.object.0">
 							<string key="name">ToolTip</string>
 							<reference key="object" ref="645110922"/>
-							<string key="toolTip">Einige Websites nutzen Flash, um beispielsweise in Überschriften Text mit ihren eigenen Schriftarten anzuzeigen. ClickToFlash erkennt dies und kann diesen Fall automatisch behandeln.</string>
+							<string type="base64-UTF8" key="toolTip">RWluaWdlIFdlYnNpdGVzIG51dHplbiBGbGFzaCwgdW0gYmVpc3BpZWxzd2Vpc2UgaW4gw5xiZXJzY2hy
+aWZ0ZW4gVGV4dCBtaXQgaWhyZW4gZWlnZW5lbiBTY2hyaWZ0YXJ0ZW4gYW56dXplaWdlbi4KCkNsaWNr
+VG9GbGFzaCBlcmtlbm50IGRpZXMgdW5kIGthbm4gZGllc2VuIEZhbGwgYXV0b21hdGlzY2ggYmVoYW5k
+ZWxuLCBpbmRlbSBGbGFzaCBkb3J0IGF1dG9tYXRpc2NoIGdlbGFkZW4gb2RlciB1bnRlcmRyw7xja3Qg
+d2lyZC4</string>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2232,7 +2245,7 @@ b3J0ZWlsLg</string>
 						<object class="IBToolTipAttribute" key="NS.object.0">
 							<string key="name">ToolTip</string>
 							<reference key="object" ref="442524382"/>
-							<string key="toolTip">Wenn Flash Text automatisch behandelt wird, kann er entfernt und durch gewöhnlichen Webseitentext ersetzt werden.</string>
+							<string key="toolTip">Wenn Flash-Text automatisch behandelt wird, kann er entfernt und durch gewöhnlichen Webseitentext ersetzt werden.</string>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2246,7 +2259,7 @@ b3J0ZWlsLg</string>
 dVR1YmUuIEVzIGthbm4gZG9ydCB2ZXJzdWNoZW4sIGRlbiBGbGFzaC1iYXNpZXJ0ZW4gVmlkZW8tUGxh
 eWVyIGR1cmNoIFF1aWNrVGltZSB6dSBlcnNldHplbi4KCkRhcyBpc3Qgd2VzZW50bGljaCBlZmZpemll
 bnRlciwgc3BhcnQgU3Ryb20gdW5kIGhlaXp0IGRlbiBSZWNobmVyIG5pY2h0IHNvIHN0YXJrIGF1Zi4g
-U2l0ZS1zcGV6aWZpc2NoZSBGdW5rdGlvbmVuIGRlcyBQbGFuZXJzIHN0ZWhlbiBkYWJlaSBhbGxlcmRp
+U2l0ZS1zcGV6aWZpc2NoZSBGdW5rdGlvbmVuIGRlcyBQbGF5ZXJzIHN0ZWhlbiBkYWJlaSBhbGxlcmRp
 bmdzIG5pY2h0IHp1ciBWZXJmw7xndW5nLg</string>
 						</object>
 					</object>

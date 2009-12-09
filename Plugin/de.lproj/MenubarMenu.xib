@@ -67,7 +67,7 @@
 					</object>
 					<object class="NSMenuItem" id="490340554">
 						<reference key="NSMenu" ref="93442052"/>
-						<string key="NSTitle">Anzeige von Flash unterdrücken</string>
+						<string key="NSTitle">Flash unterdrücken</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="661570174"/>
@@ -93,7 +93,7 @@
 					</object>
 					<object class="NSMenuItem" id="275181830">
 						<reference key="NSMenu" ref="93442052"/>
-						<string key="NSTitle">Flash auf dieser Seite laden</string>
+						<string key="NSTitle">Flash laden</string>
 						<string key="NSKeyEquiv">f</string>
 						<int key="NSKeyEquivModMask">1310720</int>
 						<int key="NSMnemonicLoc">2147483647</int>
@@ -102,7 +102,7 @@
 					</object>
 					<object class="NSMenuItem" id="401833747">
 						<reference key="NSMenu" ref="93442052"/>
-						<string key="NSTitle">Unsichtbares Flash auf dieser Seite laden</string>
+						<string key="NSTitle">Nur kleine Flash-Elemente laden</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="661570174"/>

@@ -30,10 +30,10 @@
 "Load Flash" = "Flash laden";
 
 /* Load All on this page contextual menu item */
-"Load All on this Page" = "Alles Flash auf dieser Seite laden";
+"Load All on this Page" = "Alles Flash laden";
 
 /* Hide Flash contextual menu item (sets display:none) */
-"Hide Flash" = "Flash verbergen"; 
+"Hide Flash" = "Flash verbergen";
 
 /* Remove Flash contextual menu item (sets visibility: hidden) */
 "Remove Flash" = "Flash entfernen";
@@ -52,7 +52,7 @@
 */
 
 /* NSAccessibilityDescriptionAttribute for CTFMainButton */
-"Load Flash Content" = "Flash-Inhalt laden";
+"Load Flash Content" = "Flash-Element laden";
 
 
 
@@ -67,7 +67,7 @@
 /* Format to create a 'Video Service...'-style string */
 "%@..." = "%@ …";
 
-/* H.264 badge text */
+/* H.264 badge text [CTFKillerVideo] */
 "H.264" = "QuickTime";
 
 /* HD H.264 badge text */
@@ -79,10 +79,10 @@
 "Load H.264" = "Film mit QuickTime abspielen";
 
 /* Load Smaller Version contextual menu item (alternate for the standard Load H.264 item when the default uses the 'HD' version) */
-"Load H.264 SD Version"	= "Kleinere Version mit QuickTime abspielen";
+"Load H.264 SD Version" = "Kleinere Version mit QuickTime abspielen";
 
 /* Load Larger Version contextual menu item (alternate for the standard Load H.264 item when the default uses the non-'HD' version) */
-"Load H.264 HD Version"	= "Größere Version mit QuickTime abspielen";
+"Load H.264 HD Version" = "Größere Version mit QuickTime abspielen";
 
 /* Load SITENAME page for this video menu item */
 "Load %@ page for this video" = "%@ Seite öffnen";
@@ -136,7 +136,7 @@
 /* Text of link to additional Larger Size Video Download appearing beneath the video after the standard link */
 "Larger Size" = "Größere Version";
 
-/* Text of link to the video page on SITENAME appearing beneath the video  */ 
+/* Text of link to the video page on SITENAME appearing beneath the video  */
 "Go to %@ Page" = "%@ Seite öffnen";
 
 
