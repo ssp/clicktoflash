@@ -1,7 +1,4 @@
-﻿/* 
-	PLUGIN
-*/
-
+﻿
 
 
 
@@ -19,21 +16,15 @@
 
 
 
-
-
-/*
-	CtF Plug-In Contextual Menu
-*/
-
-/* Title of Contextual Menu */
 /* Accessibility: CTFActionButton, Title of Contextual Menu */
+
 "ClickToFlash Contextual menu" = "Menu contextuel ClickToFlash";
 
 /* Load Flash contextual menu item */
 "Load Flash" = "Charger Flash";
 
 /* Load All on this page contextual menu item */
-"Load All on this Page" = "Tout charger sur cette page";
+"Load All on this Page" = "Charger tout le Flash";
 
 /* Hide Flash contextual menu item (sets display:none) */
 "Hide Flash" = "Masquer Flash";
@@ -49,20 +40,10 @@
 
 
 
-
-/* 
-	Main Button (CTFMainButton)
-*/
-
 /* NSAccessibilityDescriptionAttribute for CTFMainButton */
 "Load Flash Content" = "Charger le contenu Flash";
 
 
-
-
-/* 
-	Video Strings (CTFKillerVideo)
-*/
 
 /* Format for badge text for video service. This should probably just be %@ */
 "%@ (VideoServiceName)" = "%@";
@@ -119,16 +100,8 @@
 /* CTFKillerVideo: Tooltip for HD button when it is turned OFF */
 "Use larger version of the movie" = "Utiliser une version plus grande de ce film";
 
-
-
-
-
-/*
-	Additional Links for inserted QuickTime film
-*/
-
-/* Text of link to Video Download appearing beneath the video */
 /* CTFKillerVideo: Tooltip for Video Download button */
+
 "Download video file" = "Télécharger le fichier film";
 
 /* Label for download links appearing beneath the video */
@@ -145,12 +118,6 @@
 
 
 
-
-
-/*
-	CTFKillerSIFR
-*/
-
 /* sIFR Flash badge text */
 "sIFR Flash" = "Remplacement de texte";
 
@@ -159,20 +126,10 @@
 
 
 
-
-
-/* 
-	CTFWHITELISTWINDOWCONTROLLER
-*/
-
 /* Successful uninstallation Sheet informational message with application name */
 "Please quit and relaunch '%@' for the change to take effect." = "Veuillez quitter et relancer « %@ » pour que le changement prenne effet.";
 
 
-
-/*
-	CTFWHITELIST
-*/
 
 /* Always load Flash for '%@'? alert title */
 "Always load Flash for '%@'?" = "Utiliser Flash automatiquement sur « %@ »?";

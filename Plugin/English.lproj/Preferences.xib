@@ -2197,11 +2197,10 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableDictionary">
-						<string key="NS.key.0">ToolTip</string>
-						<object class="IBToolTipAttribute" key="NS.object.0">
-							<string key="name">ToolTip</string>
-							<reference key="object" ref="579722444"/>
-							<string key="toolTip">sIFR (Scalable Inman Flash Replacement) replaces text on HTML pages with Flash equivalents to provide better typography.</string>
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<reference key="dict.sortedKeys" ref="0"/>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2255,10 +2254,10 @@ bnRzIGluc3RlYWQuA</string>
 							<reference key="object" ref="619486495"/>
 							<string type="base64-UTF8" key="toolTip">Q2xpY2tUb0ZsYXNoIGlzIGF3YXJlIG9mIHNvbWUgdmlkZW8gc2VydmljZXMg4oCTwqBtb3N0IG5vdGFi
 bHkgWW91VHViZS4gSXQgY2FuIHRyeSB0byB1c2UgUXVpY2tUaW1lIGluc3RlYWQgb2YgdGhlIHNpdGXi
-gJlzIGN1c3RvbSB2aWRlbyBwbGF5ZXIuCgpEb2luZyB0aGF0IGlzIG1vcmUgZWZmaWNpZW50IGFuZCBp
-dCBjcmVhdGVzIGxlc3MgaGVhdCB0aGFuIHVzaW5nIHRoZSBzaXRl4oCZcyBjdXN0b20gdmlkZW8gcGxh
-eWVyIGRvZXMuIEhvd2V2ZXIsIHlvdSB3aWxsIHBvdGVudGlhbGx5IG1pc3Mgb3V0IG9uIHNpdGUtc3Bl
-Y2lmaWMgcGxheWVyIGZlYXR1cmVzLg</string>
+gJlzIGN1c3RvbSB2aWRlbyBwbGF5ZXIuCkRvaW5nIHRoYXQgaXMgbW9yZSBlZmZpY2llbnQgYW5kIGl0
+IGNyZWF0ZXMgbGVzcyBoZWF0IHRoYW4gdXNpbmcgdGhlIHNpdGXigJlzIGN1c3RvbSB2aWRlbyBwbGF5
+ZXIgZG9lcy4gSG93ZXZlciwgeW91IHdpbGwgcG90ZW50aWFsbHkgbWlzcyBvdXQgb24gc2l0ZS1zcGVj
+aWZpYyBwbGF5ZXIgZmVhdHVyZXMuA</string>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
