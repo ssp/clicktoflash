@@ -910,7 +910,6 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	if ( [self killer] != nil ) {
 		[[self killer] startFullScreen];
 	}
-	[NSCursor setHiddenUntilMouseMoves:YES];
 }
 
 

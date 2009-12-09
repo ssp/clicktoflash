@@ -335,6 +335,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	if ( [self movieView] != nil ) {
 		[[self movieView] setFillColor: [NSColor blackColor]];
 		[[[self plugin] buttonsContainer] setAutoresizingMask: NSViewNotSizable];
+		[NSCursor setHiddenUntilMouseMoves:YES];
 	}
 	[self adjustButtonPositions:YES];
 }
