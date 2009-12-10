@@ -370,7 +370,7 @@
 
 	id gradient = [NSClassFromString(@"NSGradient") alloc];
 	if ( gradient != nil ) {
-		[[gradient initWithColorsAndLocations: startColor, .0, endColor, .8, nil] autorelease];
+		gradient = [[gradient initWithColorsAndLocations: startColor, .0, endColor, .8, nil] autorelease];
 		[gradient drawInBezierPath: bP angle: 90. + gradientRotation];
 	}
 	else {
@@ -419,7 +419,7 @@
 	
 	id gradient = [NSClassFromString(@"NSGradient") alloc];
 	if ( gradient != nil ) {
-		[[gradient initWithColorsAndLocations: startColor, .0, endColor, 1., nil] autorelease];
+		gradient = [[gradient initWithColorsAndLocations: startColor, .0, endColor, 1., nil] autorelease];
 		[gradient drawInBezierPath: bP angle: 90. + gradientRotation];
 	}
 	else {
