@@ -180,7 +180,7 @@
 
 // If lookups are required to determine the correct URL to the video, redo them. When returning, the URLs should be refreshed and ready to use.
 - (void) refreshVideoURLs {
-	[self _retrieveEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId: [self videoID]];
+	[self retrieveYouTubeInfoAndCheckWithVideoID: [self videoID]];
 }
 
 
@@ -273,37 +273,51 @@
 			[self setVideoID: myVideoID];
 		}
 		
+		// 'hash' value is in the 't' or 'token' flashvar
 		NSString * myHash = [self flashVarWithName: @"t"];
+		if ( myHash == nil ) {
+			myHash = [self flashVarWithName: @"token"];
+		}
 		if ( myHash != nil ) {
 			[self setVideoHash: myHash];
 			[self _checkForH264VideoVariants];
 		}
 		else {
-			NSLog(@"ClickToFlashKillerYouTube -setInfoFromFlashVars: No 't' parameter found for video %@", [self videoID]);
+			NSLog(@"ClickToFlashKillerYouTube -setInfoFromFlashVars: No 't' or 'token' Flash variable found for video %@", [self videoID]);
 		}
 	}
 }
 
 
-
-- (void)_retrieveEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId:(NSString *)videoId {
+- (void) retrieveYouTubeInfoAndCheckWithVideoID: (NSString *) theVideoID {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	[self increaseActiveLookups];
 
-	NSURL *YouTubePageURL = [NSURL URLWithString: [self videoPageURLString]];
-	NSError *pageSourceError = nil;
-	NSString *pageSourceString = [NSString stringWithContentsOfURL:YouTubePageURL
-													  usedEncoding:nil
-															 error:&pageSourceError];
-	NSDictionary *myFlashVars = nil;
-	if (pageSourceString != nil) {
-		myFlashVars = [self _flashVarDictionaryFromYouTubePageHTML:pageSourceString];
+	NSString * YouTubeInfoURLString = [NSString stringWithFormat:@"http://www.youtube.com/get_video_info?video_id=%@", theVideoID];
+	NSURL * YouTubeInfoURL = [NSURL URLWithString: YouTubeInfoURLString];
+	NSError * YouTubeInfoError = nil;
+	NSString * YouTubeInfoString = [NSString stringWithContentsOfURL: YouTubeInfoURL
+														usedEncoding: nil
+															   error: &YouTubeInfoError];
+	if (YouTubeInfoString != nil) {
+		NSArray * argumentArray = [YouTubeInfoString componentsSeparatedByString:@"&"];
+		NSMutableDictionary * myFlashVars = [NSMutableDictionary dictionaryWithCapacity: [argumentArray count]];
+		CTFForEachObject( NSString, argument, argumentArray ) {
+			NSRange equalsRange = [argument rangeOfString:@"=" options:NSLiteralSearch];
+			if ( equalsRange.location != NSNotFound && [argument length] > equalsRange.location ) {
+				NSString * argumentName = [argument substringToIndex: equalsRange.location];
+				NSString * argumentInfo = [argument substringFromIndex: equalsRange.location + 1];
+				argumentInfo = [argumentInfo stringByReplacingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+				[myFlashVars setObject: argumentInfo forKey: argumentName];
+			}
+		}
+		
 		[self setFlashVars: myFlashVars];
 		[self setInfoFromFlashVars];
 	}
 	else {
-		if (pageSourceError != nil) {
-			NSLog(@"ClickToFlashKillerYouTube, Error in -_retrieveEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId: %@", [pageSourceError localizedDescription]);
+		if (YouTubeInfoError != nil) {
+			NSLog(@"ClickToFlashKillerYouTube, Error in -retrieveYouTubeInfoAndCheckWithVideoID: %@", [YouTubeInfoError localizedDescription]);
 		}
 	}
 
@@ -313,59 +327,8 @@
 
 
 
-- (NSDictionary*) _flashVarDictionaryFromYouTubePageHTML: (NSString*) youTubePageHTML
-{
-	NSMutableDictionary* flashVarsDictionary = [ NSMutableDictionary dictionary ];
-	NSScanner *HTMLScanner = [[NSScanner alloc] initWithString:youTubePageHTML];
-	
-	[HTMLScanner scanUpToString:@"var swfArgs = {" intoString: nil];
-	BOOL swfArgsFound = [HTMLScanner scanString:@"var swfArgs = {" intoString:nil];
-	if (!swfArgsFound) {
-		// the magic words seems to be SWF_ARGS in places (or now?)
-		[HTMLScanner setScanLocation:0];
-		[HTMLScanner scanUpToString:@"'SWF_ARGS': {" intoString: nil];
-		swfArgsFound = [HTMLScanner scanString:@"'SWF_ARGS': {" intoString:nil];
-	}
-		
-
-	if (swfArgsFound) {
-		NSString *swfArgsString = nil;
-		[HTMLScanner scanUpToString:@"}" intoString:&swfArgsString];
-		NSArray *arrayOfSWFArgs = [swfArgsString componentsSeparatedByString:@", "];
-		CTFForEachObject( NSString, currentArgPairString, arrayOfSWFArgs ) {
-			NSRange sepRange = [ currentArgPairString rangeOfString:@": "];
-			if (sepRange.location != NSNotFound) {
-				NSString *potentialKey = [currentArgPairString substringToIndex:sepRange.location];
-				NSString *potentialVal = [currentArgPairString substringFromIndex:NSMaxRange(sepRange)];
-				
-				// we might need to strip the surrounding quotes from the keys and values
-				// (but not always)
-				NSString *key = nil;
-				if ([[potentialKey substringToIndex:1] isEqualToString:@"\""]) {
-					key = [potentialKey substringWithRange:NSMakeRange(1,[potentialKey length] - 2)];
-				} else {
-					key = potentialKey;
-				}
-				
-				NSString *val = nil;
-				if ([[potentialVal substringToIndex:1] isEqualToString:@"\""]) {
-					val = [potentialVal substringWithRange:NSMakeRange(1,[potentialVal length] - 2)];
-				} else {
-					val = potentialVal;
-				}
-				
-				[flashVarsDictionary setObject:val forKey:key];
-			}
-		}
-	}
-	
-	[HTMLScanner release];
-	return flashVarsDictionary;
-}
-
-
 - (void)_getEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId:(NSString *)videoId {
-	[NSThread detachNewThreadSelector:@selector(_retrieveEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId:)
+	[NSThread detachNewThreadSelector:@selector(retrieveYouTubeInfoAndCheckWithVideoID:)
 							 toTarget:self
 						   withObject:videoId];
 }
