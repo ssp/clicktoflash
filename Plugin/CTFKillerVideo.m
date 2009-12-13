@@ -26,20 +26,19 @@
 */
 
 #import "CTFKillerVideo.h"
-#import <WebKit/WebKit.h>
-#import <QTKit/QTKit.h>
+#import "CTFKillerVideo-QT.h"
+#import "CTFKillerVideo-HTML.h"
 #import "CTFUserDefaultsController.h"
 #import "CTFUtilities.h"
 #import "Plugin.h"
-#import "CTFButtonsView.h"
+#import <QTKit/QTKit.h>
 
-static NSString * divCSS = @"margin:auto;padding:0px;border:0px none;text-align:center;display:block;float:none;";
+
 NSString * sDisableVideoElementDefaultsKey = @"disableVideoElement";
 NSString * sUseYouTubeH264DefaultsKey = @"useYouTubeH264";
 NSString * sUseYouTubeHDH264DefaultsKey = @"useYouTubeHDH264";
 NSString * sYouTubeAutoPlayDefaultsKey = @"enableYouTubeAutoPlay";
 NSString * sUseQTKitDefaultsKey = @"use QTKit";
-NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 @implementation CTFKillerVideo
 
@@ -78,18 +77,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
-/* This is 10.5 and higher only. It is only used for QTMovie-style playback which requires 10.5 as well. */
-+ (NSSet *) keyPathsForValuesAffectingValueForKey: (NSString *) key {
-	NSSet * result = [super keyPathsForValuesAffectingValueForKey:key];
-	
-	if ([key isEqualToString:@"HDButtonTooltip"]) {
-		result = [result setByAddingObject: @"usingHD"];
-	}
-	
-	return result;
-}
-
-
 
 
 #pragma mark -
@@ -119,8 +106,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	return descriptionElement;
 }
 
-
-
 // If we are on the video's home page return YES, otherwise NO. This is used to determine whether we need links pointing to the video's home page.
 - (BOOL) isOnVideoPage {
 	BOOL result = NO;
@@ -137,31 +122,9 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
-// Remove http:// and www. from beginning of URL.
-- (NSString *) cleanURLString: (NSString*) URLString {
-	NSString * result = URLString;
-
-	NSRange range = [URLString rangeOfString:@"http://www." options:NSAnchoredSearch];
-	if (range.location == NSNotFound) {
-		range = [URLString rangeOfString:@"http://" options:NSAnchoredSearch];
-	}
-	if (range.location != NSNotFound) {
-		result = [URLString substringFromIndex: range.length];
-	}
-	
-	return result;
-}
-					
-
-// Helper method used by subclasses to determine whether we want to handle video without Flash.
-+ (BOOL) isActive {
-	BOOL result = [[CTFUserDefaultsController standardUserDefaults] boolForKey: sUseYouTubeH264DefaultsKey];
-	return result;
-}
 
 
-					
-					
+
 					
 #pragma mark -
 #pragma mark Subclass override of CTFKiller
@@ -174,9 +137,8 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		[button unbind:@"toolTip"];
 		[button unbind:@"value"];		
 	}
-	[[self movie] stop];
-	[[self movieView] setMovie:nil];
 	[self setMovie:nil];
+	[[self movieView] setMovie:nil];
 	[self setMovieView: nil];
 	[self setMovieSetupThread: nil];
 	[self setProgressIndicator: nil];
@@ -311,21 +273,14 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
-// Implement default container conversion: If there is a film, use it.
+/* 
+ Implement default container conversion: If there is a film, use it.
+ Depending on the OS version and preferences it is inserted into the DOM as a video or embed element or we display it in our own QTMovieView.
+*/
 - (BOOL) convert {
-	BOOL result = NO;
-	
-	if ([self lookupStatus] == finished && [self hasVideo] && [CTFKillerVideo isActive]) {
-		[self convertToMP4ContainerUsingHD:nil];
-		result = YES;
-	}
-	else if ([self lookupStatus] == inProgress) {
-		[self setRequiresConversion: YES];
-		result = YES;
-	}
-	
-	return result;
+	return [self convertUsingHD: nil];
 }
+
 
 
 
@@ -392,15 +347,15 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 // Load the video in the WebView
 - (IBAction) loadVideo:(id)sender {
-    [self convertToMP4ContainerUsingHD: nil];
+    [self convert];
 }
 
 - (IBAction) loadVideoSD:(id)sender {
-	[self convertToMP4ContainerUsingHD: [NSNumber numberWithBool:NO]];
+	[self convertUsingHD: [NSNumber numberWithBool:NO]];
 }
 
 - (IBAction) loadVideoHD:(id)sender {
-	[self convertToMP4ContainerUsingHD: [NSNumber numberWithBool:YES]];
+	[self convertUsingHD: [NSNumber numberWithBool:YES]];
 }
 
 
@@ -470,562 +425,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
-#pragma mark -
-#pragma mark Insert Video using QTKit - 10.5 and higher only
-
-- (void) setupQuickTimeUsingHD: (NSNumber*) useHDNumber {
-	NSThread * thread = [[[NSThread alloc] initWithTarget:self selector:@selector(reallySetupQuickTimeUsingHD:) object:useHDNumber] autorelease];
-	[self setMovieSetupThread: thread];
-	[thread start];
-}
-
-
-
-- (void) reallySetupQuickTimeUsingHD: (NSNumber *) useHDNumber {
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	NSView * mainContainer = [[self plugin] containerView];
-	NSRect bounds;
-	if (mainContainer != nil) {
-		bounds = [mainContainer bounds];
-	}
-	else {
-		bounds = NSZeroRect;
-	}
-	
-	
-	QTMovieView * myMovieView = [self movieView];
-	BOOL needToInsertMovieView = NO;
-	
-	if ( myMovieView == nil ) {
-		myMovieView = [[[QTMovieView alloc] initWithFrame:bounds] autorelease];
-		[myMovieView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];		
-		[myMovieView setPreservesAspectRatio:YES];
-		[myMovieView setWantsLayer: YES]; // video seems invisible without the layer
-//		[myMovieView setCustomButtonVisible:YES];
-		if ( [[self plugin] isFullScreen] ) {
-			[myMovieView setFillColor: [NSColor blackColor]];			
-		}
-		else {
-			[myMovieView setFillColor: [NSColor clearColor]];
-		}
-
-		if ( myMovieView == nil ) { // ERROR
-			NSLog(@"CTFKillerVideo: Could not create movie view in -reallySetupQuickTimeUsingHD:");
-			return; 
-		}
-		
-		[self setMovieView: myMovieView];
-		needToInsertMovieView = YES;
-	}
-	
-	// Add progress indicator. It will be removed when the film has loaded sufficiently or when loading fails.
-	[self addProgressIndicator];
-	
-	QTMovie * myMovie = [self movieForHD: useHDNumber];
-	if ( myMovie != nil && ![[self movieSetupThread] isCancelled] ) {
-		[self setMovie: myMovie];
-		[myMovieView setMovie: myMovie];
-		
-		// It seems like QTMovieView has two subviews: one displaying the film, one for the controller. The controller view seems to end up _not_ wanting the layer. This can cause the controller to disappear after switching tags. So we sneakily set all subviews of the QTMovieView to want a layer here.
-		NSEnumerator * viewEnumerator = [[myMovieView subviews] objectEnumerator];
-		NSView * view;
-		while ( ( view = [viewEnumerator nextObject] ) ) {
-			[view setWantsLayer:YES];
-		}
-		
-		if (needToInsertMovieView) {
-			[mainContainer addSubview: myMovieView positioned: NSWindowBelow relativeTo: nil];
-			[[self plugin] setNextKeyView: myMovieView];
-			[myMovieView setNextKeyView: (NSView*)[[self plugin] mainButton]];
-		}
-		[[[self plugin] mainButton] setHidden:YES];
-		[[[self plugin] window] makeFirstResponder: myMovieView];
-	}
-	
-	[self setMovieSetupThread: nil];
-
-	// not doing this on the main thread seems to hang the application
-	// [self performSelectorOnMainThread:@selector(resizeToFitMovie) withObject:nil waitUntilDone:NO];
-	
-	[pool release];	
-}
-
-
-
-- (QTMovie *) movieForHD: (NSNumber *) useHDNumber {
-	BOOL useHD = [self useVideoHD];
-	if ( useHDNumber != nil ) {
-		useHD = [useHDNumber boolValue];
-	}
-	
-	NSString * movieURLString = [self videoURLStringForHD: useHD];
-	NSURL * movieURL = [NSURL URLWithString: movieURLString];
-	NSError * error = nil;
-	QTMovie * myMovie = nil;
-	//	movie = [QTMovie movieWithURL: movieURL error: &error];
-	float volumeLevel = 1.;
-	NSNumber * volumeNumber = [[CTFUserDefaultsController standardUserDefaults] objectForKey: sVideoVolumeLevelDefaultsKey];
-	if ( volumeNumber != nil ) {
-		volumeLevel = MAX(.0 , MIN( [volumeNumber floatValue], 1.));
-	}
-	volumeNumber = [NSNumber numberWithFloat: volumeLevel];
-	
-	NSDictionary * movieAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-									  movieURL, QTMovieURLAttribute, 
-									  [NSNumber numberWithBool:YES], QTMovieOpenAsyncOKAttribute,
-									  volumeNumber, QTMovieVolumeAttribute,
-//									  [NSNumber numberWithBool:YES], QTMovieOpenForPlaybackAttribute,
-									  nil];
-	
-	myMovie = [QTMovie movieWithAttributes:movieAttributes error:&error];
-//	NSLog(@"CTFKillerVideo -movieForHD: movie attributes %@", [[myMovie movieAttributes] description]);
-	if ( myMovie == nil ) {
-		// If we get nil, just try again. This seems to cover a bunch of the random loading problems. It would probably be better to load the 'hash' or other extra info again before retrying to also cover timeout problems
-		myMovie = [QTMovie movieWithAttributes:movieAttributes error:&error];
-	}
-	if (myMovie == nil){
-		// It seems like we occasionally get an error "The file is not a movie file" here. No idea why as the same URL appears to work again a bit later. Some clever retrying or reasonable handling of that might be nice.
-		NSLog(@"ClickToFlash CTFKillerVideo -movieForHD: Error: %@ (%@)", [error localizedDescription], movieURLString);
-	}	
-	else {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieVolumeChanged:) name:QTMovieVolumeDidChangeNotification object:myMovie];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieLoadStateChanged:) name:QTMovieLoadStateDidChangeNotification object:myMovie];
-
-		if ([self autoPlay]) {
-			[myMovie autoplay];
-		}		
-	}
-	
-	return myMovie;	
-}
-
-
-
-- (void) movieVolumeChanged: (NSNotification *) notification {
-	NSNumber * volumeNumber = [NSNumber numberWithFloat:[[self movie] volume]];
-	[[CTFUserDefaultsController standardUserDefaults] setObject:volumeNumber forKey: sVideoVolumeLevelDefaultsKey];
-}
-
-
-
-- (void) movieLoadStateChanged: (NSNotification *) notification {
-    long loadState = [[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
-#if LOGGING_ENABLED
-	NSLog(@"CTFKillerVideo -movieLoadStateChanged: %i", loadState);
-#endif
-	
-    if (loadState >= QTMovieLoadStatePlayable) {
-        // The movie has loaded enough media data to begin playing. Remove the progress indicator first and then start playing, if appropriate.
-		[self removeProgressIndicator];
-
-		// Sometimes loading is slow and the load state keeps toggling between Playable and PlaythroughOK. This can cause the film to toggle stopping and starting many times in a row. To prevent that from happening, make sure we only autoPlay once.
-		if ([self autoPlay] && ![self hasAutoPlayed]) {
-			[[self movie] play];
-			[self setHasAutoPlayed:YES];
-		}
-    }
-	if (loadState >= QTMovieLoadStateLoaded) {
-        // The movie atom has loaded. It's safe to query movie properties like the size now.
-		[self adjustButtonPositions:YES];
-		
-		// Set refresh status back to NO in case a HD toggle is coming and could use a refresh again.
-		hasRefreshedURLs = NO;
-    }
-    else if (loadState == -1) {
-		// Loading the movie failed.
-
-		// Try refreshing the URL once. It may just be that the hash/token used in our URL has expired because it has been a while since we set things up.
-		if ( ![self hasRefreshedURLs] ) {
-			[self refreshVideoURLs];
-			[self setupQuickTimeUsingHD: nil];
-			[self setHasRefreshedURLs: YES];
-		}
-		else {
-			// Refreshing the URL did not do the trick. Remove progress indicator.
-			[self removeProgressIndicator];
-			// It'd be nice to do something helpful here (fall back to Flash? display error message?)
-			NSLog(@"CTFKillerVideo -movieLoadStateChanged: An error occurred when trying to load the movie\n%@", [[[self movie] movieAttributes] description]);
-		}
-    }
-}
-
-
-
-// Adds the progress indicator shown used while loading the video
-- (void) addProgressIndicator {
-	// We only want a single progress indicator, so make sure we don't create a new one in case it already exists.
-	if ([self progressIndicator] == nil) {
-		const CGFloat pISize = 32.;
-		
-		NSRect pIRect = NSMakeRect(NSMidX([[self plugin] bounds]) - pISize*.5,
-								   NSMidY([[self plugin] bounds]) - pISize*.5,
-								   pISize,
-								   pISize);
-		
-		NSProgressIndicator * theProgressIndicator = [[NSProgressIndicator alloc] initWithFrame:pIRect];
-		[self setProgressIndicator: theProgressIndicator];
-		
-		[theProgressIndicator setAutoresizingMask: NSViewMinXMargin | NSViewMaxXMargin | NSViewMinYMargin | NSViewMaxYMargin];
-		[theProgressIndicator setStyle: NSProgressIndicatorSpinningStyle];
-		[theProgressIndicator setWantsLayer: YES];
-		
-		[theProgressIndicator startAnimation: self];
-		[[[self plugin] containerView] addSubview:theProgressIndicator];
-	}
-}
-
-
-
-// Removes the progress indicator shown while loading the video
-- (void) removeProgressIndicator {
-	if ([self progressIndicator]) {
-		[[self progressIndicator] stopAnimation: self];
-		[progressIndicator removeFromSuperview];
-		[self setProgressIndicator: nil];
-	}
-}
-
-
-
-/* 
- Move the buttons container around if necessary.  
- We want:
- * standard display behaviour before the film is loaded
- * The buttons container to be full width at the top of the screen in fullscreen mode 
- * The buttons container fitting into the bounds of the displayed movie when the movie view is present
-*/
-- (void) adjustButtonPositions:(BOOL) smoothly {
-	NSRect movieRect;
-	
-	if ([self movieView]) {
-		if ([[self plugin] isFullScreen]) {
-			movieRect = [[[[self plugin] window] screen] frame];
-		}
-		else {
-			movieRect = [[self movieView] movieBounds];
-			movieRect.size.height += [[self movieView] controllerBarHeight];
-			movieRect.origin.y -= [[self movieView] controllerBarHeight];		
-		}
-	
-		if (smoothly && (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_5)) {
-			[[[[self plugin] buttonsContainer] animator] setFrame: movieRect];
-		}
-		else {
-			[[[self plugin] buttonsContainer] setFrame: movieRect];
-		}
-	}
-}
-
-
-
-/* Adds button to toggle between the SD and HD version of a film. Only appears when two versions are available and serves as an indicator for the currently playing version */
-- (NSButton *) addHDButton {
-	NSButton * button = nil;
-	
-	if ([self hasVideo] && [self hasVideoHD]) {
-		button = [[[self plugin] buttonsView] viewWithTag: CTFHDButtonTag];
-		if (button == nil) {
-			NSCellStateValue state = NSOnState;
-			if ( ![self useVideoHD] ) { state = NSOffState; }
-			[self setUsingHD: state];
-			
-			button = [CTFButtonsView button];
-			[button setTitle: CtFLocalizedString( @"HD", @"CTFKillerVideo: Label for HD button")];
-			[button sizeToFit];
-			[button setButtonType: NSPushOnPushOffButton];
-			[button setTag: CTFHDButtonTag];
-			[button setTarget: self];
-			[button setAction: @selector(toggleHD:)];
-			[[[self plugin] buttonsView] addButton: button];
-			[button bind:@"toolTip" toObject:self withKeyPath:@"HDButtonTooltip" options:nil];
-			[button bind:@"value" toObject:self withKeyPath:@"usingHD" options:nil];
-		}
-	}	
-	return button;
-}
-
-
-
-/* Used for tooltip in HD button via bindings */
-- (NSString *) HDButtonTooltip {
-	NSString * tooltip = @"";
-	
-	if ([self usingHD] == NSOnState) {
-		tooltip = CtFLocalizedString( @"Use smaller version of the movie", @"CTFKillerVideo: Tooltip for HD button when it is turned ON" );
-	}
-	else {
-		tooltip = CtFLocalizedString( @"Use larger version of the movie", @"CTFKillerVideo: Tooltip for HD button when it is turned OFF" );	
-	}
-	
-	return tooltip;
-}
-
-
-
-/* Adds button to download the currently playing movie as a file */
-- (NSButton *) addDownloadButton {
-	// CTFDownloadButton * button = nil;
-	NSButton * button = nil;
-	
-	if ([self hasVideo] || [self hasVideoHD]) {
-		button = [[[self plugin] buttonsView] viewWithTag: CTFDownloadButtonTag];
-		if (button == nil) {
-			// button = [CTFDownloadButton downloadButton];
-			button = [CTFButtonsView button];
-			
-			NSImage * downloadImage = [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[CTFClickToFlashPlugin class]] pathForResource:@"download" ofType:@"png"]] autorelease];
-			[button setImage: downloadImage];
-			[button setToolTip: CtFLocalizedString( @"Download video file", @"CTFKillerVideo: Tooltip for Video Download button" )];
-			[button sizeToFit];
-			[button setTag: CTFDownloadButtonTag];
-			// [button setURLProvider: self];
-			[button setTarget: self];
-			[button setAction: @selector(downloadVideoUsingHD:)];
-			[[[self plugin] buttonsView] addButton: button];
-		}
-	}	
-	return button;
-}
-
-
-
-// called from the -setVideo: and -setVideoHD: setters
-- (void) addButtons {
-	[[self plugin] addFullScreenButton];
-	[self addDownloadButton];
-	[self addHDButton];
-}
-
-
-
-- (IBAction) toggleHD: (id) sender {
-	[self setupQuickTimeUsingHD: [NSNumber numberWithBool: [self usingHD]]];
-}
-
-
-// Resize the plugin view to keep its width and have the aspect ratio of the movie
-- (void) resizeToFitMovie {
-	if ( [self movie] != nil && [self movieView] != nil ) {
-		CGFloat movieAspectRatio = [[self movieView] movieBounds].size.width / [[self movieView] movieBounds].size.height;
-		CGFloat newWidth = [[self plugin] frame].size.width;
-		CGFloat newHeight = newWidth / movieAspectRatio + [[self movieView] controllerBarHeight];
-		[[[self plugin] animator] setFrameSize: NSMakeSize(newWidth,newHeight)];
-		[[self plugin] setNeedsDisplay:YES];
-		// DOMCSSStyleDeclaration * style = [[[self plugin] container] style];
-		//[style setProperty:@"height" value:@"auto" priority:nil];	
-		// [style setProperty:@"width" value:@"100%" priority:nil];
-	}
-}
-
-
-
-
-
-
-
-
-#pragma mark -
-#pragma mark Insert Video using the DOM
-
-- (void) _convertElementForMP4: (DOMElement*) element atURL: (NSString*) URLString
-{
-	// some tags (OBJECT) want a data attribute, and some want a src attribute
-	// for some reason, though, some cloned elements are not reporting themselves
-	// as OBJECT tags, even though they are; more investigation on this is needed,
-	// but for now, setting both the data and the src attribute corrects the problem
-	// (see bug #294)
-	
-	[ element setAttribute: @"data" value: URLString ];
-	[ element setAttribute: @"src" value: URLString ];
-	[ element setAttribute: @"type" value: @"video/mp4" ];
-    [ element setAttribute: @"scale" value: @"aspect" ];
-    if ([self autoPlay]) {
-		[ element setAttribute: @"autoplay" value: @"true" ];
-	} else {
-		[ element setAttribute: @"autoplay" value: @"false" ];
-	}
-    [ element setAttribute: @"cache" value: @"false" ];
-	[ element setAttribute: @"bgcolor" value: @"transparent" ];
-    [ element setAttribute: @"flashvars" value: nil ];
-}
-
-
-
-- (void) _convertElementForVideoElement: (DOMElement*) element atURL: (NSString*) URLString
-{
-    [ element setAttribute: @"src" value: URLString ];
-	if ([self autoPlay]) {
-		[ element setAttribute: @"autoplay" value:@"autoplay" ];
-	} else {
-		if ( [element hasAttribute:@"autoplay"] )
-			[ element removeAttribute:@"autoplay" ];
-	}
-	if ([[self plugin] previewURL] != nil) {
-		[element setAttribute: @"poster"  value: [[[self plugin] previewURL] absoluteString]];
-	}
-	[ element setAttribute: @"controls" value:@"controls"];
-	[ element setAttribute:@"width" value:@"100%"];
-}
-
-
-
-/*
- The useHD parameter indicates whether we want to override the default behaviour to use or not use HD.
- Passing nil invokes the default behaviour based on user preferences and HD availability.
-*/
-- (void) convertToMP4ContainerUsingHD: (NSNumber*) useHD
-{
-	[plugin revertToOriginalOpacityAttributes];
-	
-	// Delay this until the end of the event loop, because it may cause self to be deallocated
-	[plugin prepareForConversion];
-	[self performSelector:@selector(_convertToMP4ContainerAfterDelayUsingHD:) withObject:useHD afterDelay:0.0];
-}
-
-
-
-
-- (void) _convertToMP4ContainerAfterDelayUsingHD: (NSNumber*) useHDNumber {
-	BOOL useHD = [ self useVideoHD ];
-	if (useHDNumber != nil) {
-		useHD = [useHDNumber boolValue];
-	}
-		
-	[self _convertToMP4ContainerUsingHD: useHD];
-}
-
-
-
-- (void) _convertToMP4ContainerUsingHD: (BOOL) useHD {
-	if ( [[CTFUserDefaultsController standardUserDefaults] boolForKey: sUseQTKitDefaultsKey ] ) {
-		// use QTKit
-		[self setupQuickTimeUsingHD: nil];
-	}
-	else {
-		// replace element in DOM
-		DOMElement * container = [[self plugin] container];
-		DOMDocument * document = [container ownerDocument];
-		NSString * URLString = [self videoURLStringForHD: useHD];
-
-		DOMElement * videoElement;
-		if ([ self isVideoElementAvailable ]) {
-			// replace with HTML 5 video element
-			videoElement = [document createElement:@"video"];
-			[ self _convertElementForVideoElement: videoElement atURL: URLString ];
-		} else {
-			// replace with <embed> tag for QuickTime video
-			videoElement = (DOMElement*) [container cloneNode: NO ];
-			[ self _convertElementForMP4: videoElement atURL: URLString ];
-		}
-	
-	
-		DOMNode * widthNode = [[container attributes ] getNamedItem:@"width"];
-		NSString * width = @"100%"; // default to 100% width
-		if (widthNode != nil) {
-			// width is already set explicitly, preserve that
-			width = [widthNode nodeValue];
-			if ( [[NSCharacterSet decimalDigitCharacterSet] characterIsMember:[width characterAtIndex:[width length] - 1]] ) {
-				// add 'px' if existing width is just a number (ends with a digit)
-				width = [width stringByAppendingString:@"px"];
-			}
-		}
-		NSString * widthCSS = [NSString stringWithFormat:@"%@width:%@;", divCSS, width];
-	
-		DOMElement * CtFContainerElement = [document createElement: @"div"];
-		[CtFContainerElement setAttribute: @"style" value: widthCSS];
-		[CtFContainerElement setAttribute: @"class" value: @"clicktoflash-container"];
-		[CtFContainerElement appendChild: videoElement];
-		
-		DOMElement * linkContainerElement = [self linkContainerElementUsingHD: useHD];
-		if ( linkContainerElement != nil ) {
-			[CtFContainerElement appendChild: linkContainerElement];
-		}
-		
-		// Just to be safe, since we are about to replace our containing element
-		[[self retain] autorelease];
-		
-		// Replace self with element.
-		[[container parentNode] replaceChild: CtFContainerElement oldChild: container];
-		
-		[[self plugin] setContainer:nil];
-	}
-}
-
-
-
-- (DOMElement*) linkContainerElementUsingHD: (BOOL) useHD {
-	// Link container
-	DOMDocument* document = [[[self plugin] container] ownerDocument];
-	DOMElement* linkContainerElement = [document createElement: @"div"];
-	NSString * linkCSS = @"margin:0px 0.5em;padding:0px;border:0px none;";
-	[linkContainerElement setAttribute: @"style" value: divCSS];
-	[linkContainerElement setAttribute: @"class" value: @"clicktoflash-linkcontainer"];
-	
-	// Link to the video's web page if we're not there already
-	NSString * videoPageURLString = [self videoPageURLString];
-	if ( videoPageURLString != nil && ![self isOnVideoPage] )  {
-		DOMElement* videoPageLinkElement = [document createElement: @"a"];
-		[videoPageLinkElement setAttribute: @"href" value: videoPageURLString];
-		[videoPageLinkElement setAttribute: @"style" value: linkCSS];
-		[videoPageLinkElement setAttribute: @"class" value: @"clicktoflash-link"];
-		NSString * videoPageLinkText = [self videoPageLinkText];
-		if (videoPageLinkText == nil) {
-			NSString * formatString = CtFLocalizedString(@"Go to %@ Page", @"Text of link to the video page on SITENAME appearing beneath the video");
-			videoPageLinkText = [NSString stringWithFormat:formatString, [self siteName]];
-		}
-		[videoPageLinkElement setTextContent: videoPageLinkText];
-
-		[linkContainerElement appendChild: videoPageLinkElement];
-	}
-	
-	// Link to Movie file download(s)
-	DOMElement* downloadLinkElement;
-	
-	if ( !([self hasVideoHD] && !useHD) ) {
-		// standard case with a single link
-		downloadLinkElement = [document createElement: @"a"];
-		[downloadLinkElement setAttribute: @"href" value: [self videoURLStringForHD: useHD]];
-		[downloadLinkElement setAttribute: @"style" value: linkCSS];
-		[downloadLinkElement setAttribute: @"class" value: @"clicktoflash-link videodownload"];
-		NSString * videoDownloadLinkText = [self videoDownloadLinkText];
-		if (videoDownloadLinkText == nil) {
-			videoDownloadLinkText = CtFLocalizedString(@"Download video file", @"Text of link to Video Download appearing beneath the video");
-		}
-		[downloadLinkElement setTextContent: videoDownloadLinkText];
-		
-		[linkContainerElement appendChild:downloadLinkElement];
-	}
-	else {
-		// special case with a HD video available but HD turned off: offer links for downloading the standard and the larger size
-		linkCSS = @"margin:0px 0.3em;padding:0px;border:0px none;";
-
-		DOMElement * initialTextElement = [document createElement: @"span"];
-		[initialTextElement setTextContent: CtFLocalizedString(@"Download: ", @"Label for download links appearing beneath the video")];
-		[linkContainerElement appendChild: initialTextElement];
-
-		downloadLinkElement = [document createElement: @"a"];
-		[downloadLinkElement setAttribute: @"href" value: [self videoURLString]];
-		[downloadLinkElement setAttribute: @"style" value: linkCSS];
-		[downloadLinkElement setAttribute: @"class" value: @"clicktoflash-link videodownload"];
-		[downloadLinkElement setTextContent: CtFLocalizedString(@"Current Size", @"Text of link for downloading a version of the video in the current size; appearing beneath the video")];
-		[linkContainerElement appendChild: downloadLinkElement];
-
-		DOMElement * extraDownloadLinkElement = [document createElement: @"a"];
-		[extraDownloadLinkElement setAttribute: @"href" value: [self videoHDURLString]];
-		[extraDownloadLinkElement setAttribute: @"style" value: linkCSS];
-		[extraDownloadLinkElement setAttribute: @"class" value: @"clicktoflash-link videodownload"];
-		[extraDownloadLinkElement setTextContent: CtFLocalizedString(@"Larger Size", @"Text of link to additional Large Size Video Download appearing beneath the video after the standard link")];
-		[linkContainerElement appendChild: extraDownloadLinkElement];
-	}
-	
-	// Let subclasses add their own link (or delete ours)
-	linkContainerElement = [self enhanceVideoDescriptionElement: linkContainerElement];
-
-	return linkContainerElement;
-}
-
-
-
 
 
 
@@ -1081,58 +480,52 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
-- (BOOL) isVideoElementAvailable
-{
-	if ( [[CTFUserDefaultsController standardUserDefaults] boolForKey:sDisableVideoElementDefaultsKey] )
-		return NO;
+// Remove http:// and www. from beginning of URL.
+- (NSString *) cleanURLString: (NSString*) URLString {
+	NSString * result = URLString;
 	
-	/* <video> element compatibility was added to WebKit in or shortly before version 525. */
-	
-    NSBundle* webKitBundle;
-    webKitBundle = [ NSBundle bundleForClass: [ WebView class ] ];
-    if (webKitBundle) {
-		/* ref. http://lists.apple.com/archives/webkitsdk-dev/2008/Nov/msg00003.html:
-		 * CFBundleVersion is 5xxx.y on WebKits built to run on Leopard, 4xxx.y on Tiger.
-		 * Unspecific builds (such as the ones in OmniWeb) get xxx.y numbers without a prefix.
-		 */
-		int normalizedVersion;
-		float wkVersion = [ (NSString*) [ [ webKitBundle infoDictionary ] 
-										 valueForKey: @"CFBundleVersion" ] 
-						   floatValue ];
-		if (wkVersion > 4000)
-			normalizedVersion = (int)wkVersion % 1000;
-		else
-			normalizedVersion = wkVersion;
-		
-		// unfortunately, versions of WebKit above 531.5 also introduce a nasty
-		// scrolling bug with video elements that cause them to be unviewable;
-		// this bug was fixed shortly after being reported by @simX, so we can
-		// now re-enable it for correct WebKit versions
-		//
-		// this bug actually only affected certain machines that had graphics
-		// cards with a certain max texture size, and it was partially fixed, but
-		// still didn't work for MacBooks with embedded graphics, and we could
-		// detect that if we really wanted, but that would require importing
-		// the OpenGL framework, which we probably shouldn't do, so we'll just
-		// wholesale disable for certain WebKit versions
-		//
-		// https://bugs.webkit.org/show_bug.cgi?id=28705
-		
-		if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_5) {
-			// Snowy Leopard; this bug doesn't seem to be exhibited here
-			return (normalizedVersion >= 525);
-		} else {
-			// this bug was introduced in version 531.5, but has been fixed in
-			// 532 and above
-			
-			return ((normalizedVersion >= 532) ||
-					((normalizedVersion >= 525) && (normalizedVersion < 531.5))
-					);
-		}
+	NSRange range = [URLString rangeOfString:@"http://www." options:NSAnchoredSearch];
+	if (range.location == NSNotFound) {
+		range = [URLString rangeOfString:@"http://" options:NSAnchoredSearch];
 	}
-	return NO;
+	if (range.location != NSNotFound) {
+		result = [URLString substringFromIndex: range.length];
+	}
+	
+	return result;
 }
 
+
+
+// Helper method used by subclasses to determine whether we want to handle video without Flash.
++ (BOOL) isActive {
+	BOOL result = [[CTFUserDefaultsController standardUserDefaults] boolForKey: sUseYouTubeH264DefaultsKey];
+	return result;
+}
+
+
+
+- (BOOL) convertUsingHD: (NSNumber *) useHD {
+	BOOL result = NO;
+	
+	if ([self lookupStatus] == finished && [self hasVideo] && [CTFKillerVideo isActive]) {
+		if ( [CTFKillerVideo shouldUseQTKit] ) {
+			// use QTKit
+			[self setupQuickTimeUsingHD: useHD];
+		}
+		else {
+			// use DOM based conversion
+			[self convertToMP4ContainerUsingHD: useHD];
+		}
+		result = YES;
+	}
+	else if ([self lookupStatus] == inProgress) {
+		[self setRequiresConversion: YES];
+		result = YES;
+	}
+	
+	return result;
+}
 
 
 
@@ -1183,16 +576,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	autoPlay = newAutoPlay;
 }
 
-
-- (BOOL)hasAutoPlayed {
-	return hasAutoPlayed;
-}
-
-- (void)setHasAutoPlayed:(BOOL)newHasAutoPlayed {
-	hasAutoPlayed = newHasAutoPlayed;
-}
-
-
 - (BOOL)hasVideo {
 	return hasVideo;
 }
@@ -1212,15 +595,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	hasVideoHD = newHasVideoHD;
 	[self addButtons];
 	[[[self plugin] mainButton] setNeedsDisplay: YES];
-}
-
-
-- (NSCellStateValue) usingHD {
-	return usingHD;
-}
-
-- (void) setUsingHD:(NSCellStateValue)newUsingHD {
-	usingHD = newUsingHD;
 }
 
 
@@ -1256,54 +630,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 - (void) setRequiresConversion: (BOOL) newRequiresConversion {
 	requiresConversion = newRequiresConversion;
-}
-
-
-- (NSProgressIndicator *) progressIndicator {
-	return progressIndicator;
-}
-
-- (void) setProgressIndicator: (NSProgressIndicator *) newProgressIndicator {
-	[newProgressIndicator retain];
-	[progressIndicator release];
-	progressIndicator = newProgressIndicator;
-}
-
-
-- (QTMovieView *) movieView {
-	return movieView;
-}
-
-- (void) setMovieView: (QTMovieView *) newMovieView {
-	[newMovieView retain];
-	[movieView release];
-	movieView = newMovieView;
-}
-
-
-- (QTMovie *) movie {
-	return movie;
-}
-
-- (void) setMovie: (QTMovie *) newMovie {
-	[newMovie retain];
-	[movie release];
-	movie = newMovie;
-}
-
-
-- (NSThread *) movieSetupThread {
-	return movieSetupThread;
-}
-
-- (void) setMovieSetupThread: (NSThread *) newMovieSetupThread {
-	[newMovieSetupThread retain];
-	// Cancelling threads requires 10.5. We only use QTKit video playback on 10.5 and higher, so we should be fine.
-	if ( [movieSetupThread respondsToSelector: @selector(cancel)] ) {
-		[movieSetupThread performSelector:@selector(cancel)];
-	}
-	[movieSetupThread release];
-	movieSetupThread = newMovieSetupThread;
 }
 
 

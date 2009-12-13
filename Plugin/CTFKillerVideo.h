@@ -106,6 +106,7 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 
 // Helper
 + (BOOL) isActive;
+- (BOOL) convertUsingHD: (NSNumber *) useHD;
 
 // Actions
 - (IBAction) loadVideo:(id)sender;
@@ -116,62 +117,28 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 - (IBAction) downloadVideoSD: (id) sender;
 - (IBAction) downloadVideoHD: (id) sender;
 
-// QuickTime
-- (void) setupQuickTimeUsingHD: (NSNumber*) useHDNumber;
-- (void) reallySetupQuickTimeUsingHD: (NSNumber *) useHDNumber;
-- (QTMovie *) movieForHD: (NSNumber *) useHDNumber;
-- (void) addProgressIndicator;
-- (void) removeProgressIndicator;
-- (void) adjustButtonPositions: (BOOL) smoothly;
-- (NSButton *) addHDButton;
-- (NSButton *) addDownloadButton;
-- (void) addButtons;
-- (IBAction) toggleHD: (id) sender;
-- (void) resizeToFitMovie;
-
-// Internal stuff
-- (void) _convertElementForMP4: (DOMElement*) element atURL: (NSString*) URLString;
-- (void) _convertElementForVideoElement: (DOMElement*) element atURL: (NSString*) URLString;
-- (void) convertToMP4ContainerUsingHD: (NSNumber*) useHD;
-- (void) _convertToMP4ContainerAfterDelayUsingHD: (NSNumber*) useHDNumber;
-- (void) _convertToMP4ContainerUsingHD: (BOOL) useHD;
-- (DOMElement*) linkContainerElementUsingHD: (BOOL) useHD;
-
 // Helpers
 - (BOOL) useVideo;
 - (BOOL) useVideoHD;
 - (NSString *) videoURLStringForHD: (BOOL) useHD;
 - (NSURL *) downloadURL;
 - (NSString *) cleanURLString: (NSString*) URLString;
-- (BOOL) isVideoElementAvailable;
 - (void) finishedLookups;
 - (BOOL) canPlayResponseResult: (NSURLResponse *) result;
 
 // Accessors
 - (BOOL) autoPlay;
 - (void) setAutoPlay:(BOOL)newAutoPlay;
-- (BOOL) hasAutoPlayed;
-- (void) setHasAutoPlayed:(BOOL)newHasAutoPlayed;
 - (BOOL) hasVideo;
 - (void) setHasVideo:(BOOL)newHasVideo;
 - (BOOL) hasVideoHD;
 - (void) setHasVideoHD:(BOOL)newHasVideoHD;
-- (NSCellStateValue) usingHD;
-- (void) setUsingHD:(NSCellStateValue)newUsingHD;
 - (enum CTFKVLookupStatus) lookupStatus;
 - (void) setLookupStatus: (enum CTFKVLookupStatus) newLookupStatus;
 - (void) increaseActiveLookups;
 - (void) decreaseActiveLookups;
 - (BOOL) requiresConversion;
 - (void) setRequiresConversion: (BOOL) newRequiresConversion;
-- (NSProgressIndicator *) progressIndicator;
-- (void) setProgressIndicator: (NSProgressIndicator *) newProgressIndicator;
-- (QTMovieView *) movieView;
-- (void) setMovieView: (QTMovieView *) newMovieView;
-- (QTMovie *) movie;
-- (void) setMovie: (QTMovie *) newMovie;
-- (NSThread *) movieSetupThread;
-- (void) setMovieSetupThread: (NSThread *) newMovieSetupThread;
 - (BOOL) hasRefreshedURLs;
 - (void) setHasRefreshedURLs: (BOOL) newHasRefreshedURLs;
 
