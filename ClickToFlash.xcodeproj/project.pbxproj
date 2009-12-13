@@ -55,6 +55,8 @@
 		6C8EC7051076544D0053587F /* CTFKillerYouTube.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EC7041076544D0053587F /* CTFKillerYouTube.m */; };
 		6C8EC775107671F20053587F /* CTFKillerVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EC774107671F20053587F /* CTFKillerVideo.m */; };
 		6C8EC7E9107686780053587F /* CTFKillerSIFR.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EC7E8107686780053587F /* CTFKillerSIFR.m */; };
+		6CB3034910D539700036544E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6CB3034710D539700036544E /* InfoPlist.strings */; };
+		6CB3039310D544480036544E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6CB3032910D5377F0036544E /* Localizable.strings */; };
 		6CC18AE61076D09B00D9E1A0 /* CTFKillerVimeo.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CC18AE51076D09B00D9E1A0 /* CTFKillerVimeo.m */; };
 		6CF9E9EF1083D8D7004C0C1C /* CTFFullscreenWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CF9E9EE1083D8D7004C0C1C /* CTFFullscreenWindow.m */; };
 		79166CBD0FF69E1800B1F69B /* CTFGradient.m in Sources */ = {isa = PBXBuildFile; fileRef = 79166CBB0FF69E1800B1F69B /* CTFGradient.m */; };
@@ -198,6 +200,12 @@
 		6C8EC774107671F20053587F /* CTFKillerVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFKillerVideo.m; path = Plugin/CTFKillerVideo.m; sourceTree = "<group>"; };
 		6C8EC7E7107686780053587F /* CTFKillerSIFR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFKillerSIFR.h; path = Plugin/CTFKillerSIFR.h; sourceTree = "<group>"; };
 		6C8EC7E8107686780053587F /* CTFKillerSIFR.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFKillerSIFR.m; path = Plugin/CTFKillerSIFR.m; sourceTree = "<group>"; };
+		6CB3032E10D538230036544E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Updater/fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		6CB3033B10D538540036544E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Updater/en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		6CB3033F10D5387C0036544E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = Updater/de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		6CB3034810D539700036544E /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = Updater/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6CB3034C10D539950036544E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = Updater/de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6CB3034F10D5399E0036544E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Updater/fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6CC18AE41076D09B00D9E1A0 /* CTFKillerVimeo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFKillerVimeo.h; path = Plugin/CTFKillerVimeo.h; sourceTree = "<group>"; };
 		6CC18AE51076D09B00D9E1A0 /* CTFKillerVimeo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFKillerVimeo.m; path = Plugin/CTFKillerVimeo.m; sourceTree = "<group>"; };
 		6CF9E9ED1083D8D7004C0C1C /* CTFFullScreenWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFFullScreenWindow.h; path = Plugin/CTFFullScreenWindow.h; sourceTree = "<group>"; };
@@ -399,8 +407,10 @@
 				A46A5A001096C2A700E1ABAA /* Info-Updater.plist */,
 				A46A5A421096C95500E1ABAA /* CTFSparkleManager.h */,
 				A46A5A431096C95500E1ABAA /* CTFSparkleManager.m */,
-				A46A5A471096C98400E1ABAA /* MainMenu.xib */,
 				A46A5A5B1096C9C800E1ABAA /* main.m */,
+				A46A5A471096C98400E1ABAA /* MainMenu.xib */,
+				6CB3034710D539700036544E /* InfoPlist.strings */,
+				6CB3032910D5377F0036544E /* Localizable.strings */,
 			);
 			name = Updater;
 			sourceTree = "<group>";
@@ -472,6 +482,7 @@
 				German,
 				fr,
 				de,
+				en,
 			);
 			mainGroup = 55EB70300E04A8410016593D;
 			productRefGroup = 55EB70430E04A8640016593D /* Products */;
@@ -484,8 +495,8 @@
 			);
 			projectRoot = "";
 			targets = (
-				A46A59FD1096C2A700E1ABAA /* ClickToFlash Updater */,
 				55EB70410E04A8640016593D /* ClickToFlash */,
+				A46A59FD1096C2A700E1ABAA /* ClickToFlash Updater */,
 				2B9260570F36854B000F1583 /* Install plugin for user */,
 				FADCD4220F421EAE00749805 /* Build Package */,
 			);
@@ -551,6 +562,8 @@
 				A46A5A141096C5E600E1ABAA /* dsa_pub.pem in Resources */,
 				A46A5A5D1096C9CD00E1ABAA /* MainMenu.xib in Resources */,
 				A4D8074710A4129C0024454E /* ctf.icns in Resources */,
+				6CB3039310D544480036544E /* Localizable.strings in Resources */,
+				6CB3034910D539700036544E /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -685,6 +698,26 @@
 			name = MenubarMenu.xib;
 			sourceTree = "<group>";
 		};
+		6CB3032910D5377F0036544E /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6CB3033B10D538540036544E /* en */,
+				6CB3033F10D5387C0036544E /* de */,
+				6CB3032E10D538230036544E /* fr */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		6CB3034710D539700036544E /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6CB3034810D539700036544E /* en */,
+				6CB3034C10D539950036544E /* de */,
+				6CB3034F10D5399E0036544E /* fr */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		A40485A510629A3D00FDC4E2 /* AboutBox.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -767,7 +800,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
-				PRODUCT_VERSION = 1.6b5;
+				PRODUCT_VERSION = 1.6b7;
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Release;
