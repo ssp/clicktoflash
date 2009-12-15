@@ -221,8 +221,12 @@
 
 
 - (void) HEADDownloadFinished: (CTFLoader *) loader {
-	[self decreaseActiveLookups];
+#if LOGGING_ENABLED
+	NSLog(@"CTFKillerVimeo -HEADDownloadFinished:");
+#endif
 	
+	[self decreaseActiveLookups];
+
 	if ( [self canPlayResponseResult: [loader response]] ) {
 		[self setRedirectedURLString: [[[loader lastRequest] URL] absoluteString] ];
 		[self setHasVideo: YES];
@@ -230,14 +234,21 @@
 }
 
 
+
 - (void) HEADHDDownloadFinished: (CTFLoader *) loader {
-	[self decreaseActiveLookups];
+#if LOGGING_ENABLED
+	NSLog(@"CTFKillerVimeo -HEADHDDownloadFinished:");
+#endif
 	
+	[self decreaseActiveLookups];
+
 	if ( [self canPlayResponseResult: [loader response]] ) {
 		[self setRedirectedHDURLString: [[[loader lastRequest] URL] absoluteString] ];
 		[self setHasVideoHD: YES];
 	}
 }
+
+
 
 
 

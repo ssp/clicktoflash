@@ -236,6 +236,14 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
         
 		[ CTFMenubarMenuController sharedController ];	// trigger the menu items to be added
 
+		
+		// Create our subviews. These need to be in place before any conversion occurs as the CTFKillers invoked by conversion may be using them.
+		
+		[self setupSubviews];
+
+		
+		// Automatically load small/invisible Flash elements if so desired.
+		
 		if ( [ [ CTFUserDefaultsController standardUserDefaults ] boolForKey: sAutoLoadInvisibleFlashViewsDefaultsKey ]
 			&& [ self isConsideredInvisible ] ) {
 			// auto-loading is on and this view meets the size constraints
@@ -341,7 +349,6 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		[self setOriginalOpacityAttributes:originalOpacityDict];
 		[self setFrameSize:NSMakeSize(1., 1.)];
 		
-		[self setupSubviews];
 		[self setFullScreenWindow: nil];
 	}
 		
@@ -364,7 +371,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
  This setup can be changed by CTFKillers, e.g. CTFVideoKiller hides the mainButton when clicked and adds a QTMovieView.
  The layout is made in a way that also supports zooming to full screen (used in 'new style' UI only).
  In the 'new style' UI, set these views up with layers, so they draw properly above a playing movie.
-		*/
+*/
 - (void) setupSubviews {
 	// Add a full size subview which will contain everything. We need this so we can move it to full-screen without removing the plug-in from the web page.
 	NSView * myContainerView = [[[NSView alloc] initWithFrame: [self bounds]] autorelease];
@@ -421,7 +428,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		[theActionButton setWantsLayer: YES];
 		[theButtonsView setWantsLayer: YES];
 		[myContainerView setWantsLayer: YES];
-}
+	}
 }
 
 
@@ -597,19 +604,22 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 #pragma mark Loading
 
 - (IBAction) clicked: (id) sender {
+#if LOGGING_ENABLED > 0
+	NSLog(@"CTFPluginController -clicked:");
+#endif
 	if (![self isConverted]) {
-	if ([self _isCommandPressed]) {
-		if ([self _isOptionPressed]) {
-			[self removeFlash:self];
+		if ([self _isCommandPressed]) {
+			if ([self _isOptionPressed]) {
+				[self removeFlash:self];
+			} else {
+				[self hideFlash:self];
+			}
+		} else if ([self _isOptionPressed] && ![self _isHostWhitelisted]) {
+			[self _askToAddCurrentSiteToWhitelist];
 		} else {
-			[self hideFlash:self];
+				[self convertTypesForContainer:YES];
 		}
-	} else if ([self _isOptionPressed] && ![self _isHostWhitelisted]) {
-		[self _askToAddCurrentSiteToWhitelist];
-	} else {
-			[self convertTypesForContainer:YES];
 	}
-}
 }
 
 
