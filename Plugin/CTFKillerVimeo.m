@@ -225,12 +225,12 @@
 	NSLog(@"CTFKillerVimeo -HEADDownloadFinished:");
 #endif
 	
-	[self decreaseActiveLookups];
-
 	if ( [self canPlayResponseResult: [loader response]] ) {
 		[self setRedirectedURLString: [[[loader lastRequest] URL] absoluteString] ];
 		[self setHasVideo: YES];
 	}
+	
+	[self decreaseActiveLookups];
 }
 
 
@@ -240,12 +240,12 @@
 	NSLog(@"CTFKillerVimeo -HEADHDDownloadFinished:");
 #endif
 	
-	[self decreaseActiveLookups];
-
 	if ( [self canPlayResponseResult: [loader response]] ) {
 		[self setRedirectedHDURLString: [[[loader lastRequest] URL] absoluteString] ];
 		[self setHasVideoHD: YES];
 	}
+	
+	[self decreaseActiveLookups];
 }
 
 
