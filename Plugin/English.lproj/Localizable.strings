@@ -14,12 +14,11 @@
 /* CTFClickToFlashPlugin: Tooltip for fullscreen button while in fullscreen mode */
 "Return to Web Page" = "Return to web page";
 
-
-
-/* CTFClickToFlashPlugin: Title of Contextual Menu 
- CTFActionButton Accessibility: Title of Contextual Menu */
-
+/* CTFClickToFlashPlugin: Title of Contextual Menu */
 "ClickToFlash Contextual menu" = "ClickToFlash Contextual Menu";
+
+
+
 
 /* CTFClickToFlashPlugin: Load Flash contextual menu item */
 "Load Flash" = "Load Flash";
@@ -39,10 +38,21 @@
 /* CTFClickToFlashPlugin: Preferences Contextual Menu Item */
 "ClickToFlash Preferences..." = "ClickToFlash Preferences…";
 
+/* CTFClickToFlashPlugin Accessibility: Description */
+"Blocked Flash content" = "Blocked Flash Content";
+
+/* CTFClickToFlashPlugin Accessibility: Help */
+"A film or some other interactive content which is implemented in Flash should appear here. ClickToFlash prevented it from loading automatically. Clicking will start loading it." = "A film or some other interactive content which is implemented in Flash should appear here. ClickToFlash prevented it from loading automatically. Clicking will start loading it.";
 
 
-/* CTFMainButton: NSAccessibilityDescriptionAttribute */
+
+/* CTFMainButton Accessibility: Description */
 "Load Flash Content" = "Load Flash Content";
+
+
+
+/* CTFActionButton Accessibility: Title for button that displays the menu */
+"ClickToFlash Menu" = "ClickToFlash Menu";
 
 
 

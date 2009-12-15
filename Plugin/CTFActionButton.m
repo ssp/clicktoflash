@@ -185,7 +185,7 @@
 	id value;
 	
 	if ( [attribute isEqualToString: NSAccessibilityDescriptionAttribute] ) {
-		value = CtFLocalizedString( @"ClickTo Flash Contextual menu", @"Accessibility: CTFActionButton, Title of Contextual Menu");
+		value = CtFLocalizedString( @"ClickTo Flash Menu", @"CTFActionButton Accessibility: Description");
 	}
 	else if ( [attribute isEqualToString: NSAccessibilityParentAttribute] ){
 		value = NSAccessibilityUnignoredAncestor([[self controlView] superview]); 

@@ -1021,28 +1021,38 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 - (id) accessibilityAttributeValue: (NSString *) attribute {
 	id value = nil;
+//	NSLog(@"AX: %@", attribute);
 	
 	if ( [attribute isEqualToString: NSAccessibilityTitleAttribute] ) {
 		//	value = [self badgeLabelText];
 	}
 	else if ( [attribute isEqualToString: NSAccessibilityDescriptionAttribute] ) {
-//		value = CtFLocalizedString( @"Blocked Flash content", @"Accessibility: NSAccessibilityDescriptionAttribute for Plugin.m");
+		value = CtFLocalizedString( @"Blocked Flash content", @"CTFClickToFlashPlugin Accessibility: Description");
 	}
 	else if ( [attribute isEqualToString: NSAccessibilityHelpAttribute] ) {
-//		value = CtFLocalizedString( @"A film or other interactive content is implemented in Flash should appear here. ClickToFlash prevented it from loading automatically.", @"Accessibility: NSAccessibilityHelpAttribute for Plugin.m");
+		value = CtFLocalizedString( @"A film or some other interactive content which is implemented in Flash should appear here. ClickToFlash prevented it from loading automatically. Clicking will start loading it.", @"CTFClickToFlashPlugin Accessibility: Help");
 	}
 	else if ( [attribute isEqualToString: NSAccessibilityParentAttribute] ){
-		value = NSAccessibilityUnignoredAncestor([[[self webView] mainFrame] frameView]); 
+		value = nil;  // no idea what needs to go here
 	}
 	else if ( [attribute isEqualToString: NSAccessibilityChildrenAttribute] ){
-		value = [NSArray arrayWithObjects: [self viewWithTag: CTFMainButtonTag], [self actionButton], nil];
+		value = NSAccessibilityUnignoredChildren( [NSArray arrayWithObjects: [self viewWithTag: CTFMainButtonTag], [self actionButton], [self buttonsView], nil] );
 	} 
 	else if ( [attribute isEqualToString: NSAccessibilityRoleAttribute] ) {
 		value = NSAccessibilityGroupRole;
 	}
 	else if ( [attribute isEqualToString: NSAccessibilityRoleDescriptionAttribute] ) {
 		value = NSAccessibilityRoleDescription(NSAccessibilityGroupRole, nil);
-	} 
+	}
+	else if ( [attribute isEqualToString: NSAccessibilityTopLevelUIElementAttribute] ) {
+		value = [self window];
+	}
+	else if ( [attribute isEqualToString: NSAccessibilityWindowAttribute] ) {
+		value = [self window];
+	}
+	else if ( [attribute isEqualToString: @"AXBlockQuoteLevel"] ) { // does this make any sense? Copying the name and value from what I saw in Accessibility Inspector.
+		value = [NSNumber numberWithInt: 0];
+	}
 	else {
 		value =  [super accessibilityAttributeValue:attribute];
 	}
