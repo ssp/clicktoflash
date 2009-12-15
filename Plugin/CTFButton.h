@@ -32,4 +32,6 @@
 
 }
 
++ (CTFButton *) button;
+
 @end

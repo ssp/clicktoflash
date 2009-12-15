@@ -32,8 +32,6 @@
 	NSMutableArray * buttons;
 }
 
-+ (NSButton *) button;
-
 - (void) insertButton: (NSControl*) button atIndex: (NSInteger) index;
 - (void) addButton: (NSControl*) button;
 - (void) removeButton: (NSControl*) button;

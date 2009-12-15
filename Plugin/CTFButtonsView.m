@@ -61,21 +61,6 @@ static CGFloat height = 32.;
 
 
 #pragma mark -
-#pragma mark Convenience
-
-
-+ (NSButton *) button {
-	NSButton * button = [[[CTFButton alloc] initWithFrame:NSZeroRect] autorelease];
-	[button setButtonType: NSMomentaryLight];
-	[button setBezelStyle: NSTexturedRoundedBezelStyle];
-	return button;
-}
-
-
-
-
-
-#pragma mark -
 #pragma mark NSView subclassing
 
 - (void) resizeWithOldSuperviewSize: (NSSize) oldBoundsSize {

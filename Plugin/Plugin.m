@@ -978,7 +978,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	NSButton * button = nil;
 	
 	if ([[self buttonsView] viewWithTag: CTFFullScreenButtonTag] == nil) {
-		button = [CTFButtonsView button];
+		button = [CTFButton button];
 		[button setImage: [NSImage imageNamed:NSImageNameEnterFullScreenTemplate]];
 		[button setToolTip: CtFLocalizedString( @"Fill entire screen", @"Tooltip for fullscreen button" )];
 		[button sizeToFit];

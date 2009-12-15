@@ -301,7 +301,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 			if ( ![self useVideoHD] ) { state = NSOffState; }
 			[self setUsingHD: state];
 			
-			button = [CTFButtonsView button];
+			button = [CTFButton button];
 			[button setTitle: CtFLocalizedString( @"HD", @"CTFKillerVideo: Label for HD button")];
 			[button sizeToFit];
 			[button setButtonType: NSPushOnPushOffButton];
@@ -336,21 +336,18 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 /* Adds button to download the currently playing movie as a file */
 - (NSButton *) addDownloadButton {
-	// CTFDownloadButton * button = nil;
 	NSButton * button = nil;
 	
 	if ([self hasVideo] || [self hasVideoHD]) {
 		button = [[[self plugin] buttonsView] viewWithTag: CTFDownloadButtonTag];
 		if (button == nil) {
-			// button = [CTFDownloadButton downloadButton];
-			button = [CTFButtonsView button];
+			button = [CTFButton button];
 			
 			NSImage * downloadImage = [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[CTFClickToFlashPlugin class]] pathForResource:@"download" ofType:@"png"]] autorelease];
 			[button setImage: downloadImage];
 			[button setToolTip: CtFLocalizedString( @"Download video file", @"CTFKillerVideo: Tooltip for Video Download button" )];
 			[button sizeToFit];
 			[button setTag: CTFDownloadButtonTag];
-			// [button setURLProvider: self];
 			[button setTarget: self];
 			[button setAction: @selector(downloadVideoUsingHD:)];
 			[[[self plugin] buttonsView] addButton: button];

@@ -30,6 +30,21 @@
 @implementation CTFButton
 
 
+#pragma mark -
+#pragma mark Convenience
+
++ (CTFButton *) button {
+	CTFButton * button = [[[CTFButton alloc] initWithFrame:NSZeroRect] autorelease];
+	[button setButtonType: NSMomentaryLight];
+	[button setBezelStyle: NSTexturedRoundedBezelStyle];
+	return button;
+}
+
+
+
+#pragma mark -
+#pragma mark NSView subclassing
+
 // Ignore clicks while in the background
 - (BOOL) acceptsFirstMouse:(NSEvent*) theEvent {
 	return NO;
