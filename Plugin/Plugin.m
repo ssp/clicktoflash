@@ -1033,7 +1033,18 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		value = CtFLocalizedString( @"A film or some other interactive content which is implemented in Flash should appear here. ClickToFlash prevented it from loading automatically. Clicking will start loading it.", @"CTFClickToFlashPlugin Accessibility: Help");
 	}
 	else if ( [attribute isEqualToString: NSAccessibilityParentAttribute] ){
-		value = nil;  // no idea what needs to go here
+        id webArea = [[[self superview] accessibilityAttributeValue:NSAccessibilityChildrenAttribute] objectAtIndex:0];
+		NSArray * webAreaChildren = [webArea accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
+		CTFForEachObject( NSObject , child, webAreaChildren ) {
+			NSArray * subChildren = [child accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
+			if ([subChildren count] == 1) {
+				id firstSubChild = [[child accessibilityAttributeValue:NSAccessibilityChildrenAttribute] objectAtIndex:0];
+				if ( firstSubChild == self ) {
+					value = child;
+					break;
+				}
+			}
+		}
 	}
 	else if ( [attribute isEqualToString: NSAccessibilityChildrenAttribute] ){
 		value = NSAccessibilityUnignoredChildren( [NSArray arrayWithObjects: [self viewWithTag: CTFMainButtonTag], [self actionButton], [self buttonsView], nil] );
