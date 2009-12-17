@@ -393,6 +393,8 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  Make sure file names are unique.
  TODO: Hold Option key to get Save dialogue.
  TODO: Write xattr with video's web page URL?
+ TODO: investigate problems with saving
+ ... eg on http://vimeo.com/8186279, resulting in a -2015 "The movie contains an incorrect time value" error. Allegedly saving as MP4 resolves this in other applications, but how does one save in QT (and why can't we just grab the downloaded file?
 */
 - (IBAction) saveMovie: (id) sender {
 	NSAssert( [self movie] != nil, @"CTFKillerVideo-QT -saveMovie called even though movie == nil");
@@ -403,20 +405,20 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	NSArray * searchPaths = NSSearchPathForDirectoriesInDomains( NSDownloadsDirectory, NSUserDomainMask, YES);
 	if ( [searchPaths count] > 0 ) {
 		NSString * basePath = [searchPaths objectAtIndex: 0];
-		NSString * videoTitle = [self videoName];
-		if ( videoTitle == nil ) {
-			videoTitle = [NSString stringWithFormat: CtFLocalizedString(@"%@ Video", @"CTFKillerVideo QuickTime: default file name for saved movie. %@ will be the name of the video site"), [self siteName]];
+		NSString * fileName = [self title];
+		if ( fileName == nil ) {
+			fileName = [NSString stringWithFormat: CtFLocalizedString(@"%@ Video", @"CTFKillerVideo QuickTime: default file name for saved movie. %@ will be the name of the video site"), [self siteName]];
 		}
 		
 		// NSString * fileNameExtension = @"";
-		NSString * fullName = videoTitle; //[videoTitle stringByAppendingPathExtension: fileNameExtension];
+		NSString * fullName = fileName; //[videoTitle stringByAppendingPathExtension: fileNameExtension];
 		destinationPath = [basePath stringByAppendingPathComponent: fullName];
 		
 		unsigned i = 2;
 		const unsigned maximumNumber = 10000;
 		// make sure we have a unique name
 		while ([[NSFileManager defaultManager] fileExistsAtPath: destinationPath] && i < maximumNumber) {
-			fullName = [videoTitle stringByAppendingFormat:@"-%u", i++];
+			fullName = [fileName stringByAppendingFormat:@"-%u", i++]; // if one used file name extensions, the format would need to be adapted
 			destinationPath = [basePath stringByAppendingPathComponent: fullName];
 		}
 		if ( i == maximumNumber) { // yeah right, we totally need this!

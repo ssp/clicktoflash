@@ -55,6 +55,8 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 	BOOL hasVideoHD;
 	NSCellStateValue usingHD;
 	
+	NSString * title;
+	
 	NSInteger activeLookups;
 	enum CTFKVLookupStatus lookupStatus;
 	BOOL requiresConversion;
@@ -79,9 +81,6 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 
 // Name of the video service that can be used for automatic link text generation 
 - (NSString*) siteName;
-
-// Name of the current video. Return nil if unknown.
-- (NSString*) videoName;
 
 // URL to the video file used for loading it in the player.
 - (NSString*) videoURLString;
@@ -131,6 +130,8 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 - (BOOL) canPlayResponseResult: (NSURLResponse *) result;
 
 // Accessors
+- (NSString *) title;
+- (void) setTitle: (NSString *) newTitle;
 - (BOOL) autoPlay;
 - (void) setAutoPlay:(BOOL)newAutoPlay;
 - (BOOL) hasVideo;

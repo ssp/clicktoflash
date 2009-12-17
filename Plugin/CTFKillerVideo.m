@@ -52,6 +52,8 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 		hasVideo = NO;
 		hasVideoHD = NO;
 		
+		[self setTitle: nil];
+		
 		activeLookups = 0;
 		lookupStatus = nothing;
 		requiresConversion = NO;
@@ -140,6 +142,7 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 		[button unbind:@"toolTip"];
 		[button unbind:@"value"];		
 	}
+	[self setTitle: nil];
 	[self setMovie:nil];
 	[[self movieView] setMovie:nil];
 	[self setMovieView: nil];
@@ -569,6 +572,18 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 
 #pragma mark -
 #pragma mark Accessors
+
+
+- (NSString *) title {
+	return title;
+}
+
+- (void) setTitle: (NSString *) newTitle {
+	[newTitle retain];
+	[title release];
+	title = newTitle;
+}
+
 
 - (BOOL)autoPlay {
 	BOOL result = autoPlay;

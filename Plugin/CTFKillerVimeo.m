@@ -57,7 +57,6 @@
 	[self setClipID: nil];
 	[self setClipSignature: nil];
 	[self setClipExpires: nil];
-	[self setClipTitle: nil];
 	[self setRedirectedURLString: nil];
 	[self setRedirectedHDURLString: nil];
 	
@@ -85,7 +84,6 @@
 	[self setClipID: nil];
 	[self setClipSignature: nil];
 	[self setClipExpires: nil];
-	[self setClipTitle: nil];
 	[self setRedirectedURLString: nil];
 	[self setRedirectedHDURLString: nil];
 	[super dealloc];
@@ -101,13 +99,6 @@
 // Name of the video service that can be used for automatic link text generation 
 - (NSString*) siteName { 
 	return CtFLocalizedString(@"Vimeo", @"Name of Vimeo");
-}
-
-
-
-// Name of the current video. Return nil if unknown.
-- (NSString*) videoName {
-	return [self clipTitle];
 }
 
 
@@ -205,7 +196,7 @@
 		nodes = [XML nodesForXPath:@"//caption" error:&error];
 		if ([nodes count] > 0) {
 			node = [nodes objectAtIndex:0];
-			[self setClipTitle: [node stringValue]];
+			[self setTitle: [node stringValue]];
 		}
 		
 
@@ -284,6 +275,7 @@
 	clipID = newClipID;
 }
 
+
 - (NSString *) clipSignature {
 	return clipSignature;
 }
@@ -293,6 +285,7 @@
 	[clipSignature release];
 	clipSignature = newClipSignature;
 }
+
 
 - (NSString *) clipExpires {
 	return clipExpires;
@@ -305,17 +298,6 @@
 }
 
 
-- (NSString *) clipTitle {
-	return clipTitle;
-}
-
-- (void) setClipTitle: (NSString *) newClipTitle {
-	[newClipTitle retain];
-	[clipTitle release];
-	clipTitle = newClipTitle;
-}
-
-
 - (NSString *) redirectedURLString {
 	return redirectedURLString;
 }
@@ -325,6 +307,7 @@
 	[redirectedURLString release];
 	redirectedURLString = newRedirectedURLString;
 }
+
 
 - (NSString *) redirectedHDURLString {
 	return redirectedHDURLString;

@@ -78,7 +78,49 @@
 	NSString * myVideoHash = [self videoHash];
 	
 	if (myVideoID != nil && myVideoHash != nil) {
+		// We are on a YouTube page which contains all relevant info right there: check for videos
 		[self _checkForH264VideoVariants];
+
+		// ... and get the video's name
+		// first get <html> and <head> nodes
+		DOMDocument * d = [[[self plugin] container] ownerDocument];
+		DOMNode * HTML = [[d firstChild] nextSibling];
+		DOMNodeList * nodeList = [HTML childNodes];
+		DOMNode * headNode = nil;
+		NSUInteger i;
+		for ( i = 0; i < [nodeList length]; i++ ) {
+			headNode = [nodeList item: i];
+			if ( [[headNode nodeName] isEqualToString: @"HEAD"] ) {
+				// found <head> node, now scan for <meta title="name"...
+				break;
+			}
+		}
+		
+		NSString * theTitle = nil;
+		if ( i < [nodeList length] ) {
+			// we break-ed out of the previous loop -> continue
+			nodeList = [headNode childNodes];
+			DOMNode * metaNode = nil;
+			for ( i = 0; i < [nodeList length]; i++ ) {
+				metaNode = [nodeList item: i];
+				if ( [[metaNode nodeName] isEqualToString: @"META"] ) {
+					DOMNode * theAttribute = [[metaNode attributes] getNamedItem:@"name"];
+					if ( theAttribute != nil ) {
+						// found a name attribute
+						NSString * theValue = [theAttribute nodeValue];
+						if ( [theValue isEqualToString: @"title"] ) {
+							// found a name attribute called title -> set it
+							theAttribute = [[metaNode attributes] getNamedItem:@"content"];
+							if ( theAttribute != nil ) {
+								[self setTitle: [theAttribute nodeValue]];
+							}
+							break;
+						}
+					}
+				}
+			}		
+		}
+		
 	} 
 	else {
 		// it's an embedded YouTube flash view; scrub the URL to
@@ -148,15 +190,6 @@
 // Name of the video service that can be used for automatic link text generation 
 - (NSString*) siteName { 
 	return CtFLocalizedString(@"YouTube", @"Name of YouTube");
-}
-
-
-
-// Name of the current video. Return nil if unknown.
-// TODO: Implement a working version for YouTube pages.
-- (NSString*) videoName {
-	NSString * name = [self flashVarWithName: @"title"];
-	return name;
 }
 
 
@@ -295,6 +328,12 @@
 		else {
 			NSLog(@"ClickToFlashKillerYouTube -setInfoFromFlashVars: No 't' or 'token' Flash variable found for video %@", [self videoID]);
 		}
+		
+		NSString * myTitle = [self flashVarWithName: @"title"];
+		if ( myTitle != nil ) {
+			[self setTitle: myTitle];
+		}
+		
 	}
 }
 
