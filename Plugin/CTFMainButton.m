@@ -448,12 +448,9 @@
 
 #pragma mark Accessibility
 
-- (BOOL)accessibilityIsIgnored {
-	return NO;
-}
-
-
-
+/*
+ Say that we provide and AXTitle and AXDescription.
+*/
 - (NSArray *) accessibilityAttributeNames {
 	NSMutableArray * attributes = [[[super accessibilityAttributeNames] mutableCopy] autorelease];
 	[attributes addObject: NSAccessibilityTitleAttribute];
@@ -463,6 +460,12 @@
 
 
 
+/*
+ Provide values for accessibility attributes.
+ AXTitle -> badge label
+ AXDescription -> Load Flash Content
+ AXParent -> The plug-in's containerView
+*/
 - (id) accessibilityAttributeValue: (NSString *) attribute {
 	id value = nil;
 	
@@ -473,13 +476,7 @@
 		value = CtFLocalizedString( @"Load Flash Content", @"NSAccessibilityDescriptionAttribute for CTFMainButton");
 	}
 	else if ( [attribute isEqualToString: NSAccessibilityParentAttribute] ){
-		value = NSAccessibilityUnignoredAncestor([[self controlView] superview]); 
-	}
-	else if ( [attribute isEqualToString: NSAccessibilityRoleAttribute] ) {
-		value = NSAccessibilityButtonRole;
-	}
-	else if ( [attribute isEqualToString: NSAccessibilityRoleDescriptionAttribute] ) {
-		value = NSAccessibilityRoleDescription(NSAccessibilityButtonRole, nil);
+		value = NSAccessibilityUnignoredAncestor([[(id)[self controlView] plugin] containerView]);
 	}
 	else {
 		value =  [super accessibilityAttributeValue:attribute];
@@ -490,26 +487,19 @@
 
 
 
- - (NSArray *) accessibilityActionNames {
-	 NSArray * actionNames = [NSArray arrayWithObjects: NSAccessibilityPressAction, NSAccessibilityShowMenuAction, nil];
-	 return actionNames;
- }
- 
- /*
- - (void) accessibilityPerformAction: (NSString *) action {
-	 if ( [action isEqualToString: NSAccessibilityPressAction] ) {
-		 [self convertTypesForContainer];
-	 }
-	 
-	 else {
-		 [super accessibilityPerformAction: action];
-	 }
- }
+/*
+ Advertise our Actions:
+ -> AXPress: normal clicking of button
+ -> AXShowMenu: view's contextual menu
 */
-
-
-
-
-
+- (NSArray *) accessibilityActionNames {
+	NSArray * actionNames = [NSArray arrayWithObjects: 
+							 NSAccessibilityPressAction, 
+							 NSAccessibilityShowMenuAction, 
+							 nil];
+	return actionNames;
+}
+ 
+ 
 
 @end
