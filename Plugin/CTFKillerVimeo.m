@@ -59,6 +59,7 @@
 	[self setClipExpires: nil];
 	[self setClipTitle: nil];
 	[self setRedirectedURLString: nil];
+	[self setRedirectedHDURLString: nil];
 	
 	NSString * myID = [ self flashVarWithName:@"clip_id" ]; 
 
@@ -86,6 +87,7 @@
 	[self setClipExpires: nil];
 	[self setClipTitle: nil];
 	[self setRedirectedURLString: nil];
+	[self setRedirectedHDURLString: nil];
 	[super dealloc];
 }
 
