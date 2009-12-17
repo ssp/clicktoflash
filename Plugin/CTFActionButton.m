@@ -117,11 +117,6 @@
 
 
 
-#pragma mark -
-#pragma mark NSView subclassing
-
-
-
 @implementation CTFActionButtonCell
 
 #pragma mark NSCell subclassing
@@ -173,6 +168,10 @@
 
 #pragma mark Accessibility
 
+
+/*
+ Say that we also provide an AXDescription.
+*/
 - (NSArray *) accessibilityAttributeNames {
 	NSMutableArray * attributes = [[[super accessibilityAttributeNames] mutableCopy] autorelease];
 	[attributes addObject: NSAccessibilityDescriptionAttribute];
@@ -181,19 +180,55 @@
 
 
 
+/*
+ Provide values for accessibility attributes.
+ AXDescription -> description
+ AXParent -> plugin
+*/
 - (id) accessibilityAttributeValue: (NSString *) attribute {
 	id value;
 	
 	if ( [attribute isEqualToString: NSAccessibilityDescriptionAttribute] ) {
 		value = CtFLocalizedString( @"ClickTo Flash Menu", @"CTFActionButton Accessibility: Description");
 	}
-	else if ( [attribute isEqualToString: NSAccessibilityParentAttribute] ){
-		value = NSAccessibilityUnignoredAncestor([[self controlView] superview]); 
+	else if ( [attribute isEqualToString: NSAccessibilityParentAttribute] ) {
+		// the plugin's view is our parent
+		value = NSAccessibilityUnignoredAncestor([self controlView]);
 	}
 	else {
 		value = [super accessibilityAttributeValue:attribute];
 	}
 	return value;
+}
+
+
+
+/*
+ Implement performing the AXPress action.
+ Do this by calling our mouseDown method.
+*/
+- (void) accessibilityPerformAction: (NSString *) action {
+	if ( [action isEqualToString: NSAccessibilityPressAction] ) {
+		// figure out sort-of middle of control in window coordinates
+		NSPoint fakeMouseLocation = [[self controlView] convertPoint:NSMakePoint(16, 16.) toView:nil];
+		// apparently we have to supply this and the internet says it's that complicated
+		double timestamp = (double)(AbsoluteToDuration(UpTime())) / 1000.0;
+		
+		NSEvent * clickEvent = [NSEvent mouseEventWithType: NSLeftMouseDown
+												  location: fakeMouseLocation
+											 modifierFlags: 0
+												 timestamp: timestamp
+											  windowNumber: [[[self controlView] window] windowNumber]
+												   context: [[[self controlView] window] graphicsContext]
+											   eventNumber: [[NSApp currentEvent] eventNumber] + 1
+												clickCount: 0
+												  pressure: .0 ];
+		
+		[[self controlView] mouseDown: clickEvent];
+	}
+	else {
+		[super accessibilityPerformAction: action];
+	}
 }
 
 
