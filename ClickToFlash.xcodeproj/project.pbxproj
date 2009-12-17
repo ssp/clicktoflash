@@ -210,10 +210,10 @@
 		6CB3034F10D5399E0036544E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Updater/fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6CC18AE41076D09B00D9E1A0 /* CTFKillerVimeo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFKillerVimeo.h; path = Plugin/CTFKillerVimeo.h; sourceTree = "<group>"; };
 		6CC18AE51076D09B00D9E1A0 /* CTFKillerVimeo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFKillerVimeo.m; path = Plugin/CTFKillerVimeo.m; sourceTree = "<group>"; };
-		6CC8F8E910D5979D00F31573 /* CTFKillerVideo-HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CTFKillerVideo-HTML.h"; sourceTree = "<group>"; };
-		6CC8F8EA10D5979D00F31573 /* CTFKillerVideo-HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CTFKillerVideo-HTML.m"; sourceTree = "<group>"; };
-		6CC8F8EE10D597AE00F31573 /* CTFKillerVideo-QT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CTFKillerVideo-QT.h"; sourceTree = "<group>"; };
-		6CC8F8EF10D597AE00F31573 /* CTFKillerVideo-QT.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CTFKillerVideo-QT.m"; sourceTree = "<group>"; };
+		6CC8F8E910D5979D00F31573 /* CTFKillerVideo-HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CTFKillerVideo-HTML.h"; path = "Plugin/CTFKillerVideo-HTML.h"; sourceTree = "<group>"; };
+		6CC8F8EA10D5979D00F31573 /* CTFKillerVideo-HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CTFKillerVideo-HTML.m"; path = "Plugin/CTFKillerVideo-HTML.m"; sourceTree = "<group>"; };
+		6CC8F8EE10D597AE00F31573 /* CTFKillerVideo-QT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CTFKillerVideo-QT.h"; path = "Plugin/CTFKillerVideo-QT.h"; sourceTree = "<group>"; };
+		6CC8F8EF10D597AE00F31573 /* CTFKillerVideo-QT.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CTFKillerVideo-QT.m"; path = "Plugin/CTFKillerVideo-QT.m"; sourceTree = "<group>"; };
 		6CF9E9ED1083D8D7004C0C1C /* CTFFullScreenWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFFullScreenWindow.h; path = Plugin/CTFFullScreenWindow.h; sourceTree = "<group>"; };
 		6CF9E9EE1083D8D7004C0C1C /* CTFFullscreenWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFFullscreenWindow.m; path = Plugin/CTFFullscreenWindow.m; sourceTree = "<group>"; };
 		79166CBB0FF69E1800B1F69B /* CTFGradient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFGradient.m; path = Plugin/CTFGradient.m; sourceTree = "<group>"; };
@@ -798,7 +798,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
-				PRODUCT_VERSION = 1.6b5;
+				PRODUCT_VERSION = 1.6b7;
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Debug;
