@@ -19,6 +19,8 @@
 - (void) setupQuickTimeUsingHD: (NSNumber*) useHDNumber;
 - (void) reallySetupQuickTimeUsingHD: (NSNumber *) useHDNumber;
 - (QTMovie *) movieForHD: (NSNumber *) useHDNumber;
+- (void) showEndOfMovieButtons;
+- (void) hideEndOfMovieButtons;
 - (void) addProgressIndicator;
 - (void) removeProgressIndicator;
 - (void) adjustButtonPositions: (BOOL) smoothly;
@@ -42,6 +44,9 @@
 - (void) setMovie: (QTMovie *) newMovie;
 - (NSThread *) movieSetupThread;
 - (void) setMovieSetupThread: (NSThread *) newMovieSetupThread;
+- (NSView *) endOfMovieButtonsView;
+- (void) setEndOfMovieButtonsView: (NSView *) newEndOfMovieButtonsView;
+
 
 
 @end

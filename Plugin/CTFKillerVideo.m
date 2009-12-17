@@ -61,6 +61,7 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 		[self setMovieView: nil];
 		[self setMovie: nil];
 		[self setMovieSetupThread: nil];
+		[self setEndOfMovieButtonsView: nil];
 		
 		hasRefreshedURLs = NO;
 	}
@@ -84,6 +85,9 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 
 // Name of the video service that can be used for automatic link text generation 
 - (NSString*) siteName { return nil; }
+
+// Name of the current video. Return nil if unknown.
+- (NSString*) videoName { return nil; }
 
 // URL to the video file used for loading it in the player.
 - (NSString*) videoURLString { return nil;} 
@@ -131,7 +135,6 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 
 // Called when our plug-in is destroyed, so pending actions can be stopped in a controlled way
 - (void) pluginDestroy {
-	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	NSButton * button = [[[self plugin] buttonsView] viewWithTag: CTFHDButtonTag];
 	if (button != nil) {
 		[button unbind:@"toolTip"];
@@ -142,6 +145,7 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 	[self setMovieView: nil];
 	[self setMovieSetupThread: nil];
 	[self setProgressIndicator: nil];
+	[self setEndOfMovieButtonsView: nil];
 }
 
 

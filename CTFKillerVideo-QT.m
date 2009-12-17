@@ -11,6 +11,7 @@
 #import "Plugin.h"
 #import <QTKit/QTKit.h>
 #import "CTFButtonsView.h"
+#import "CTFButton.h"
 
 
 NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
@@ -160,9 +161,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		NSLog(@"ClickToFlash CTFKillerVideo -movieForHD: Error: %@ (%@)", [error localizedDescription], movieURLString);
 	}	
 	else {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieVolumeChanged:) name:QTMovieVolumeDidChangeNotification object:myMovie];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieLoadStateChanged:) name:QTMovieLoadStateDidChangeNotification object:myMovie];
-		
 		if ([self autoPlay]) {
 			[myMovie autoplay];
 		}		
@@ -173,6 +171,17 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
+
+
+
+#pragma mark -
+#pragma mark Notifications
+
+
+/*
+ Called by QTMovieVolumeDidChangeNotification.
+ Stores the new volume level in defaults, so future movies can use it.
+*/
 - (void) movieVolumeChanged: (NSNotification *) notification {
 	NSNumber * volumeNumber = [NSNumber numberWithFloat:[[self movie] volume]];
 	[[CTFUserDefaultsController standardUserDefaults] setObject:volumeNumber forKey: sVideoVolumeLevelDefaultsKey];
@@ -180,6 +189,16 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
+/*
+ Called by QTMovieLoadStateDidChangeNotification.
+ When movie has loaded: adjust button positions to fit into the movie's frame.
+ When movie is playable: start auto-playing if required, hide progress indicator.
+ When an error occurs: try refreshing the video's URL and loading again.
+ 
+ TODO: sometimes Vimeo videos don't get us a changed load state…
+       … before the film is completely loaded. Hence we cannot hide the progress indicator or autoplay.
+ TODO: figure out how to handle persistent failures of video loading
+*/
 - (void) movieLoadStateChanged: (NSNotification *) notification {
     long loadState = [[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
 #if LOGGING_ENABLED
@@ -222,6 +241,207 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 }
 
 
+
+/*
+ Called by QTMovieDidEndNotification.
+ Shows end of movie buttons.
+*/
+- (void) movieDidEnd: (NSNotification *) notification {
+#ifdef LOGGING_ENABLED
+	NSLog(@"CTFKillerVideo QuickTime: movie did end");
+#endif
+	
+	[self showEndOfMovieButtons];
+}
+
+
+
+/*
+ Called by QTMovieTimeDidChangeNotification.
+ Determines whether we are at the end of the movie and shows/hides the end of movie buttons accordingsly.
+*/
+- (void) movieTimeDidChange: (NSNotification *) notification {
+#ifdef LOGGING_ENABLED
+	NSLog(@"CTFKillerVideo QuickTime: movie time changed");
+#endif
+
+	if ( [[self movie] currentTime].timeValue == [[self movie] duration].timeValue ) {
+		[self showEndOfMovieButtons];
+	}
+	else{
+		[self hideEndOfMovieButtons];
+	}
+}
+
+
+
+/*
+ Fade in buttons.
+ Create them when needed.
+ TODO: sort out key loop?
+ ... not sure we're actually having much of a key loop in the WebView
+ TODO: Accessibility
+ TODO: Draw translucent background behind buttons?
+*/
+- (void) showEndOfMovieButtons {
+	NSView * myView = [self endOfMovieButtonsView];
+	if ( myView == nil ) {
+		// Create view with buttons if it doesn't exist yet.
+		
+		// Download button
+		CTFButton * downloadButton = [CTFButton button];
+		[downloadButton setTarget: self];
+		[downloadButton setAction: @selector(saveMovie:)];
+		NSString * buttonTitle = CtFLocalizedString(@"Save Movie", @"CTFKillerVideo QuickTime: Title of Save Movie button at end of Movie");
+		NSMutableParagraphStyle * paragraphStyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
+		[paragraphStyle setAlignment: NSCenterTextAlignment];
+		NSDictionary * fontStyle = [NSDictionary dictionaryWithObjectsAndKeys: [NSFont systemFontOfSize: 16.0], NSFontAttributeName, paragraphStyle, NSParagraphStyleAttributeName, nil];
+		NSAttributedString * attributedTitle = [[[NSAttributedString alloc] initWithString: buttonTitle attributes: fontStyle] autorelease];
+		[downloadButton setAttributedTitle: attributedTitle];
+		[downloadButton sizeToFit];
+		[downloadButton setWantsLayer: YES];
+		
+		NSSize buttonSize = [downloadButton frame].size;
+		CGFloat buttonWidth = buttonSize.width;
+		NSRect containerRect;
+		containerRect.origin = NSZeroPoint;
+		containerRect.size = buttonSize;
+
+		// Go to Video Page button
+		CTFButton * gotoVideoPageButton = nil;
+		
+		if ( ![self isOnVideoPage] ) {
+			// not on the video page -> show button to visit the video's page as well
+			gotoVideoPageButton = [CTFButton button];
+			[gotoVideoPageButton setTarget: self];
+			[gotoVideoPageButton setAction: @selector(gotoVideoPage:)];
+			buttonTitle = [NSString stringWithFormat: CtFLocalizedString(@"Go to %@ page", @"CTFKillerVideo QuickTime: Title of Go to video page button at end of Movie. %@ is the video site's name"), [self siteName]];
+			attributedTitle = [[[NSAttributedString alloc] initWithString: buttonTitle attributes: fontStyle] autorelease];
+			[gotoVideoPageButton setAttributedTitle: attributedTitle];
+			[gotoVideoPageButton sizeToFit];
+			[gotoVideoPageButton setWantsLayer: YES];
+		
+			// Both buttons have the same height. Make them the same width as well
+			buttonWidth = MAX(buttonSize.width, [gotoVideoPageButton frame].size.width);
+			buttonSize.width = buttonWidth;
+			[downloadButton setFrameSize: buttonSize];
+			[gotoVideoPageButton setFrameSize: buttonSize];
+
+			// Adjust size of containing view
+			containerRect.size.width = buttonWidth;
+			containerRect.size.height = 2 * containerRect.size.height + 8.0;
+		}
+		
+		
+		// Create tightly fitting view containing the button(s)
+		NSView * endOfMovieButtonsContainer = [[[NSView alloc] initWithFrame: containerRect] autorelease];
+		[endOfMovieButtonsContainer setWantsLayer: YES];
+		
+		[endOfMovieButtonsContainer addSubview: downloadButton];
+	
+		if ( ![self isOnVideoPage] ) {
+			NSPoint buttonOrigin = NSMakePoint( .0, containerRect.size.height - [gotoVideoPageButton frame].size.height );
+			[gotoVideoPageButton setFrameOrigin: buttonOrigin];
+			[endOfMovieButtonsContainer addSubview: gotoVideoPageButton];
+		}
+		
+		// Add the buttons view to the containerView of the plugin
+		NSRect pluginFrame = [[[self plugin] containerView] frame];
+		CGFloat x = (pluginFrame.size.width - containerRect.size.width) / 2.;
+		CGFloat y = (pluginFrame.size.height - containerRect.size.height) / 2.;
+		NSPoint buttonContainerOrigin = NSMakePoint( floor(x), floor(y) );
+		[endOfMovieButtonsContainer setFrameOrigin: buttonContainerOrigin];
+		[endOfMovieButtonsContainer setAutoresizingMask: NSViewMinXMargin | NSViewMaxXMargin | NSViewMinYMargin | NSViewMaxYMargin];
+		[[[self plugin] containerView] addSubview: endOfMovieButtonsContainer];
+		
+		[self setEndOfMovieButtonsView: endOfMovieButtonsContainer];
+	}
+	
+	// Fade in
+	[[myView animator] setAlphaValue: 1.];
+}
+
+
+
+/*
+ Fade out the button(s).
+ Do this a bit more quickly than the default to not get in people's way in case they want to re-watch part of the movie.
+ Does horrible stuff to avoid linking to CoreAnimation libraries.
+*/
+- (void) hideEndOfMovieButtons {
+	NSView * view = [self endOfMovieButtonsView];
+	if ( view != nil && [view alphaValue] != .0) {
+		// Create class object from string so we don't have to link to Core Quartz Core
+		Class CAT = NSClassFromString(@"CATransaction");
+		[CAT begin];
+		// BAD: makes kCATransactionAnimationDuration explicit because we don't have the symbolic constant
+		[CAT setValue: [NSNumber numberWithFloat:.05] forKey:@"animationDuration"];
+		[[view animator] setAlphaValue: .0];
+		[CAT commit];
+	}
+}
+
+
+
+
+
+/*
+ Save our loaded movie.
+ Try to figure out the downloads folder and use that as the location.
+ If we know the video's name, use that as the file name.
+ Otherwise use the video site's name in the file name.
+ Make sure file names are unique.
+ TODO: Hold Option key to get Save dialogue.
+ TODO: Write xattr with video's web page URL?
+*/
+- (IBAction) saveMovie: (id) sender {
+	NSAssert( [self movie] != nil, @"CTFKillerVideo-QT -saveMovie called even though movie == nil");
+    long loadState = [[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
+	NSAssert( loadState == QTMovieLoadStateComplete, @"CTFKillerVideo-QT -saveMovie called even though the movie is not loaded completely");
+	
+	NSString * destinationPath;
+	NSArray * searchPaths = NSSearchPathForDirectoriesInDomains( NSDownloadsDirectory, NSUserDomainMask, YES);
+	if ( [searchPaths count] > 0 ) {
+		NSString * basePath = [searchPaths objectAtIndex: 0];
+		NSString * videoTitle = [self videoName];
+		if ( videoTitle == nil ) {
+			videoTitle = [NSString stringWithFormat: CtFLocalizedString(@"%@ Video", @"CTFKillerVideo QuickTime: default file name for saved movie. %@ will be the name of the video site"), [self siteName]];
+		}
+		
+		// NSString * fileNameExtension = @"";
+		NSString * fullName = videoTitle; //[videoTitle stringByAppendingPathExtension: fileNameExtension];
+		destinationPath = [basePath stringByAppendingPathComponent: fullName];
+		
+		unsigned i = 2;
+		const unsigned maximumNumber = 10000;
+		// make sure we have a unique name
+		while ([[NSFileManager defaultManager] fileExistsAtPath: destinationPath] && i < maximumNumber) {
+			fullName = [videoTitle stringByAppendingFormat:@"-%u", i++];
+			destinationPath = [basePath stringByAppendingPathComponent: fullName];
+		}
+		if ( i == maximumNumber) { // yeah right, we totally need this!
+			NSLog(@"CTFKillerVideo-QT: could not save file because all the file names I want are already used");
+			return;
+		}
+	}
+	
+	NSError * error = nil;
+	NSDictionary * saveAttributes = [NSDictionary dictionaryWithObjectsAndKeys: [NSNumber numberWithBool: YES], QTMovieFlatten, nil];
+	BOOL saveSuccessful = [[self movie] writeToFile: destinationPath withAttributes: saveAttributes error: &error];
+	if (!saveSuccessful) {
+		if (error != nil) {
+			NSLog(@"ClickToFlash failed to Save the movie with error: %@", [error description]);
+		}
+	}
+}
+
+
+
+
+
+
+#pragma mark -
+#pragma mark Helpers
 
 // Adds the progress indicator shown used while loading the video
 - (void) addProgressIndicator {
@@ -373,6 +593,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
+// TODO: figure out how to resize ourselves well
 // If someone can figure out how we can resize our view to fully fill the width of the containing DOM element and setting the height of said element while remaining flexibe (i.e. just like using width:100%; in CSS), please speak up. 
 /*
 // Resize the plugin view to keep its width and have the aspect ratio of the movie
@@ -444,9 +665,24 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 }
 
 - (void) setMovie: (QTMovie *) newMovie {
-	[newMovie retain];
-	[movie stop];
-	[movie release];
+	if (newMovie != nil) {
+		[newMovie retain];
+
+		// track volume changes, so we can store them in defaults
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieVolumeChanged:) name:QTMovieVolumeDidChangeNotification object:newMovie];
+		// track load state, so we can resize the UI and remove the progress indicator ASAP
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieLoadStateChanged:) name:QTMovieLoadStateDidChangeNotification object:newMovie];
+		// track playback end and manual position changes, so we can show/hide the end of movie buttons
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieDidEnd:) name:QTMovieDidEndNotification object:newMovie];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieTimeDidChange:) name:QTMovieTimeDidChangeNotification object:newMovie];
+	}
+	
+	if (movie != nil) {
+		[[NSNotificationCenter defaultCenter] removeObserver:self name:nil object:movie];
+		[movie stop];
+		[movie release];
+	}
+	
 	movie = newMovie;
 }
 
@@ -466,6 +702,15 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 }
 
 
+- (NSView *) endOfMovieButtonsView {
+	return endOfMovieButtonsView;
+}
+
+- (void) setEndOfMovieButtonsView: (NSView *) newEndOfMovieButtonsView {
+	[newEndOfMovieButtonsView retain];
+	[endOfMovieButtonsView release];
+	endOfMovieButtonsView = newEndOfMovieButtonsView;
+}
 
 
 @end

@@ -152,6 +152,15 @@
 
 
 
+// Name of the current video. Return nil if unknown.
+// TODO: Implement a working version for YouTube pages.
+- (NSString*) videoName {
+	NSString * name = [self flashVarWithName: @"title"];
+	return name;
+}
+
+
+
 // URL to the video file used for loading it in the player.
 - (NSString*) videoURLString { 
 	NSString * result = nil;
@@ -163,6 +172,7 @@
 
 	return result;
 } 
+
 
 
 - (NSString*) videoHDURLString { 

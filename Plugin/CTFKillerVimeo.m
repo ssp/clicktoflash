@@ -57,6 +57,7 @@
 	[self setClipID: nil];
 	[self setClipSignature: nil];
 	[self setClipExpires: nil];
+	[self setClipTitle: nil];
 	[self setRedirectedURLString: nil];
 	
 	NSString * myID = [ self flashVarWithName:@"clip_id" ]; 
@@ -83,6 +84,7 @@
 	[self setClipID: nil];
 	[self setClipSignature: nil];
 	[self setClipExpires: nil];
+	[self setClipTitle: nil];
 	[self setRedirectedURLString: nil];
 	[super dealloc];
 }
@@ -97,6 +99,13 @@
 // Name of the video service that can be used for automatic link text generation 
 - (NSString*) siteName { 
 	return CtFLocalizedString(@"Vimeo", @"Name of Vimeo");
+}
+
+
+
+// Name of the current video. Return nil if unknown.
+- (NSString*) videoName {
+	return [self clipTitle];
 }
 
 
@@ -191,6 +200,12 @@
 			node = [nodes objectAtIndex:0];
 			clipIsHD = ([[node stringValue] intValue] != 0);
 		}
+		nodes = [XML nodesForXPath:@"//caption" error:&error];
+		if ([nodes count] > 0) {
+			node = [nodes objectAtIndex:0];
+			[self setClipTitle: [node stringValue]];
+		}
+		
 
 		// Now we collected the data but vimeo seem to have two video formats in the background flv/mp4. The only way I see so far to tell those apart is from the MIME Type of the video file's URL. Any better way to do this would be great.		
 		NSString * HEADURLString = [NSString stringWithFormat:@"http://vimeo.com/moogaloop/play/clip:%@/%@/%@/", [self clipID], [self clipSignature], [self clipExpires]];
@@ -285,6 +300,17 @@
 	[newClipExpires retain];
 	[clipExpires release];
 	clipExpires = newClipExpires;
+}
+
+
+- (NSString *) clipTitle {
+	return clipTitle;
+}
+
+- (void) setClipTitle: (NSString *) newClipTitle {
+	[newClipTitle retain];
+	[clipTitle release];
+	clipTitle = newClipTitle;
 }
 
 

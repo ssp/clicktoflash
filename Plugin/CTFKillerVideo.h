@@ -64,6 +64,7 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 	QTMovieView * movieView;
 	QTMovie * movie;
 	NSThread * movieSetupThread;
+	NSView * endOfMovieButtonsView;
 	
 	BOOL hasRefreshedURLs;
 }
@@ -78,6 +79,9 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 
 // Name of the video service that can be used for automatic link text generation 
 - (NSString*) siteName;
+
+// Name of the current video. Return nil if unknown.
+- (NSString*) videoName;
 
 // URL to the video file used for loading it in the player.
 - (NSString*) videoURLString;
