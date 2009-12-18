@@ -468,7 +468,7 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 
 
 
-// Return the NSURL of the video that would currently be used. Called by CTFDownloadButton
+// Return the NSURL of the video that would currently be used.
 - (NSURL *) downloadURL {
 	BOOL useHD;
 	

@@ -50,7 +50,6 @@
 		6C2B4EC110D5A8C6000764BF /* CTFKillerVideo-HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CC8F8EA10D5979D00F31573 /* CTFKillerVideo-HTML.m */; };
 		6C2C5A6A1068CE8700A90A54 /* Credits.css in Resources */ = {isa = PBXBuildFile; fileRef = A40485B110629B0E00FDC4E2 /* Credits.css */; };
 		6C436DAF107830A200A0D525 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C436DAE107830A200A0D525 /* QTKit.framework */; };
-		6C7A9248108B95FD002CEDED /* download.png in Resources */ = {isa = PBXBuildFile; fileRef = 6C7A9247108B95FD002CEDED /* download.png */; };
 		6C8815BC10A1903F00A381D6 /* CTFButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8815BB10A1903F00A381D6 /* CTFButton.m */; };
 		6C8E03FF10795EB900E21A50 /* CTFLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8E03FE10795EB900E21A50 /* CTFLoader.m */; };
 		6C8EC6F410764F810053587F /* CTFKiller.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EC6F310764F810053587F /* CTFKiller.m */; };
@@ -189,7 +188,6 @@
 		6C09647E10808D4B0006923A /* CTFMainButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFMainButton.h; path = Plugin/CTFMainButton.h; sourceTree = "<group>"; };
 		6C09647F10808D4B0006923A /* CTFMainButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFMainButton.m; path = Plugin/CTFMainButton.m; sourceTree = "<group>"; };
 		6C436DAE107830A200A0D525 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
-		6C7A9247108B95FD002CEDED /* download.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = download.png; path = Plugin/download.png; sourceTree = "<group>"; };
 		6C8815BA10A1903F00A381D6 /* CTFButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFButton.h; path = Plugin/CTFButton.h; sourceTree = "<group>"; };
 		6C8815BB10A1903F00A381D6 /* CTFButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFButton.m; path = Plugin/CTFButton.m; sourceTree = "<group>"; };
 		6C8E03FD10795EB900E21A50 /* CTFLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFLoader.h; path = Plugin/CTFLoader.h; sourceTree = "<group>"; };
@@ -364,7 +362,6 @@
 				6953E43A0F3EDEB50014ECF7 /* MenubarMenu.xib */,
 				072189BC0F30D9C3008C8944 /* Preferences.xib */,
 				A494CC2B0F9F2446007D5EEB /* ctf.icns */,
-				6C7A9247108B95FD002CEDED /* download.png */,
 				79B1F5BF105D9CEE0081D0B0 /* dsa_pub.pem */,
 				D9566C2B0F37EA0800358646 /* deSIFR Resources */,
 				A40485B110629B0E00FDC4E2 /* Credits.css */,
@@ -561,7 +558,6 @@
 				A40485B910629B0E00FDC4E2 /* Credits.html in Resources */,
 				A40485BA10629B0E00FDC4E2 /* InfoPlist.strings in Resources */,
 				A40485BB10629B0E00FDC4E2 /* Localizable.strings in Resources */,
-				6C7A9248108B95FD002CEDED /* download.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

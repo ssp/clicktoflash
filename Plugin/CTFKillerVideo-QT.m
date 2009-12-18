@@ -556,34 +556,9 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
-/* Adds button to download the currently playing movie as a file */
-- (NSButton *) addDownloadButton {
-	NSButton * button = nil;
-	
-	if ([self hasVideo] || [self hasVideoHD]) {
-		button = [[[self plugin] buttonsView] viewWithTag: CTFDownloadButtonTag];
-		if (button == nil) {
-			button = [CTFButton button];
-			
-			NSImage * downloadImage = [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[CTFClickToFlashPlugin class]] pathForResource:@"download" ofType:@"png"]] autorelease];
-			[button setImage: downloadImage];
-			[button setToolTip: CtFLocalizedString( @"Download video file", @"CTFKillerVideo: Tooltip for Video Download button" )];
-			[button sizeToFit];
-			[button setTag: CTFDownloadButtonTag];
-			[button setTarget: self];
-			[button setAction: @selector(downloadVideoUsingHD:)];
-			[[[self plugin] buttonsView] addButton: button];
-		}
-	}	
-	return button;
-}
-
-
-
 // called from the -setVideo: and -setVideoHD: setters
 - (void) addButtons {
 	[[self plugin] addFullScreenButton];
-	[self addDownloadButton];
 	[self addHDButton];
 }
 

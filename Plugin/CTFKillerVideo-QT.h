@@ -25,7 +25,6 @@
 - (void) removeProgressIndicator;
 - (void) adjustButtonPositions: (BOOL) smoothly;
 - (NSButton *) addHDButton;
-- (NSButton *) addDownloadButton;
 - (void) addButtons;
 - (IBAction) toggleHD: (id) sender;
 // - (void) resizeToFitMovie;
