@@ -282,6 +282,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  ... not sure we're actually having much of a key loop in the WebView
  TODO: Accessibility
  TODO: Draw translucent background behind buttons?
+ TODO: Buttons don't show up when movie is in background tab at the time (it seems that our NSView's -window is nil if it is added to the containerView while in a backgroud tab. Any ideas?)
 */
 - (void) showEndOfMovieButtons {
 	NSView * myView = [self endOfMovieButtonsView];
@@ -335,6 +336,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		
 		// Create tightly fitting view containing the button(s)
 		NSView * endOfMovieButtonsContainer = [[[NSView alloc] initWithFrame: containerRect] autorelease];
+		[endOfMovieButtonsContainer setAlphaValue: .0];
 		[endOfMovieButtonsContainer setWantsLayer: YES];
 		
 		[endOfMovieButtonsContainer addSubview: downloadButton];
@@ -355,6 +357,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		[[[self plugin] containerView] addSubview: endOfMovieButtonsContainer];
 		
 		[self setEndOfMovieButtonsView: endOfMovieButtonsContainer];
+		myView = endOfMovieButtonsContainer;
 	}
 	
 	// Fade in
