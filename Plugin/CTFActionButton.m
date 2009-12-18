@@ -37,17 +37,23 @@
 	NSRect gearButtonRect = NSMakeRect( .0, .0, size + 2.*margin , size + 2.*margin );
 
 	CTFActionButton * gearButton = [[[CTFActionButton alloc] initWithFrame: gearButtonRect] autorelease];
-	[gearButton setButtonType: NSMomentaryPushInButton];
+	[gearButton setPullsDown: YES];
 	
 	return gearButton;
 }
 
 
 
-#pragma mark NSButton subclassing
 
+#pragma mark -
+#pragma mark Subclassing
+
+/*
+ Return and use our own NSPopupButtonCell subclass.
+ Overriding NSButton.
+*/
 + (Class) cellClass {
-	return NSClassFromString(@"CTFActionButtonCell");
+	return [CTFActionButtonCell class];
 }
 
 
@@ -56,30 +62,25 @@
 	self = [super initWithFrame: frameRect];
 	if (self != nil) {
 		[self setPlugin: nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menuWillPopup:) name:NSPopUpButtonWillPopUpNotification object:self ];
 	}
 	return self;
 }
 
 
+
 - (void) dealloc {
 	[self setPlugin: nil];
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[super dealloc];
 }
 
 
 
-- (void) mouseDown: (NSEvent *) event {
-	[NSMenu popUpContextMenu:[self menuForEvent:event] withEvent:event forView:self];
-}	
-
-
-
-- (NSMenu*) menuForEvent: (NSEvent*) event {
-	return [[self plugin] menuForEvent: event];
-}
-
-
-
+/*
+ Automatically Show/Hide ourselves depending on whether the plugin is large enough for us.
+ Overriding NSView.
+*/
 - (void) resizeWithOldSuperviewSize:(NSSize) oldBoundsSize {
 	if ( [[self cell] gearVisible] && ![[self plugin] isFullScreen]) {
 		[self setHidden:NO];
@@ -92,11 +93,38 @@
 		[self setHidden:YES];
 	}
 }
+
+
+
+/*
+ Ignore clicks while in the background.
+ Overriding NSView.
+*/
+- (BOOL) acceptsFirstMouse:(NSEvent*) theEvent {
+	return NO;
+}
+
+
+
+
+
+#pragma mark -
+#pragma mark Notification
+
+/*
+ Called by NSPopUpButtonWillPopUpNotification.
+ Sets up the menu on-the-fly.
+*/
+- (void) menuWillPopup: (NSNotification *) notification {
+	[self setMenu: [[self plugin] menuForEvent: [NSApp currentEvent]]];
+}
+
+
 	
 
 
 
-
+#pragma mark -
 #pragma mark Accessors
 
 - (CTFClickToFlashPlugin *) plugin {
@@ -116,6 +144,7 @@
 
 
 
+#pragma mark -
 
 @implementation CTFActionButtonCell
 
@@ -154,7 +183,7 @@
 
 
 
-
+#pragma mark -
 #pragma mark Helper
 
 - (BOOL) gearVisible {
@@ -166,6 +195,7 @@
 
 
 
+#pragma mark -
 #pragma mark Accessibility
 
 
@@ -201,35 +231,6 @@
 	return value;
 }
 
-
-
-/*
- Implement performing the AXPress action.
- Do this by calling our mouseDown method.
-*/
-- (void) accessibilityPerformAction: (NSString *) action {
-	if ( [action isEqualToString: NSAccessibilityPressAction] ) {
-		// figure out sort-of middle of control in window coordinates
-		NSPoint fakeMouseLocation = [[self controlView] convertPoint:NSMakePoint(16, 16.) toView:nil];
-		// apparently we have to supply this and the internet says it's that complicated
-		double timestamp = (double)(AbsoluteToDuration(UpTime())) / 1000.0;
-		
-		NSEvent * clickEvent = [NSEvent mouseEventWithType: NSLeftMouseDown
-												  location: fakeMouseLocation
-											 modifierFlags: 0
-												 timestamp: timestamp
-											  windowNumber: [[[self controlView] window] windowNumber]
-												   context: [[[self controlView] window] graphicsContext]
-											   eventNumber: [[NSApp currentEvent] eventNumber] + 1
-												clickCount: 0
-												  pressure: .0 ];
-		
-		[[self controlView] mouseDown: clickEvent];
-	}
-	else {
-		[super accessibilityPerformAction: action];
-	}
-}
 
 
 @end

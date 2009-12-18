@@ -25,17 +25,18 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import "CTFButton.h"
 
 
 @class CTFClickToFlashPlugin;
 
 
-@interface CTFActionButton : CTFButton {
+@interface CTFActionButton : NSPopUpButton {
 	CTFClickToFlashPlugin * plugin;
 }
 
 + (id) actionButton;
+
+- (void) menuWillPopup: (NSNotification *) notification;
 
 - (CTFClickToFlashPlugin *) plugin;
 - (void) setPlugin: (CTFClickToFlashPlugin *) newPlugin;
@@ -44,7 +45,7 @@
 
 
 
-@interface CTFActionButtonCell : NSButtonCell {
+@interface CTFActionButtonCell : NSPopUpButtonCell {
 	
 }
 
