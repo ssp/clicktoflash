@@ -303,7 +303,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		[downloadButton setWantsLayer: YES];
 		
 		NSSize buttonSize = [downloadButton frame].size;
-		CGFloat buttonWidth = buttonSize.width;
 		NSRect containerRect;
 		containerRect.origin = NSZeroPoint;
 		containerRect.size = buttonSize;
@@ -323,7 +322,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 			[gotoVideoPageButton setWantsLayer: YES];
 		
 			// Both buttons have the same height. Make them the same width as well
-			buttonWidth = MAX(buttonSize.width, [gotoVideoPageButton frame].size.width);
+			CGFloat buttonWidth = MAX(buttonSize.width, [gotoVideoPageButton frame].size.width);
 			buttonSize.width = buttonWidth;
 			[downloadButton setFrameSize: buttonSize];
 			[gotoVideoPageButton setFrameSize: buttonSize];
@@ -341,7 +340,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		
 		[endOfMovieButtonsContainer addSubview: downloadButton];
 	
-		if ( ![self isOnVideoPage] ) {
+		if ( gotoVideoPageButton != nil ) {
 			NSPoint buttonOrigin = NSMakePoint( .0, containerRect.size.height - [gotoVideoPageButton frame].size.height );
 			[gotoVideoPageButton setFrameOrigin: buttonOrigin];
 			[endOfMovieButtonsContainer addSubview: gotoVideoPageButton];
@@ -397,14 +396,14 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  TODO: Hold Option key to get Save dialogue.
  TODO: Write xattr with video's web page URL?
  TODO: investigate problems with saving
- ... eg on http://vimeo.com/8186279, resulting in a -2015 "The movie contains an incorrect time value" error. Allegedly saving as MP4 resolves this in other applications, but how does one save in QT (and why can't we just grab the downloaded file?
+ ... eg on http://vimeo.com/8186279 resulting in a -2015 "The movie contains an incorrect time value" error. Allegedly saving as MP4 resolves this in other applications, but how does one save in QT (and why can't we just grab the downloaded file?
 */
 - (IBAction) saveMovie: (id) sender {
 	NSAssert( [self movie] != nil, @"CTFKillerVideo-QT -saveMovie called even though movie == nil");
     long loadState = [[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
 	NSAssert( loadState == QTMovieLoadStateComplete, @"CTFKillerVideo-QT -saveMovie called even though the movie is not loaded completely");
 	
-	NSString * destinationPath;
+	NSString * destinationPath = nil;
 	NSArray * searchPaths = NSSearchPathForDirectoriesInDomains( NSDownloadsDirectory, NSUserDomainMask, YES);
 	if ( [searchPaths count] > 0 ) {
 		NSString * basePath = [searchPaths objectAtIndex: 0];
@@ -430,15 +429,53 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		}
 	}
 	
-	NSError * error = nil;
-	NSDictionary * saveAttributes = [NSDictionary dictionaryWithObjectsAndKeys: [NSNumber numberWithBool: YES], QTMovieFlatten, nil];
-	BOOL saveSuccessful = [[self movie] writeToFile: destinationPath withAttributes: saveAttributes error: &error];
-	if (!saveSuccessful) {
-		if (error != nil) {
-			NSLog(@"ClickToFlash failed to Save the movie with error: %@", [error description]);
+	if (destinationPath != nil) {
+		NSError * error = nil;
+		NSDictionary * saveAttributes = [NSDictionary dictionaryWithObjectsAndKeys: [NSNumber numberWithBool: YES], QTMovieFlatten, nil];
+		BOOL saveSuccessful = [[self movie] writeToFile: destinationPath withAttributes: saveAttributes error: &error];
+		if (!saveSuccessful) {
+			if (error != nil) {
+				NSString * errorDescription = CtFLocalizedString(@"ClickToFlash could not save the movie file.", @"CTFKillerVideo QuickTime: Could not save movie QuickTime error");
+				NSString * recoverySuggestion = [NSString stringWithFormat:CtFLocalizedString(@"QuickTime reported the error '%@' (%i) while trying to save the file.\nYou can try re-downloading the movie without QuickTime.", @"CTFKillerVideo QuickTime: Could not save movie QuickTime error recovery suggestion."), [error localizedDescription], [error code]];
+				NSArray * recoveryOptions = [NSArray arrayWithObjects: CtFLocalizedString(@"Re-download without QuickTime", @"CTFKillerVideo QuickTime: Could not save movie QuickTime error recovery option 0: Re-download without QuickTime"), CtFLocalizedString(@"Cancel", @"Cancel"), nil];
+				
+				NSDictionary * errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+											errorDescription, NSLocalizedDescriptionKey,
+											recoverySuggestion, NSLocalizedRecoverySuggestionErrorKey,
+											error, NSUnderlyingErrorKey,
+											recoveryOptions, NSLocalizedRecoveryOptionsErrorKey,
+											self, NSRecoveryAttempterErrorKey,
+											nil];
+				
+				NSError * myError = [NSError errorWithDomain:@"ClickToFlashErrorDomain" code:[error code] userInfo:errorInfo];
+				[[self plugin] presentError: myError];
+				NSLog(@"ClickToFlash failed to Save the movie with error: %@", [error description]);
+			}
 		}
 	}
+	else {
+		NSLog(@"ClickToFlash failed to determine the file name for the movie. (This should not happen)");
+	}
 }
+
+
+
+/*
+ For NSErrorRecoveryAttempting Protocol.
+ Only used for movie saving error at the moment.
+ Options are:
+    0 -> Download without QuickTime
+    1 -> Cancel
+*/
+- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex {
+	BOOL result = NO;
+	if ( recoveryOptionIndex == 0 ) {
+		[self downloadVideoUsingHD: nil];
+		result = YES;
+	}
+	return result;
+}
+
 
 
 
