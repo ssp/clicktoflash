@@ -28,7 +28,7 @@
 - (void) addButtons;
 - (IBAction) toggleHD: (id) sender;
 // - (void) resizeToFitMovie;
-
+- (NSString *) pathForSavingMovie;
 
 // Accessors
 - (BOOL) hasAutoPlayed;

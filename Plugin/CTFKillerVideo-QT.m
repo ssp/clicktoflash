@@ -12,6 +12,7 @@
 #import <QTKit/QTKit.h>
 #import "CTFButtonsView.h"
 #import "CTFButton.h"
+#import <sys/xattr.h>
 
 
 NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
@@ -147,7 +148,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 									  movieURL, QTMovieURLAttribute, 
 									  [NSNumber numberWithBool:YES], QTMovieOpenAsyncOKAttribute,
 									  volumeNumber, QTMovieVolumeAttribute,
-									  //									  [NSNumber numberWithBool:YES], QTMovieOpenForPlaybackAttribute,
+									  [self title], QTMovieDisplayNameAttribute,
 									  nil];
 	
 	myMovie = [QTMovie movieWithAttributes:movieAttributes error:&error];
@@ -394,7 +395,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  Otherwise use the video site's name in the file name.
  Make sure file names are unique.
  TODO: Hold Option key to get Save dialogue.
- TODO: Write xattr with video's web page URL?
  TODO: investigate problems with saving
  ... eg on http://vimeo.com/8186279 resulting in a -2015 "The movie contains an incorrect time value" error. Allegedly saving as MP4 resolves this in other applications, but how does one save in QT (and why can't we just grab the downloaded file?
 */
@@ -403,37 +403,33 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
     long loadState = [[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
 	NSAssert( loadState == QTMovieLoadStateComplete, @"CTFKillerVideo-QT -saveMovie called even though the movie is not loaded completely");
 	
-	NSString * destinationPath = nil;
-	NSArray * searchPaths = NSSearchPathForDirectoriesInDomains( NSDownloadsDirectory, NSUserDomainMask, YES);
-	if ( [searchPaths count] > 0 ) {
-		NSString * basePath = [searchPaths objectAtIndex: 0];
-		NSString * fileName = [self title];
-		if ( fileName == nil ) {
-			fileName = [NSString stringWithFormat: CtFLocalizedString(@"%@ Video", @"CTFKillerVideo QuickTime: default file name for saved movie. %@ will be the name of the video site"), [self siteName]];
-		}
-		
-		// NSString * fileNameExtension = @"";
-		NSString * fullName = fileName; //[videoTitle stringByAppendingPathExtension: fileNameExtension];
-		destinationPath = [basePath stringByAppendingPathComponent: fullName];
-		
-		unsigned i = 2;
-		const unsigned maximumNumber = 10000;
-		// make sure we have a unique name
-		while ([[NSFileManager defaultManager] fileExistsAtPath: destinationPath] && i < maximumNumber) {
-			fullName = [fileName stringByAppendingFormat:@"-%u", i++]; // if one used file name extensions, the format would need to be adapted
-			destinationPath = [basePath stringByAppendingPathComponent: fullName];
-		}
-		if ( i == maximumNumber) { // yeah right, we totally need this!
-			NSLog(@"CTFKillerVideo-QT: could not save file because all the file names I want are already used");
-			return;
-		}
-	}
-	
+	NSString * destinationPath = [self pathForSavingMovie];
 	if (destinationPath != nil) {
 		NSError * error = nil;
 		NSDictionary * saveAttributes = [NSDictionary dictionaryWithObjectsAndKeys: [NSNumber numberWithBool: YES], QTMovieFlatten, nil];
 		BOOL saveSuccessful = [[self movie] writeToFile: destinationPath withAttributes: saveAttributes error: &error];
-		if (!saveSuccessful) {
+		if (saveSuccessful) {
+			// saved successfully, add extended attribute with URL of video page
+			if ( [self videoPageURLString] != nil ) {
+				NSString * errorDescription = nil;
+				NSData * xAttrPlistData = [NSPropertyListSerialization dataFromPropertyList: [self videoPageURLString] format:NSPropertyListBinaryFormat_v1_0 errorDescription: &errorDescription];
+				if ( errorDescription != nil) {
+					NSLog(@"ClickToFlash: could not convert string for extended attributes when saving movie file: %@", errorDescription);
+					[errorDescription release];
+				}
+				
+				int result = setxattr( [destinationPath fileSystemRepresentation],
+									  "com.apple.metadata:kMDItemWhereFroms",
+									  [xAttrPlistData bytes],
+									  [xAttrPlistData length],
+									  0, 0);
+				if (result == -1) {
+					NSLog(@"ClickToFlash: could not write extended attributes when saving movie file: %i", errno);
+				}
+			}
+		}
+		else{
+			// couldn't save file, sort-of handle errors
 			if (error != nil) {
 				NSString * errorDescription = CtFLocalizedString(@"ClickToFlash could not save the movie file.", @"CTFKillerVideo QuickTime: Could not save movie QuickTime error");
 				NSString * recoverySuggestion = [NSString stringWithFormat:CtFLocalizedString(@"QuickTime reported the error '%@' (%i) while trying to save the file.\nYou can try re-downloading the movie without QuickTime.", @"CTFKillerVideo QuickTime: Could not save movie QuickTime error recovery suggestion."), [error localizedDescription], [error code]];
@@ -454,7 +450,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		}
 	}
 	else {
-		NSLog(@"ClickToFlash failed to determine the file name for the movie. (This should not happen)");
+		NSLog(@"ClickToFlash: Could not save the movie because we couldn't figure out a good file name. This should not happen.");
 	}
 }
 
@@ -627,6 +623,64 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	}
 }
 */
+
+
+
+/*
+ Returns a string that is a path for saving the Movie at.
+ Location: Uses the System's Downloads folder (X.5 and higher only) for that.
+ File Name: Uses video title if available, removes leading dots, replaces / by -, and truncates if necessary.
+			Otherwise falls back to using a name with the video site title in it.
+*/
+- (NSString *) pathForSavingMovie {
+	NSString * destinationPath = nil;
+	
+	NSArray * searchPaths = NSSearchPathForDirectoriesInDomains( NSDownloadsDirectory, NSUserDomainMask, YES );
+	if ( [searchPaths count] > 0 ) {
+		NSString * basePath = [searchPaths objectAtIndex: 0];
+		NSString * fileName = [self title];
+		
+		// probably slashes in the file name are a bad idea as we're working with Unix-Style paths rather than reasonable file references
+		fileName = [fileName stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
+		// remove dots from beginning of file name to avoid ivisibility
+		while ([fileName rangeOfString:@"." options: NSAnchoredSearch|NSLiteralSearch].location != NSNotFound) {
+			if ( [fileName length] > 1 ) {
+				fileName = [fileName substringFromIndex:1];
+			}
+			else {
+				fileName = @"";
+			}
+		}
+		
+		if ( [fileName length] > 50 ) {
+			// cut off long file names
+			fileName = [[fileName substringToIndex: 40] stringByAppendingString: NSLocalizedString(@"...", @"ellipsis")];
+		}
+		
+		if ( fileName == nil || [fileName length] == 0) {
+			fileName = [NSString stringWithFormat: CtFLocalizedString(@"%@ Video", @"CTFKillerVideo QuickTime: default file name for saved movie. %@ will be the name of the video site"), [self siteName]];
+		}
+		
+		
+		// NSString * fileNameExtension = @"";
+		NSString * fullName = fileName; //[videoTitle stringByAppendingPathExtension: fileNameExtension];
+		destinationPath = [basePath stringByAppendingPathComponent: fullName];
+		
+		unsigned i = 2;
+		const unsigned maximumNumber = 10000;
+		// make sure we have a unique name
+		while ([[NSFileManager defaultManager] fileExistsAtPath: destinationPath] && i < maximumNumber) {
+			fullName = [fileName stringByAppendingFormat:@"-%u", i++]; // if one used file name extensions, the format would need to be adapted
+			destinationPath = [basePath stringByAppendingPathComponent: fullName];
+		}
+		if ( i == maximumNumber) { // yeah right, we totally need this!
+			NSLog(@"ClickToFlash: could not determine video file name because all the file names I want are already used");
+			destinationPath = nil;
+		}
+	}
+	
+	return destinationPath;
+}
 
 
 
