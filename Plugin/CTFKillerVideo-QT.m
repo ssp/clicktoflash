@@ -394,7 +394,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  If we know the video's name, use that as the file name.
  Otherwise use the video site's name in the file name.
  Make sure file names are unique.
- TODO: Hold Option key to get Save dialogue.
  TODO: investigate problems with saving
  ... eg on http://vimeo.com/8186279 resulting in a -2015 "The movie contains an incorrect time value" error. Allegedly saving as MP4 resolves this in other applications, but how does one save in QT (and why can't we just grab the downloaded file?
 */
@@ -635,47 +634,56 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 - (NSString *) pathForSavingMovie {
 	NSString * destinationPath = nil;
 	
-	NSArray * searchPaths = NSSearchPathForDirectoriesInDomains( NSDownloadsDirectory, NSUserDomainMask, YES );
-	if ( [searchPaths count] > 0 ) {
-		NSString * basePath = [searchPaths objectAtIndex: 0];
-		NSString * fileName = [self title];
-		
-		// probably slashes in the file name are a bad idea as we're working with Unix-Style paths rather than reasonable file references
-		fileName = [fileName stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
-		// remove dots from beginning of file name to avoid ivisibility
-		while ([fileName rangeOfString:@"." options: NSAnchoredSearch|NSLiteralSearch].location != NSNotFound) {
-			if ( [fileName length] > 1 ) {
-				fileName = [fileName substringFromIndex:1];
+	if ( [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask ) {
+		// Display a save dialogue when the option key is held
+		NSSavePanel * savePanel = [NSSavePanel savePanel];
+		if ( [savePanel runModal] == NSFileHandlingPanelOKButton ) {
+			destinationPath = [[savePanel URL] path];
+		}
+	}
+	else {
+		NSArray * searchPaths = NSSearchPathForDirectoriesInDomains( NSDownloadsDirectory, NSUserDomainMask, YES );
+		if ( [searchPaths count] > 0 ) {
+			NSString * basePath = [searchPaths objectAtIndex: 0];
+			NSString * fileName = [self title];
+			
+			// probably slashes in the file name are a bad idea as we're working with Unix-Style paths rather than reasonable file references
+			fileName = [fileName stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
+			// remove dots from beginning of file name to avoid ivisibility
+			while ([fileName rangeOfString:@"." options: NSAnchoredSearch|NSLiteralSearch].location != NSNotFound) {
+				if ( [fileName length] > 1 ) {
+					fileName = [fileName substringFromIndex:1];
+				}
+				else {
+					fileName = @"";
+				}
 			}
-			else {
-				fileName = @"";
+			
+			if ( [fileName length] > 50 ) {
+				// cut off long file names
+				fileName = [[fileName substringToIndex: 40] stringByAppendingString: NSLocalizedString(@"...", @"ellipsis")];
 			}
-		}
-		
-		if ( [fileName length] > 50 ) {
-			// cut off long file names
-			fileName = [[fileName substringToIndex: 40] stringByAppendingString: NSLocalizedString(@"...", @"ellipsis")];
-		}
-		
-		if ( fileName == nil || [fileName length] == 0) {
-			fileName = [NSString stringWithFormat: CtFLocalizedString(@"%@ Video", @"CTFKillerVideo QuickTime: default file name for saved movie. %@ will be the name of the video site"), [self siteName]];
-		}
-		
-		
-		// NSString * fileNameExtension = @"";
-		NSString * fullName = fileName; //[videoTitle stringByAppendingPathExtension: fileNameExtension];
-		destinationPath = [basePath stringByAppendingPathComponent: fullName];
-		
-		unsigned i = 2;
-		const unsigned maximumNumber = 10000;
-		// make sure we have a unique name
-		while ([[NSFileManager defaultManager] fileExistsAtPath: destinationPath] && i < maximumNumber) {
-			fullName = [fileName stringByAppendingFormat:@"-%u", i++]; // if one used file name extensions, the format would need to be adapted
+			
+			if ( fileName == nil || [fileName length] == 0) {
+				fileName = [NSString stringWithFormat: CtFLocalizedString(@"%@ Video", @"CTFKillerVideo QuickTime: default file name for saved movie. %@ will be the name of the video site"), [self siteName]];
+			}
+			
+			
+			// NSString * fileNameExtension = @"";
+			NSString * fullName = fileName; //[videoTitle stringByAppendingPathExtension: fileNameExtension];
 			destinationPath = [basePath stringByAppendingPathComponent: fullName];
-		}
-		if ( i == maximumNumber) { // yeah right, we totally need this!
-			NSLog(@"ClickToFlash: could not determine video file name because all the file names I want are already used");
-			destinationPath = nil;
+			
+			unsigned i = 2;
+			const unsigned maximumNumber = 10000;
+			// make sure we have a unique name
+			while ([[NSFileManager defaultManager] fileExistsAtPath: destinationPath] && i < maximumNumber) {
+				fullName = [fileName stringByAppendingFormat:@"-%u", i++]; // if one used file name extensions, the format would need to be adapted
+				destinationPath = [basePath stringByAppendingPathComponent: fullName];
+			}
+			if ( i == maximumNumber) { // yeah right, we totally need this!
+				NSLog(@"ClickToFlash: could not determine video file name because all the file names I want are already used");
+				destinationPath = nil;
+			}
 		}
 	}
 	
