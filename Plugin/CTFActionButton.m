@@ -169,7 +169,7 @@
 		NSRect backgroundFrame = NSMakeRect(x, y, size, size);
 		
 		NSBezierPath * circle = [NSBezierPath bezierPathWithOvalInRect:backgroundFrame];
-		CGFloat alpha = ( [self isHighlighted] ) ? .9 : .7 ;
+		CGFloat alpha = [[(CTFActionButton *)[self controlView] plugin] overlayOpacityHighlighted: [self isHighlighted]];
 		[[NSColor colorWithDeviceWhite:1.0 alpha:alpha] set];
 		[circle fill];
 				

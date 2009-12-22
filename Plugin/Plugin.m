@@ -773,6 +773,30 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 
 
+/*
+ Returns the opacity that should be used for drawing on top of the view.
+ Return adapted opacities for highlighted and non-highlighted states.
+ Returns greater opacity if a preview image is present.
+ Used for the badge and the action button.
+*/
+- (CGFloat) overlayOpacityHighlighted: (BOOL) highlighted {
+	CGFloat result = .5;
+	
+	if (highlighted == YES) {
+		result += .15;
+	}
+	
+	if ([self previewImage] != nil) {
+		result += .15;
+	}
+	
+	return result;
+}
+
+
+
+
+
 
 
 

@@ -269,13 +269,9 @@
 	
     CGContextRef context = [ [ NSGraphicsContext currentContext ] graphicsPort ];
     
-	CGFloat opacity = 0.45;
-	// Make Badge more opaque when we have a background image
-	if ( [[self plugin] previewImage] != nil ) {
-		opacity = 0.8;
-	}
+	CGFloat opacity = [[(CTFMainButton *)[self controlView] plugin] overlayOpacityHighlighted: [self isHighlighted]];
 	
-	CGContextSetAlpha( context, ( [self isHighlighted] ) ? opacity : opacity - 0.15 );		
+	CGContextSetAlpha( context, opacity );
 	CGContextBeginTransparencyLayer( context, nil );
 	
 	// Draw everything at full size, centered on the origin.
@@ -284,7 +280,7 @@
 	NSRect borderRect = NSMakeRect( loc.x - kFrameXInset, loc.y - kFrameYInset, w, h );
 	
     NSBezierPath* fillPath = bezierPathWithRoundedRectCornerRadius( borderRect, 4 );
-    [ [ NSColor colorWithCalibratedWhite: 1.0 alpha: opacity ] set ];
+    [ [ NSColor colorWithCalibratedWhite: 1.0 alpha: 1. ] set ];
     [ fillPath fill ];
     
     NSBezierPath* darkBorderPath = bezierPathWithRoundedRectCornerRadius( borderRect, 4 );
@@ -293,7 +289,7 @@
     [ darkBorderPath stroke ];
     
     NSBezierPath* lightBorderPath = bezierPathWithRoundedRectCornerRadius( NSInsetRect(borderRect, -2, -2), 6 );
-    [ [ NSColor colorWithCalibratedWhite: 1.0 alpha: opacity ] set ];
+    [ [ NSColor colorWithCalibratedWhite: 1.0 alpha: 1. ] set ];
     [ lightBorderPath setLineWidth: 2 ];
     [ lightBorderPath stroke ];
     
