@@ -222,8 +222,7 @@
 	// Compute a scale factor based on the view's size.
 	
 	float maxW = NSWidth( bounds ) - kMinMargin;
-	// the 9/10 factor here is to account for the 60% vertical top-biasing
-	float maxH = _fromFlickr ? NSHeight( bounds )*9/10 - kMinMargin : NSHeight( bounds ) - kMinMargin;
+	float maxH = NSHeight( bounds ) - kMinMargin;
 	float minW = kMinHeight * w / h;
 	
 	BOOL rotate = NO;
@@ -261,13 +260,8 @@
 	[ NSGraphicsContext saveGraphicsState ];
     
 	NSAffineTransform* xform = [ NSAffineTransform transform ];
-	// vertical top-bias by 60% here
-    if (_fromFlickr) {
-        [ xform translateXBy: NSWidth( bounds ) / 2 yBy: NSHeight( bounds ) / 10 * 6 ];
-    } else {
-        [ xform translateXBy: NSWidth( bounds ) / 2 yBy: NSHeight( bounds ) / 2 ];
-    }
-
+	[ xform translateXBy: NSWidth( bounds ) / 2 yBy: NSHeight( bounds ) / 2 ];
+    
 	[ xform scaleBy: scaleFactor ];
 	if( rotate )
 		[ xform rotateByDegrees: 90 ];
