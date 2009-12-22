@@ -196,7 +196,13 @@
 	NSString* str = [ self badgeLabelText ];
 	
 	NSShadow *superAwesomeShadow = [[NSShadow alloc] init];
-	[superAwesomeShadow setShadowOffset:NSMakeSize(2.0, -2.0)];
+	// NSShadow offsets differ by a pixel between X.5 and X.6
+	if ( floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_5 ) {
+		[superAwesomeShadow setShadowOffset: NSMakeSize(1., -1.)];
+	}
+	else {
+		[superAwesomeShadow setShadowOffset: NSMakeSize(2., -2.)];
+	}
 	[superAwesomeShadow setShadowColor:[NSColor whiteColor]];
 	[superAwesomeShadow autorelease];
 	NSDictionary* attrs = [ NSDictionary dictionaryWithObjectsAndKeys: 
