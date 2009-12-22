@@ -1031,13 +1031,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 - (NSArray *) accessibilityAttributeNames {
 	NSMutableArray * attributes = [[[super accessibilityAttributeNames] mutableCopy] autorelease];
-	//	[attributes addObject: NSAccessibilityTitleAttribute];
 	[attributes addObject: NSAccessibilityDescriptionAttribute];
-//	[attributes addObject: NSAccessibilityHelpAttribute];
-//	[attributes addObject: NSAccessibilityParentAttribute];
-//	[attributes addObject: NSAccessibilityChildrenAttribute];
-//	[attributes addObject: NSAccessibilityRoleAttribute];
-//	[attributes addObject: NSAccessibilityRoleDescriptionAttribute];
 	return attributes;
 }
 
