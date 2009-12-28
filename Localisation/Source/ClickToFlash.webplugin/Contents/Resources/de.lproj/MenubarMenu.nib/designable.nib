@@ -93,7 +93,7 @@
 					</object>
 					<object class="NSMenuItem" id="275181830">
 						<reference key="NSMenu" ref="93442052"/>
-						<string key="NSTitle">Flash laden</string>
+						<string key="NSTitle">Alles Flash laden</string>
 						<string key="NSKeyEquiv">f</string>
 						<int key="NSKeyEquivModMask">1310720</int>
 						<int key="NSMnemonicLoc">2147483647</int>
