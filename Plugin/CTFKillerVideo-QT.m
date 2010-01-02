@@ -67,6 +67,9 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		bounds = NSZeroRect;
 	}
 	
+	// remove Save button in case it is visible (e.g. when switching to HD version)
+	[self hideEndOfMovieButtons];
+	
 	QTMovieView * myMovieView = [self movieView];
 	BOOL needToInsertMovieView = NO;
 	
