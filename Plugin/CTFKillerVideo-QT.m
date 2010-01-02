@@ -286,7 +286,8 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  ... not sure we're actually having much of a key loop in the WebView
  TODO: Accessibility
  TODO: Draw translucent background behind buttons?
- TODO: Buttons don't show up when movie is in background tab at the time (it seems that our NSView's -window is nil if it is added to the containerView while in a backgroud tab. Any ideas?)
+ TODO: Buttons don't show up when movie is in background tab at the time
+ ... (it seems that our NSView's -window is nil if it is added to the containerView while in a backgroud tab. Any ideas?)
 */
 - (void) showEndOfMovieButtons {
 	NSView * myView = [self endOfMovieButtonsView];
@@ -392,13 +393,11 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 /*
- Save our loaded movie.
+ Save our loaded movie (includes a whacky workaround for slightly incompatible videos as found on vimeo).
  Try to figure out the downloads folder and use that as the location.
  If we know the video's name, use that as the file name.
  Otherwise use the video site's name in the file name.
  Make sure file names are unique.
- TODO: investigate problems with saving
- ... eg on http://vimeo.com/8186279 resulting in a -2015 "The movie contains an incorrect time value" error. Allegedly saving as MP4 resolves this in other applications, but how does one save in QT (and why can't we just grab the downloaded file?
 */
 - (IBAction) saveMovie: (id) sender {
 	NSAssert( [self movie] != nil, @"CTFKillerVideo-QT -saveMovie called even though movie == nil");
@@ -410,6 +409,32 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		NSError * error = nil;
 		NSDictionary * saveAttributes = [NSDictionary dictionaryWithObjectsAndKeys: [NSNumber numberWithBool: YES], QTMovieFlatten, nil];
 		BOOL saveSuccessful = [[self movie] writeToFile: destinationPath withAttributes: saveAttributes error: &error];
+		
+		// Careful: whacky code which tries to work around a save problem by removing a frame from the movie.
+		if ( !saveSuccessful && error ) {
+			// Check whether we are in a 'vimeo-type' situation which gives a -2015 "The movie contains an incorrect time value." error when saving. In that case, trimming a frame from the film's beginning seems to fix things.
+			if ( [error code] == -2015 ) {
+				// Find out frame rate. It is stored in movie -> video track -> media -> QTMediaTimeScaleAttribute and has to be divided by 1000.
+				NSArray * videoTracks = [[self movie] tracksOfMediaType: QTMediaTypeVideo];
+				if ( [videoTracks count] > 0 ) {
+					QTTrack * track = [videoTracks objectAtIndex: 0];
+					QTMedia * media = [track media];
+					NSNumber * timeScale = [media attributeForKey: QTMediaTimeScaleAttribute];
+					if (timeScale) {
+						// use a length of 1.5 frames as 1 frame doesn't seem to do the trick (perhaps some rounding problem?)
+						CGFloat length = 1500. / [timeScale floatValue];
+						QTTimeRange timeRange = QTMakeTimeRange(QTMakeTimeWithTimeInterval(0), QTMakeTimeWithTimeInterval(length));
+						
+						// Need to make movie editable before removing frame.
+						[[self movie] setAttribute: [NSNumber numberWithBool:YES] forKey: QTMovieEditableAttribute];
+						[[self movie] deleteSegment: timeRange];
+						
+						saveSuccessful = [[self movie] writeToFile: destinationPath withAttributes: saveAttributes error: &error];
+					}
+				}
+			}
+		}
+		
 		if (saveSuccessful) {
 			// saved successfully, add extended attribute with URL of video page
 			if ( [self videoPageURLString] != nil ) {
