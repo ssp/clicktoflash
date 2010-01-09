@@ -75,6 +75,9 @@
 
 - (void) dealloc {
 	[data release];
+    [URL release];
+    [response release];
+    [lastRequest release];
 	[delegate release];
 	[identifier release];
 	[super dealloc];
