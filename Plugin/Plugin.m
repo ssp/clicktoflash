@@ -201,10 +201,6 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
             _flashVars = [ [ CTFClickToFlashPlugin flashVarDictionary: flashvars ] retain ];
 		
 		
-		// Set up the CTFKiller subclass, if appropriate.
-		[self setKiller: [CTFKiller killerForURL:[NSURL URLWithString:[self baseURL]] src:[self src] attributes:[self attributes] forPlugin:self]];
-		
-		
 #if LOGGING_ENABLED > 1
 		NSLog( @"ClickToFlash Plugin arguments = %@", arguments );
 		NSLog( @"ClickToFlash Plugin flashvars = %@", _flashVars );
@@ -226,6 +222,11 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 			return self;
 		}		
 		
+
+		// Set up the CTFKiller subclass, if appropriate.
+		[self setKiller: [CTFKiller killerForURL:[NSURL URLWithString:[self baseURL]] src:[self src] attributes:[self attributes] forPlugin:self]];
+				
+
 		// Plugin is enabled and the host is not white-listed. Kick off Sparkle.
 		
 		/*NSString *pathToRelaunch = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:[CTFClickToFlashPlugin launchedAppBundleIdentifier]];
