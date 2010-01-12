@@ -96,9 +96,21 @@
 #pragma mark -
 #pragma mark CTFVideoKiller subclassing overrides
 
-// Name of the video service that can be used for automatic link text generation 
-- (NSString*) siteName { 
-	return CtFLocalizedString(@"Vimeo", @"Name of Vimeo");
+/*
+ Name of the video service that is be used for automatic link text generation as well as the badge.
+ collegehumor.com also uses vimeo, use their name when the web page is on that site.
+*/
+- (NSString*) siteName {
+	NSString * name = nil;
+	if ( [[[self plugin] baseURL] rangeOfString:@"collegehumor.com" options:NSCaseInsensitiveSearch].location != NSNotFound ) {
+		// we're on collegehumor.com
+		name = CtFLocalizedString(@"CollegeHumor", "Name of CollegeHumor");
+	}
+	else {
+		name =  CtFLocalizedString(@"Vimeo", @"Name of Vimeo");
+	}
+	
+	return name;
 }
 
 
