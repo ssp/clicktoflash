@@ -195,7 +195,7 @@ static NSString *sSifr3AddOnJSFilename = @"sifr3-addons";
 	}
 	
 	// implement rollback
-	[[sifrWebView windowScriptObject] evaluateWebScript: sSifrRollbackJS];
+	id result = [[sifrWebView windowScriptObject] evaluateWebScript: sSifrRollbackJS];
 }
 
 
