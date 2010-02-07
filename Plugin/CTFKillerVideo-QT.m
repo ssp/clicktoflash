@@ -493,7 +493,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 - (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex {
 	BOOL result = NO;
 	if ( recoveryOptionIndex == 0 ) {
-		[self downloadVideoUsingHD: nil];
+		[self downloadVideo: nil];
 		result = YES;
 	}
 	return result;
