@@ -27,7 +27,7 @@
 	<key>WebPluginDescription</key>
 	<string>Shockwave Flash 10.0 r42</string>
 	<key>Flash version number</key>
-	<string>10.0.42.2</string>
+	<string>10.0.42.34</string>
 	<key>WebPluginMIMETypes</key>
 	<dict>
 		<key>application/x-shockwave-flash</key>
