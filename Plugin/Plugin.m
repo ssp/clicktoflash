@@ -46,6 +46,9 @@ THE SOFTWARE.
 static NSString *sFlashOldMIMEType = @"application/x-shockwave-flash";
 static NSString *sFlashNewMIMEType = @"application/futuresplash";
 
+// Info.plist key storing the Flash version number
+static NSString *CTFFlashVersionNumberKey = @"Flash version number";
+
 // CTFUserDefaultsController keys
 static NSString *sAutoLoadInvisibleFlashViewsDefaultsKey = @"autoLoadInvisibleViews";
 static NSString *sPluginEnabledDefaultsKey = @"pluginEnabled";
@@ -142,6 +145,53 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	// automatically remove SiFR (and use normal text instead)?
 	CTFInitialDefault( [NSNumber numberWithBool: NO], sSifrDeSifrDefaultsKey, )
 }
+
+
+
+
+#pragma mark -
+#pragma mark WebKitPluginScripting
+
+- (id) objectForWebScript {
+    return self;
+}
+
+
++ (NSString *) webScriptNameForSelector: (SEL) aSelector {
+    // javascript may call GetVariable("$version") on us
+    if (aSelector == @selector(flashGetVariable:))
+        return @"GetVariable";
+    return nil;
+}
+
+
++ (BOOL) isSelectorExcludedFromWebScript: (SEL) aSelector {
+    if (aSelector == @selector(flashGetVariable:))
+        return NO;
+    return YES;
+}
+
+
+- (id) flashGetVariable: (id) flashVar {
+	NSString * result = nil;
+	
+    if (flashVar && [flashVar isKindOfClass:[NSString class]] && [(NSString *)flashVar isEqualToString:@"$version"]) {
+		/*
+		 Get Flash version number stored in our Info.plist and hand it over to JavaScript in the 'correct' format.
+		 It may be preferable to get the full version number from the Flash plug-in that's actually installed, but doing so may be a lot of work (locate the bundle, full version number seems to be stored in resource file only...).
+		*/
+		NSDictionary * infoDict = [[NSBundle bundleForClass: [self class]] infoDictionary];
+		NSMutableString * versionString = [[[infoDict objectForKey: CTFFlashVersionNumberKey] mutableCopy] autorelease];
+		if ( versionString != nil ) {
+			[versionString replaceOccurrencesOfString:@"." withString:@"," options:NSLiteralSearch range:NSMakeRange(0, [versionString length])];
+			
+			result = [NSString stringWithFormat: @"MAC %@", versionString];
+		}
+	}
+
+    return result;
+}
+
 
 
 
