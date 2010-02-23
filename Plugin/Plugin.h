@@ -94,6 +94,7 @@ enum subviewTags {
 - (IBAction)hideFlash: (id) sender;
 - (void) convertTypesForContainer: (BOOL) keepIt;
 
+- (NSString*) flashvarWithName: (NSString*) argName;
 + (NSDictionary*) flashVarDictionary: (NSString*) flashvarString;
 + (NSString *)launchedAppBundleIdentifier;
 - (void) browseToURLString: (NSString*) URLString;

@@ -175,17 +175,25 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 - (id) flashGetVariable: (id) flashVar {
 	NSString * result = nil;
 	
-    if (flashVar && [flashVar isKindOfClass:[NSString class]] && [(NSString *)flashVar isEqualToString:@"$version"]) {
-		/*
-		 Get Flash version number stored in our Info.plist and hand it over to JavaScript in the 'correct' format.
-		 It may be preferable to get the full version number from the Flash plug-in that's actually installed, but doing so may be a lot of work (locate the bundle, full version number seems to be stored in resource file only...).
-		*/
-		NSDictionary * infoDict = [[NSBundle bundleForClass: [self class]] infoDictionary];
-		NSMutableString * versionString = [[[infoDict objectForKey: CTFFlashVersionNumberKey] mutableCopy] autorelease];
-		if ( versionString != nil ) {
-			[versionString replaceOccurrencesOfString:@"." withString:@"," options:NSLiteralSearch range:NSMakeRange(0, [versionString length])];
-			
-			result = [NSString stringWithFormat: @"MAC %@", versionString];
+	if ( [flashVar isKindOfClass:[NSString class]] ) {
+		// we only know how to deal with strings
+		
+		if (flashVar && [(NSString *)flashVar isEqualToString:@"$version"]) {
+			/*
+			 Get Flash version number stored in our Info.plist and hand it over to JavaScript in the 'correct' format.
+			 It may be preferable to get the full version number from the Flash plug-in that's actually installed, but doing so may be a lot of work (locate the bundle, full version number seems to be stored in resource file only...).
+			 */
+			NSDictionary * infoDict = [[NSBundle bundleForClass: [self class]] infoDictionary];
+			NSMutableString * versionString = [[[infoDict objectForKey: CTFFlashVersionNumberKey] mutableCopy] autorelease];
+			if ( versionString != nil ) {
+				[versionString replaceOccurrencesOfString:@"." withString:@"," options:NSLiteralSearch range:NSMakeRange(0, [versionString length])];
+				
+				result = [NSString stringWithFormat: @"MAC %@", versionString];
+			}
+		}
+		else {
+			// Fall back to using stored flashvars for the other cases
+			result = [self flashvarWithName:(NSString *)flashVar];
 		}
 	}
 
