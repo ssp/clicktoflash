@@ -78,10 +78,9 @@
 	NSString * myVideoHash = [self videoHash];
 	
 	if (myVideoID != nil && myVideoHash != nil) {
-		// We are on a YouTube page which contains all relevant info right there: check for videos
-		[self _checkForH264VideoVariants];
-
-		// ... and get the video's name
+		// We are on a YouTube page which contains all relevant info right there.
+		// We already checked for video: check for videos. Now get the video's name.
+		 
 		// first get <html> and <head> nodes
 		DOMDocument * d = [[[self plugin] container] ownerDocument];
 		DOMNode * HTML = [[d firstChild] nextSibling];
