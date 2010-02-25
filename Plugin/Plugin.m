@@ -149,61 +149,6 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 
 
-#pragma mark -
-#pragma mark WebKitPluginScripting
-
-- (id) objectForWebScript {
-    return self;
-}
-
-
-+ (NSString *) webScriptNameForSelector: (SEL) aSelector {
-    // javascript may call GetVariable("$version") on us
-    if (aSelector == @selector(flashGetVariable:))
-        return @"GetVariable";
-    return nil;
-}
-
-
-+ (BOOL) isSelectorExcludedFromWebScript: (SEL) aSelector {
-    if (aSelector == @selector(flashGetVariable:))
-        return NO;
-    return YES;
-}
-
-
-- (id) flashGetVariable: (id) flashVar {
-	NSString * result = nil;
-	
-	if ( [flashVar isKindOfClass:[NSString class]] ) {
-		// we only know how to deal with strings
-		
-		if (flashVar && [(NSString *)flashVar isEqualToString:@"$version"]) {
-			/*
-			 Get Flash version number stored in our Info.plist and hand it over to JavaScript in the 'correct' format.
-			 It may be preferable to get the full version number from the Flash plug-in that's actually installed, but doing so may be a lot of work (locate the bundle, full version number seems to be stored in resource file only...).
-			 */
-			NSDictionary * infoDict = [[NSBundle bundleForClass: [self class]] infoDictionary];
-			NSMutableString * versionString = [[[infoDict objectForKey: CTFFlashVersionNumberKey] mutableCopy] autorelease];
-			if ( versionString != nil ) {
-				[versionString replaceOccurrencesOfString:@"." withString:@"," options:NSLiteralSearch range:NSMakeRange(0, [versionString length])];
-				
-				result = [NSString stringWithFormat: @"MAC %@", versionString];
-			}
-		}
-		else {
-			// Fall back to using stored flashvars for the other cases
-			result = [self flashvarWithName:(NSString *)flashVar];
-		}
-	}
-
-    return result;
-}
-
-
-
-
-
 
 #pragma mark -
 #pragma mark Initialization and Superclass Overrides
@@ -577,6 +522,62 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	if ([self killer]) {
 		[killer pluginResized];
 	}
+}
+
+
+
+
+
+
+#pragma mark -
+#pragma mark WebKitPluginScripting
+
+- (id) objectForWebScript {
+    return self;
+}
+
+
++ (NSString *) webScriptNameForSelector: (SEL) aSelector {
+    // javascript may call GetVariable("$version") on us
+    if (aSelector == @selector(flashGetVariable:))
+        return @"GetVariable";
+    return nil;
+}
+
+
++ (BOOL) isSelectorExcludedFromWebScript: (SEL) aSelector {
+    if (aSelector == @selector(flashGetVariable:))
+        return NO;
+    return YES;
+}
+
+
+- (id) flashGetVariable: (id) flashVar {
+	NSString * result = nil;
+	
+	if ( [flashVar isKindOfClass:[NSString class]] ) {
+		// we only know how to deal with strings
+		
+		if (flashVar && [(NSString *)flashVar isEqualToString:@"$version"]) {
+			/*
+			 Get Flash version number stored in our Info.plist and hand it over to JavaScript in the 'correct' format.
+			 It may be preferable to get the full version number from the Flash plug-in that's actually installed, but doing so may be a lot of work (locate the bundle, full version number seems to be stored in resource file only...).
+			 */
+			NSDictionary * infoDict = [[NSBundle bundleForClass: [self class]] infoDictionary];
+			NSMutableString * versionString = [[[infoDict objectForKey: CTFFlashVersionNumberKey] mutableCopy] autorelease];
+			if ( versionString != nil ) {
+				[versionString replaceOccurrencesOfString:@"." withString:@"," options:NSLiteralSearch range:NSMakeRange(0, [versionString length])];
+				
+				result = [NSString stringWithFormat: @"MAC %@", versionString];
+			}
+		}
+		else {
+			// Fall back to using stored flashvars for the other cases
+			result = [self flashvarWithName:(NSString *)flashVar];
+		}
+	}
+	
+    return result;
 }
 
 
