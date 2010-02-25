@@ -331,6 +331,7 @@
 		
 		NSString * myTitle = [self flashVarWithName: @"title"];
 		if ( myTitle != nil ) {
+			NSLog(@"CTFKillerYouTube - setInfoFramFlashVars: found 'title' flash var and setting name from it");
 			[self setTitle: myTitle];
 		}
 		
