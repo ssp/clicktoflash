@@ -203,6 +203,9 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
         if( flashvars != nil )
             _flashVars = [ [ CTFClickToFlashPlugin flashVarDictionary: flashvars ] retain ];
 		
+#if LOGGING_ENABLED
+		NSLog(@"ClickToFlashPlugin %@ -initWithArguments, src: %@", [self description], [self src]);
+#endif
 		
 #if LOGGING_ENABLED > 1
 		NSLog( @"ClickToFlash Plugin arguments = %@", arguments );
@@ -438,6 +441,10 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 
 - (void)webPlugInDestroy {
+#if LOGGING_ENABLED
+	NSLog(@"ClickToFlashPlugin %@ -webPlugInDestroy", [self description]);
+#endif
+	
 	[NSObject cancelPreviousPerformRequestsWithTarget:self];
 	
 	[[self killer] pluginDestroy];
@@ -473,12 +480,12 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 
 - (void) dealloc {
+#if LOGGING_ENABLED
+	NSLog(@"ClickToFlashPlugin %@ -dealloc", [self description]);
+#endif
+	
 	// Just in case...
 	[self webPlugInDestroy];
-	
-#if LOGGING_ENABLED
-	NSLog(@"ClickToFlash Plugin: -dealloc");
-#endif
 	
     [super dealloc];
 }

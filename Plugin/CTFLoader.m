@@ -51,6 +51,10 @@
 
 // Calls -reallyStart on the main thread. -reallyStart opens an NSURLConnection which calls its delegate methods on the same thread it was initialised on (and does nothing when that thread doesn't exist anymore). As this method can be called on a different thread, we make sure that the delegate methods can be called when they are due.
 - (void) start {
+#if LOGGING_ENABLED
+	NSLog(@"CTFLoader %@ -start for address: %@", [self description], [[self URL] absoluteString]);
+#endif
+	
 	[self performSelectorOnMainThread:@selector(reallyStart) withObject:nil waitUntilDone:YES];
 }
 
@@ -68,6 +72,9 @@
 
 
 - (void) finish {
+#if LOGGING_ENABLED
+	NSLog(@"CTFLoader %@ -finish", [self description]);
+#endif
 	[delegate performSelector:callbackSelector withObject:self];
 }
 
@@ -108,13 +115,17 @@
 
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+#if LOGGING_ENABLED
+	NSLog(@"CTFLoader %@ finished Loading for delegate: %@", [self description], [[self delegate] description]);
+#endif
+	
 	[self finish];		
 }
 
 
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-	NSLog(@"ClickToFlash Loader download failure: %@", [error description]);
+	NSLog(@"CTFlashLoader %@ download failure: %@", [self description], [error description]);
 	[self finish];
 }
 
@@ -125,7 +136,7 @@
 			redirectResponse:(NSURLResponse *)redirectResponse
 {
 #if LOGGING_ENABLED
-	NSLog(@"CTFLoader redirect to: %@", [[request URL] absoluteString]);
+	NSLog(@"CTFLoader %@ redirect to: %@", [self description], [[request URL] absoluteString]);
 #endif
 	NSURLRequest * result = request;
 	
@@ -161,10 +172,6 @@
 }
 
 - (void)setURL:(NSURL *)newURL {
-#if LOGGING_ENABLED
-	NSLog(@"CTFLoader setURL: %@", newURL);
-#endif
-	
 	[newURL retain];
 	[URL release];
 	URL = newURL;
