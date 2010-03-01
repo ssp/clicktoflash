@@ -29,6 +29,7 @@
 #import "CTFKillerVideo-QT.h"
 #import "CTFKillerVideo-HTML.h"
 #import "CTFUserDefaultsController.h"
+#import "CTFLoader.h"
 #import "CTFUtilities.h"
 #import "Plugin.h"
 #import <QTKit/QTKit.h>
@@ -137,6 +138,8 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 
 // Called when our plug-in is destroyed, so pending actions can be stopped in a controlled way
 - (void) pluginDestroy {
+	[[NSNotificationCenter defaultCenter] postNotificationName: CTFLoaderCancelNotification object: [self plugin]];
+	
 	NSButton * button = [[[self plugin] buttonsView] viewWithTag: CTFHDButtonTag];
 	if (button != nil) {
 		[button unbind:@"toolTip"];
