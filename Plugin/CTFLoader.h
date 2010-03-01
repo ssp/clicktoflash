@@ -27,12 +27,16 @@
 
 #import <Cocoa/Cocoa.h>
 
+extern NSString * CTFLoaderCancelNotification;
+
+
 
 @interface CTFLoader : NSObject {
 	NSMutableData * data;
 	NSURL * URL;
 	NSURLResponse * response;
 	NSURLRequest * lastRequest;
+	NSURLConnection * connection;
 	
 	id identifier;
 	
@@ -54,6 +58,8 @@
 - (void)setResponse:(NSURLResponse *)newResponse;
 - (NSURLRequest *)lastRequest;
 - (void)setLastRequest:(NSURLRequest *)newLastRequest;
+- (NSURLConnection *)connection;
+- (void)setConnection:(NSURLConnection *)newConnection;
 - (id)identifier;
 - (void)setIdentifier:(id)newIdentifier;
 - (BOOL)HEADOnly;

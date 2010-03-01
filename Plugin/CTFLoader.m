@@ -26,6 +26,10 @@
 #import "CTFUtilities.h"
 
 
+NSString * CTFLoaderCancelNotification = @"CTFLoaderCancel";
+
+
+
 @implementation CTFLoader
 
 - (id) initWithURL: (NSURL *) theURL delegate: (id) theDelegate selector: (SEL) theSelector {
@@ -40,8 +44,19 @@
 		data = [[NSMutableData alloc] init];
 		identifier = nil;
 		response = nil;
+		connection = nil;
 		
 		result = self;
+		
+		// listen to cancel notifications. Try to use the plug-in as the object (so we can catch everything) belonging to our plug-in. Otherwise use the delegate.
+		id notificationObject = delegate;
+		if ([delegate respondsToSelector:@selector(plugin)]) {
+			notificationObject = [delegate performSelector:@selector(plugin)];
+		}
+		[[NSNotificationCenter defaultCenter] addObserver: self
+												 selector: @selector(cancel:)
+													 name: CTFLoaderCancelNotification
+												   object: notificationObject];
 	}
 	
 	return result;
@@ -66,7 +81,11 @@
 	if ([self HEADOnly]) {
 		[request setHTTPMethod:@"HEAD"];
 	}
-	[[[NSURLConnection alloc] initWithRequest:request delegate:self] autorelease];
+	NSURLConnection * myConnection = [[[NSURLConnection alloc] initWithRequest:request delegate:self] autorelease];
+	[self setConnection: myConnection];
+#if LOGGING_ENABLED
+	NSLog(@"CTFLoader %@ -reallyStart: started URLConnection %@", [self description], [myConnection description]);
+#endif
 }
 
 
@@ -80,11 +99,28 @@
 
 
 
+- (void) cancel: (NSNotification *) notification {
+#if LOGGING_ENABLED
+	NSLog(@"CTFLoader %@ -cancel:", [self description]);
+#endif
+	
+	[[self connection] cancel];
+}
+
+
+
 - (void) dealloc {
+#if LOGGING_ENABLED
+	NSLog(@"CTFLoader %@ -dealloc", [self description]);
+#endif
+	
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
 	[data release];
     [URL release];
     [response release];
     [lastRequest release];
+	[connection release];
 	[delegate release];
 	[identifier release];
 	[super dealloc];
@@ -102,13 +138,13 @@
 
 
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)theResponse {
+- (void)connection:(NSURLConnection *)theConnection didReceiveResponse:(NSURLResponse *)theResponse {
 	[self setResponse: theResponse];
 	
 	// We need to cancel HEAD fetching connections here as 10.5 may proceed to download the whole file otherwise ( http://openradar.appspot.com/7019347 )
 	if ( [self HEADOnly] && [(NSHTTPURLResponse*) theResponse statusCode] == 200 ) {
 		[self finish];
-		[connection cancel];
+		[theConnection cancel];
 	}
 }
 
@@ -197,6 +233,17 @@
 	[newLastRequest retain];
 	[lastRequest release];
 	lastRequest = newLastRequest;
+}
+
+
+- (NSURLConnection *)connection {
+	return connection;
+}
+
+- (void)setConnection:(NSURLConnection *)newConnection {
+	[newConnection retain];
+	[connection release];
+	connection = newConnection;
 }
 
 
