@@ -893,6 +893,8 @@
 				IBC_FLATTEN_NIBS = NO;
 				INFOPLIST_FILE = "Updater/Info-Updater.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				"MACOSX_DEPLOYMENT_TARGET[arch=i386]" = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=ppc]" = 10.4;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH_ACTUAL)";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -926,6 +928,8 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Updater/Info-Updater.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				"MACOSX_DEPLOYMENT_TARGET[arch=i386]" = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=ppc]" = 10.4;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Sparkle,
