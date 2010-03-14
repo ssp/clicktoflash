@@ -120,11 +120,11 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	}
 	
 	[self setMovieSetupThread: nil];
-	
+
 	// not doing this on the main thread seems to hang the application
 	// [self performSelectorOnMainThread:@selector(resizeToFitMovie) withObject:nil waitUntilDone:NO];
 	
-	[pool release];	
+	[pool drain];
 }
 
 
@@ -550,7 +550,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  * standard display behaviour before the film is loaded
  * The buttons container to be full width at the top of the screen in fullscreen mode 
  * The buttons container fitting into the bounds of the displayed movie when the movie view is present
- */
+*/
 - (void) adjustButtonPositions:(BOOL) smoothly {
 	NSRect movieRect;
 	
