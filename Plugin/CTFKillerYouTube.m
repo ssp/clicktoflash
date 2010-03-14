@@ -95,7 +95,6 @@
 			}
 		}
 		
-		NSString * theTitle = nil;
 		if ( i < [nodeList length] ) {
 			// we break-ed out of the previous loop -> continue
 			nodeList = [headNode childNodes];

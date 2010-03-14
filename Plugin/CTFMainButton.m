@@ -185,8 +185,6 @@
 
 
 - (void) drawBadgeForBounds: (NSRect) bounds {	
-	static BOOL _fromFlickr = NO;  // have to figure this out
-
 	// What and how are we going to draw?
 	const float kFrameXInset = 10;
 	const float kFrameYInset =  4;
