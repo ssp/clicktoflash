@@ -2,7 +2,7 @@
 
 The MIT License
 
-Copyright (c) 2008-2009 ClickToFlash Developers
+Copyright (c) 2008-2010 ClickToFlash Developers
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -153,203 +153,182 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 #pragma mark -
 #pragma mark Initialization and Superclass Overrides
 
-
-- (id) initWithArguments:(NSDictionary *)arguments
-{
-    self = [super init];
+- (id) initWithArguments: (NSDictionary*) arguments {
+	self = [super init];
     if (self) {
-		// check whether plugin is disabled, load all content as normal if so
-		if ([CTFClickToFlashPlugin CTFIsInactive]) {
-			_isLoadingFromWhitelist = YES;
-			[self convertTypesForContainer:NO];
-			return self;
-		}
-
-		isConverted = NO;
-		_sparkleUpdateInProgress = NO;
-		
+		// SET UP INSTANCE VARIABLES
+		// display related
 		[self setWebView:[[[arguments objectForKey:WebPlugInContainerKey] webFrame] webView]];
-        [self setContainer:[arguments objectForKey:WebPlugInContainingElementKey]];
-		[self setFrameSize:NSMakeSize(1., 1.)];
-		[self setFullScreenWindow: nil];
+		[self setContainer:[arguments objectForKey:WebPlugInContainingElementKey]];
 		
-        // Get URL
-        
-        NSURL *base = [arguments objectForKey:WebPlugInBaseURLKey];
+		// URL related
+		NSURL * base = [arguments objectForKey:WebPlugInBaseURLKey];
 		[self setBaseURL:[base absoluteString]];
 		[self setHost:[base host]];
-
+		
+		// attribute & variable related
 		[self setAttributes:[arguments objectForKey:WebPlugInAttributesKey]];
-		NSString *srcAttribute = [[self attributes] objectForKey:@"src"];
-        
+
+		NSString * srcAttribute = [[self attributes] objectForKey:@"src"];
 		if (srcAttribute) {
 			[self setSrc:srcAttribute];
 		} else {
-			NSString *dataAttribute = [[self attributes] objectForKey:@"data"];
-			if (dataAttribute) [self setSrc:dataAttribute];
-		}
-		
-		
-		// set tooltip
-		
-		if ([self src]) {
-			int srcLength = [[self src] length];
-			if ([[self src] length] > 200) {
-				NSString *srcStart = [[self src] substringToIndex:150];
-				NSString *srcEnd = [[self src] substringFromIndex:(srcLength-50)];
-				NSString *shortenedSrc = [NSString stringWithFormat:@"%@…%@",srcStart,srcEnd];
-				[self setToolTip:shortenedSrc];
-			} else {
-				[self setToolTip:[self src]];
+			NSString * dataAttribute = [[self attributes] objectForKey:@"data"];
+			if (dataAttribute) {
+				[self setSrc:dataAttribute];
 			}
 		}
+
+		NSString * flashVars = [[self attributes] objectForKey:@"flashvars"];
+		[self setFlashVarsFromString:flashVars];
 		
-        
-        // Read in flashvars
-        
-        NSString* flashvars = [[self attributes] objectForKey: @"flashvars" ];
-        if( flashvars != nil )
-            _flashVars = [ [ CTFClickToFlashPlugin flashVarDictionary: flashvars ] retain ];
+		[self opacitySetup]; // sets up original opacity attributes and changes our opacity
+
+		isConverted = NO;
 		
+		[self setupSubviews]; // sets up subview variables
+		
+		[self setFullScreenWindow: nil];
+		
+		[self setPreviewURL: nil];
+		[self setPreviewImage: nil];
+
 #if LOGGING_ENABLED
 		NSLog(@"ClickToFlashPlugin %@ -initWithArguments, src: %@", [self description], [self src]);
-#endif
-		
 #if LOGGING_ENABLED > 1
 		NSLog( @"ClickToFlash Plugin arguments = %@", arguments );
 		NSLog( @"ClickToFlash Plugin flashvars = %@", _flashVars );
 #endif
+#endif
 		
+		// FURTHER SETUP & POTENTIAL CONVERSION
 		
-		// Set up the CTFKiller subclass, if appropriate.
-		[self setKiller: [CTFKiller killerForURL:[NSURL URLWithString:[self baseURL]] src:[self src] attributes:[self attributes] forPlugin:self]];
-				
+		// Try to add menu bar items.
+		[CTFMenubarMenuController sharedController];
+		
+		// Check whether plugin is disabled, load all content as normal if so.
+		// Do this before setting up Killers.
+		if ( [CTFClickToFlashPlugin CTFIsInactive] ) {
+			[self convertTypesForContainer:NO];
+			return self;
+		}
 
-		// Plugin is enabled and the host is not white-listed. Kick off Sparkle.
-		
-		/*NSString *pathToRelaunch = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:[CTFClickToFlashPlugin launchedAppBundleIdentifier]];
-		[[SparkleManager sharedManager] setPathToRelaunch:pathToRelaunch];
-		[[SparkleManager sharedManager] startAutomaticallyCheckingForUpdates];*/
-		
-        // Set up main menus
-        
-		[ CTFMenubarMenuController sharedController ];	// trigger the menu items to be added
 
+		// Set up the CTFKiller subclass if appropriate.
+		[self setKiller: [CTFKiller killerForURL:[NSURL URLWithString:[self baseURL]]
+											 src:[self src]
+									  attributes:[self attributes]
+									   forPlugin:self] ];
 		
-		// Create our subviews. These need to be in place before any conversion occurs as the CTFKillers invoked by conversion may be using them.
-		
-		[self setupSubviews];
-
 		
 		// Automatically load small/invisible Flash elements if so desired.
-		
 		if ( [ [ CTFUserDefaultsController standardUserDefaults ] boolForKey: sAutoLoadInvisibleFlashViewsDefaultsKey ]
 			&& [ self isConsideredInvisible ] ) {
 			// auto-loading is on and this view meets the size constraints
-            _isLoadingFromWhitelist = YES;
 			[self convertTypesForContainer:YES];
 			return self;
 		}
 		
 		
+		// Automatically load Flash on whitelisted URLs
 		BOOL loadFromWhiteList = [self _isHostWhitelisted];
 		
 		// Check the SWF src URL itself against the whitelist (allows embbeded videos from whitelisted sites to play, e.g. YouTube)
-		
 		if( !loadFromWhiteList ) {
-            if (srcAttribute) {
-				if( [self _isWhiteListedForHostString:srcAttribute ] ) {
+            if ( [self src] ) {
+				if( [self _isWhiteListedForHostString: [self src] ] ) {
                     loadFromWhiteList = YES;
                 }
             }
 		}
 		
-        
-        // Handle if this is loading from whitelist
-        
-        if(loadFromWhiteList && ![self _isOptionPressed]) {
-            _isLoadingFromWhitelist = YES;
+		// Convert if we are loading a whitelisted item.
+        if( loadFromWhiteList && ![self _isOptionPressed] ) {
 			[self convertTypesForContainer:YES];
-
 			return self;
         }
 		
 		
-		// send a notification so that all flash objects can be tracked
-		// we only want to track it if we don't auto-load it
+		// Send a notification so that all flash objects can be tracked.
+		// We only want to track it if we don't auto-load it.
 		[[CTFMenubarMenuController sharedController] registerView: self];
         
         // Observe various things:
-        
         NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
         
         // Observe for additions to the whitelist:
         [self _addWhitelistObserver];
 		
-		[center addObserver: self 
-				   selector: @selector( _loadContent: ) 
-					   name: kCTFLoadAllFlashViews 
+		[center addObserver: self
+				   selector: @selector( _loadContent: )
+					   name: kCTFLoadAllFlashViews
 					 object: nil ];
 		
-		[center addObserver: self 
-				   selector: @selector( _loadContentForWindow: ) 
-					   name: kCTFLoadFlashViewsForWindow 
+		[center addObserver: self
+				   selector: @selector( _loadContentForWindow: )
+					   name: kCTFLoadFlashViewsForWindow
 					 object: nil ];
 		
-		[center addObserver: self 
-				   selector: @selector( _loadInvisibleContentForWindow: ) 
+		[center addObserver: self
+				   selector: @selector( _loadInvisibleContentForWindow: )
 					   name: kCTFLoadInvisibleFlashViewsForWindow
 					 object: nil ];
-		
-		
-		// if a Flash view has style attributes that make it transparent, the CtF
-		// view will similarly be transparent; we want to make it temporarily
-		// visible, and then restore the original attributes so that we don't
-		// have any display issues once the Flash view is loaded
-		
-		// Should we apply this to the parent?
-		// That seems to be problematic.
-		
-		// well, in my experience w/CSS, to get a layout to work a lot of the
-		// time, you need to create parent objects and apply styles to parents,
-		// so it seemed reasonable to check both self and parent for potential
-		// problems with opacity
-		
-		NSMutableDictionary *originalOpacityDict = [NSMutableDictionary dictionary];
-		NSString *opacityResetString = @"; opacity: 1.000 !important; -moz-opacity: 1 !important; filter: alpha(opacity=1) !important;";
-		
-		NSString *originalWmode = [[self container] getAttribute:@"wmode"];
-		NSString *originalStyle = [[self container] getAttribute:@"style"];
-		NSString *originalParentWmode = [(DOMElement *)[[self container] parentNode] getAttribute:@"wmode"];
-		NSString *originalParentStyle = [(DOMElement *)[[self container] parentNode] getAttribute:@"style"];
-		
-		if (originalWmode != nil && [originalWmode length] > 0u && ![originalWmode isEqualToString:@"opaque"]) {
-			[originalOpacityDict setObject:originalWmode forKey:@"self-wmode"];
-			[[self container] setAttribute:@"wmode" value:@"opaque"];
-		}
-		
-		if (originalStyle != nil && [originalStyle length] > 0u && ![originalStyle hasSuffix:opacityResetString]) {
-			[originalOpacityDict setObject:originalStyle forKey:@"self-style"];
-			[originalOpacityDict setObject:[originalStyle stringByAppendingString:opacityResetString] forKey:@"modified-self-style"];
-			[[self container] setAttribute:@"style" value:[originalStyle stringByAppendingString:opacityResetString]];
-		}
-		
-		if (originalParentWmode != nil && [originalParentWmode length] > 0u && ![originalParentWmode isEqualToString:@"opaque"]) {
-			[originalOpacityDict setObject:originalParentWmode forKey:@"parent-wmode"];
-			[(DOMElement *)[[self container] parentNode] setAttribute:@"wmode" value:@"opaque"];
-		}
-		
-		if (originalParentStyle != nil && [originalParentStyle length] > 0u && ![originalParentStyle hasSuffix:opacityResetString]) {
-			[originalOpacityDict setObject:originalParentStyle forKey:@"parent-style"];
-			[originalOpacityDict setObject:[originalParentStyle stringByAppendingString:opacityResetString] forKey:@"modified-parent-style"];
-			[(DOMElement *)[[self container] parentNode] setAttribute:@"style" value:[originalParentStyle stringByAppendingString:opacityResetString]];
-		}
-		
-		[self setOriginalOpacityAttributes:originalOpacityDict];
+
 	}
-		
-    return self;
+	
+	return self;
 }
+
+
+
+
+// If a Flash view has style attributes that make it transparent, the CtF
+// view will similarly be transparent; we want to make it temporarily
+// visible, and then restore the original attributes so that we don't
+// have any display issues once the Flash view is loaded.
+//
+// Should we apply this to the parent?
+// That seems to be problematic.
+//
+// Well, in my experience w/CSS, to get a layout to work a lot of the
+// time, you need to create parent objects and apply styles to parents,
+// so it seemed reasonable to check both self and parent for potential
+// problems with opacity.
+
+- (void) opacitySetup {
+	NSMutableDictionary *originalOpacityDict = [NSMutableDictionary dictionary];
+	NSString *opacityResetString = @"; opacity: 1.000 !important; -moz-opacity: 1 !important; filter: alpha(opacity=1) !important;";
+	
+	NSString *originalWmode = [[self container] getAttribute:@"wmode"];
+	NSString *originalStyle = [[self container] getAttribute:@"style"];
+	NSString *originalParentWmode = [(DOMElement *)[[self container] parentNode] getAttribute:@"wmode"];
+	NSString *originalParentStyle = [(DOMElement *)[[self container] parentNode] getAttribute:@"style"];
+	
+	if (originalWmode != nil && [originalWmode length] > 0u && ![originalWmode isEqualToString:@"opaque"]) {
+		[originalOpacityDict setObject:originalWmode forKey:@"self-wmode"];
+		[[self container] setAttribute:@"wmode" value:@"opaque"];
+	}
+	
+	if (originalStyle != nil && [originalStyle length] > 0u && ![originalStyle hasSuffix:opacityResetString]) {
+		[originalOpacityDict setObject:originalStyle forKey:@"self-style"];
+		[originalOpacityDict setObject:[originalStyle stringByAppendingString:opacityResetString] forKey:@"modified-self-style"];
+		[[self container] setAttribute:@"style" value:[originalStyle stringByAppendingString:opacityResetString]];
+	}
+	
+	if (originalParentWmode != nil && [originalParentWmode length] > 0u && ![originalParentWmode isEqualToString:@"opaque"]) {
+		[originalOpacityDict setObject:originalParentWmode forKey:@"parent-wmode"];
+		[(DOMElement *)[[self container] parentNode] setAttribute:@"wmode" value:@"opaque"];
+	}
+	
+	if (originalParentStyle != nil && [originalParentStyle length] > 0u && ![originalParentStyle hasSuffix:opacityResetString]) {
+		[originalOpacityDict setObject:originalParentStyle forKey:@"parent-style"];
+		[originalOpacityDict setObject:[originalParentStyle stringByAppendingString:opacityResetString] forKey:@"modified-parent-style"];
+		[(DOMElement *)[[self container] parentNode] setAttribute:@"style" value:[originalParentStyle stringByAppendingString:opacityResetString]];
+	}
+	
+	[self setOriginalOpacityAttributes:originalOpacityDict];
+}
+
 
 
 
@@ -392,7 +371,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	[myContainerView addSubview: theButtonsContainer];
 	[self setButtonsContainer: theButtonsContainer];
 	
-		// Add action button control
+	// Add action button control
 	CTFActionButton * theActionButton = [CTFActionButton actionButton];
 	[theActionButton setTag: CTFActionButtonTag];
 	[theActionButton setPlugin: self];
@@ -443,13 +422,17 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	// notify that this ClickToFlash plugin is going away
 	[[CTFMenubarMenuController sharedController] unregisterView:self];
 	
-	[self setContainer:nil];
-	[self setHost:nil];
 	[self setWebView:nil];
+	[self setContainer:nil];
+
 	[self setBaseURL:nil];
-	[self setSrc:nil];
+	[self setHost:nil];
+
 	[self setAttributes:nil];
+	[self setSrc:nil];
+	[self setFlashVarsFromString:nil];
 	[self setOriginalOpacityAttributes:nil];
+	
 	[self setKiller:nil];
 	[self setContainerView:nil];
 	[self setMainButton:nil];
@@ -460,8 +443,6 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	[self setPreviewURL:nil];
 	[self setPreviewImage:nil];
 	
-	[_flashVars release];
-	_flashVars = nil;
 
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -729,21 +710,31 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 + (NSDictionary*) flashVarDictionary: (NSString*) flashvarString
 {
-    NSMutableDictionary* flashVarsDictionary = [ NSMutableDictionary dictionary ];
+    NSMutableDictionary * flashVarsDictionary = nil;
+	
+	if (flashvarString != nil) {
+		flashVarsDictionary = [ NSMutableDictionary dictionary ];
     
-    NSArray* args = [ flashvarString componentsSeparatedByString: @"&" ];
+		NSArray* args = [ flashvarString componentsSeparatedByString: @"&" ];
     
-    CTFForEachObject( NSString, oneArg, args ) {
-        NSRange sepRange = [ oneArg rangeOfString: @"=" ];
-        if( sepRange.location != NSNotFound ) {
-            NSString* key = [ oneArg substringToIndex: sepRange.location ];
-            NSString* val = [ oneArg substringFromIndex: NSMaxRange( sepRange ) ];
-            
-            [ flashVarsDictionary setObject: val forKey: key ];
-        }
-    }
+		CTFForEachObject( NSString, oneArg, args ) {
+			NSRange sepRange = [ oneArg rangeOfString: @"=" ];
+			if( sepRange.location != NSNotFound ) {
+				NSString* key = [ oneArg substringToIndex: sepRange.location ];
+				NSString* val = [ oneArg substringFromIndex: NSMaxRange( sepRange ) ];
+				
+				[ flashVarsDictionary setObject: val forKey: key ];
+			}
+		}
+	}
     
     return flashVarsDictionary;
+}
+
+
+- (void) setFlashVarsFromString: (NSString *) string {
+	[_flashVars release];
+	_flashVars = [[CTFClickToFlashPlugin flashVarDictionary: string] retain];
 }
 
 
@@ -1099,7 +1090,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 #pragma mark Accessibility
 
 
-- (BOOL)accessibilityIsIgnored {
+- (BOOL) accessibilityIsIgnored {
 	return NO;
 }
 
@@ -1251,91 +1242,98 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 #pragma mark -
 #pragma mark Accessors
 
-- (WebView *)webView {
+- (WebView *) webView {
     return _webView;
 }
 
-- (void)setWebView:(WebView *)newValue {
+- (void) setWebView: (WebView *) newValue {
     // Not retained, because the WebView owns the plugin, so we'll get a retain cycle.
     _webView = newValue;
 }
 
 
-- (DOMElement *)container {
+
+- (DOMElement *) container {
     return _container;
 }
 
-- (void)setContainer:(DOMElement *)newValue {
+- (void) setContainer: (DOMElement *) newValue {
     [newValue retain];
     [_container release];
     _container = newValue;
 }
 
 
-- (NSString *)host {
-    return _host;
-}
 
-- (void)setHost:(NSString *)newValue {
-    [newValue retain];
-    [_host release];
-    _host = newValue;
-}
-
-
-- (NSString *)baseURL {
+- (NSString *) baseURL {
     return _baseURL;
 }
 
-- (void)setBaseURL:(NSString *)newValue {
+- (void) setBaseURL: (NSString *) newValue {
     [newValue retain];
     [_baseURL release];
     _baseURL = newValue;
 }
 
 
-- (NSDictionary *)attributes {
+
+- (NSString *) host {
+    return _host;
+}
+
+- (void) setHost: (NSString *) newValue {
+    [newValue retain];
+    [_host release];
+    _host = newValue;
+}
+
+
+
+- (NSDictionary *) attributes {
     return _attributes;
 }
 
-- (void)setAttributes:(NSDictionary *)newValue {
+- (void) setAttributes: (NSDictionary *) newValue {
     [newValue retain];
     [_attributes release];
     _attributes = newValue;
 }
 
 
-- (NSDictionary *)originalOpacityAttributes {
-    return _originalOpacityAttributes;
-}
 
-- (void)setOriginalOpacityAttributes:(NSDictionary *)newValue {
-    [newValue retain];
-    [_originalOpacityAttributes release];
-    _originalOpacityAttributes = newValue;
-}
-
-
-- (NSString *)src {
+- (NSString *) src {
     return _src;
 }
 
-- (void)setSrc:(NSString *)newValue {
+- (void) setSrc: (NSString *) newValue {
     [newValue retain];
     [_src release];
     _src = newValue;
 }
 
 
-- (CTFKiller *)killer {
-	return killer;
+
+- (NSDictionary *) originalOpacityAttributes {
+    return _originalOpacityAttributes;
 }
 
-- (void)setKiller:(CTFKiller *)newKiller {
-	[newKiller retain];
-	[killer release];
-	killer = newKiller;
+- (void) setOriginalOpacityAttributes: (NSDictionary *) newValue {
+    [newValue retain];
+    [_originalOpacityAttributes release];
+    _originalOpacityAttributes = newValue;
 }
+
+
+
+- (BOOL) isConverted {
+	return isConverted;
+}
+
+- (void) setIsConverted: (BOOL) newIsConverted {
+	[[self mainButton] setHidden: newIsConverted];
+	isConverted = newIsConverted;
+}
+
 
 
 - (NSView *) containerView {
@@ -1393,6 +1391,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 }
 
 
+
 - (CTFFullScreenWindow *) fullScreenWindow {
 	return fullScreenWindow;
 }
@@ -1410,11 +1409,24 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 }
 
 
+
+- (CTFKiller *) killer {
+	return killer;
+}
+
+- (void) setKiller: (CTFKiller *) newKiller {
+	[newKiller retain];
+	[killer release];
+	killer = newKiller;
+}
+
+
+
 - (NSURL *) previewURL {
 	return previewURL;
 }
 
-- (void) setPreviewURL:(NSURL *) newPreviewURL {
+- (void) setPreviewURL: (NSURL *) newPreviewURL {
 	[newPreviewURL retain];
 	[previewURL release];
 	previewURL = newPreviewURL;
@@ -1424,18 +1436,6 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		[loader start];
 	}
 }
-
-
-- (BOOL) isConverted {
-	return isConverted;
-}
-
-- (void) setIsConverted: (BOOL) newIsConverted {
-	[[self mainButton] setHidden: newIsConverted];
-	isConverted = newIsConverted;
-}
-
-
 
 
 
@@ -1457,8 +1457,5 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		[self setPreviewImage: image];
 	}
 }
-
-
-
 
 @end

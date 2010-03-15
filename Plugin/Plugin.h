@@ -2,7 +2,7 @@
 
 The MIT License
 
-Copyright (c) 2008-2009 ClickToFlash Developers
+Copyright (c) 2008-2010 ClickToFlash Developers
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -47,18 +47,16 @@ enum subviewTags {
 @class CTFFullScreenWindow;
 
 @interface CTFClickToFlashPlugin : NSView <WebPlugInViewFactory> {
-    DOMElement *_container;
-    NSString *_host;
-    NSDictionary* _flashVars;
-    id trackingArea;
-    NSAlert* _activeAlert;
-    BOOL mouseIsDown;
-    BOOL _isLoadingFromWhitelist;
-	WebView *_webView;
-	NSString *_baseURL;
-	NSDictionary *_attributes;
-	NSDictionary *_originalOpacityAttributes;
-	NSString *_src;
+	WebView * _webView;
+    DOMElement * _container;
+	
+	NSString * _baseURL;
+    NSString * _host;
+
+   	NSDictionary * _attributes;
+	NSString * _src;
+	NSDictionary * _flashVars;
+	NSDictionary * _originalOpacityAttributes;
 
 	BOOL isConverted;
 	
@@ -67,35 +65,40 @@ enum subviewTags {
 	NSView * buttonsContainer;
 	CTFActionButton * actionButton;
 	CTFButtonsView * buttonsView;
-	CTFKiller * killer;
 	
 	CTFFullScreenWindow * fullScreenWindow;
-	
+
+	CTFKiller * killer;
+
 	NSURL * previewURL;
 	NSImage * previewImage;
-
-	BOOL _sparkleUpdateInProgress;
+	
+	// used by CTFClickToFlashPlugin+Whitelist
+    NSAlert* _activeAlert;
 }
 
-+ (NSView *)plugInViewWithArguments:(NSDictionary *)arguments;
-- (void) setupSubviews;
++ (NSView *) plugInViewWithArguments: (NSDictionary *) arguments;
+- (id) initWithArguments: (NSDictionary *) arguments;
 
-- (void) revertToOriginalOpacityAttributes;
-- (void) prepareForConversion;
+- (void) setupSubviews;
+- (void) opacitySetup;
+
+- (BOOL) isConsideredInvisible;
 
 - (NSMenuItem*) addContextualMenuItemWithTitle: (NSString*) title action: (SEL) selector;
 - (NSMenuItem *) addContextualMenuItemWithTitle: (NSString*) title action: (SEL) selector target:(id) target;
 
 - (IBAction) clicked: (id) sender;
+- (IBAction) removeFlash: (id) sender;
+- (IBAction) hideFlash: (id) sender;
+- (IBAction) loadFlash:(id)sender;
+- (IBAction) loadAllOnPage:(id)sender;
 
-- (IBAction)loadFlash:(id)sender;
-- (IBAction)loadAllOnPage:(id)sender;
-- (IBAction)removeFlash: (id) sender;
-- (IBAction)hideFlash: (id) sender;
-- (void) convertTypesForContainer: (BOOL) keepIt;
 
-- (NSString*) flashvarWithName: (NSString*) argName;
-+ (NSDictionary*) flashVarDictionary: (NSString*) flashvarString;
++ (NSDictionary *) flashVarDictionary: (NSString *) flashvarString;
+- (void) setFlashVarsFromString: (NSString *) string;
+- (NSString *) flashvarWithName: (NSString *) argName;
+
 + (NSString *)launchedAppBundleIdentifier;
 - (void) browseToURLString: (NSString*) URLString;
 - (void) downloadURLString: (NSString*) URLString;
@@ -103,14 +106,14 @@ enum subviewTags {
 + (BOOL) CTFIsInactive;
 - (CGFloat) overlayOpacityHighlighted: (BOOL) highlighted;
 
+- (void) convertTypesForContainer: (BOOL) keepIt;
+- (void) prepareForConversion;
+- (void) revertToOriginalOpacityAttributes;
+
 - (IBAction) enterFullScreen: (id) sender;
 - (IBAction) exitFullScreen: (id) sender;
 - (IBAction) toggleFullScreen: (id) sender;
 - (NSButton*) addFullScreenButton;
-
-- (BOOL) isConsideredInvisible;
-
-- (id) initWithArguments:(NSDictionary *)arguments;
 
 + (void) _migratePrefsToExternalFile;
 + (void) _uniquePrefsFileWhitelist;
@@ -118,43 +121,48 @@ enum subviewTags {
 
 
 #pragma mark Accessors
-- (CTFKiller *) killer;
-- (void)setKiller:(CTFKiller *)newKiller;
+- (WebView *) webView;
+- (void) setWebView: (WebView *) newValue;
+- (DOMElement *) container;
+- (void) setContainer: (DOMElement *) newValue;
+
+- (NSString *) baseURL;
+- (void) setBaseURL: (NSString *) newValue;
+- (NSString *) host;
+- (void) setHost: (NSString *) newValue;
+
+- (NSDictionary *) attributes;
+- (void) setAttributes: (NSDictionary *) newValue;
+- (NSString *) src;
+- (void) setSrc: (NSString *) newValue;
+- (NSDictionary *) originalOpacityAttributes;
+- (void) setOriginalOpacityAttributes: (NSDictionary *) newValue;
+
+- (BOOL) isConverted;
+- (void) setIsConverted: (BOOL) newIsConverted;
+
+
 - (NSView *) containerView;
 - (void) setContainerView: (NSView *) newContainerView;
 - (CTFMainButton *) mainButton;
-- (void) setMainButton:(CTFMainButton *) newMainButton;
+- (void) setMainButton: (CTFMainButton *) newMainButton;
 - (NSView *) buttonsContainer;
 - (void) setButtonsContainer: (NSView *) newButtonsContainer;
 - (CTFActionButton *) actionButton;
 - (void) setActionButton: (CTFActionButton *) newActionButton;
 - (CTFButtonsView *) buttonsView;
 - (void) setButtonsView: (CTFButtonsView *) newButtonsView;
+
 - (CTFFullScreenWindow *) fullScreenWindow;
 - (void) setFullScreenWindow: (CTFFullScreenWindow *) newFullScreenWindow;
-- (BOOL)isFullScreen;
-- (DOMElement *)container;
-- (void)setContainer:(DOMElement *)newValue;
-- (NSString *)host;
-- (void)setHost:(NSString *)newValue;
-- (WebView *)webView;
-- (void)setWebView:(WebView *)newValue;
-- (NSString *)baseURL;
-- (void)setBaseURL:(NSString *)newValue;
-- (NSDictionary *)attributes;
-- (void)setAttributes:(NSDictionary *)newValue;
-- (NSDictionary *)originalOpacityAttributes;
-- (void)setOriginalOpacityAttributes:(NSDictionary *)newValue;
-- (NSString *)src;
-- (void)setSrc:(NSString *)newValue;
-- (BOOL)isConverted;
-- (void)setIsConverted:(BOOL)newIsConverted;
-+ (NSString *)launchedAppBundleIdentifier;
+- (BOOL) isFullScreen;
+
+- (CTFKiller *) killer;
+- (void) setKiller: (CTFKiller *) newKiller;
 
 - (NSURL *) previewURL;
 - (void) setPreviewURL: (NSURL *) newPreviewURL;
 - (NSImage *) previewImage;
 - (void) setPreviewImage: (NSImage *) newPreviewImage;
-
 
 @end
