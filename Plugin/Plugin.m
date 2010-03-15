@@ -102,7 +102,7 @@ nil]
 
 
 
-#define CTFInitialDefault( initialValue, defaultName, bla) \
+#define CTFInitialDefault( initialValue, defaultName ) \
 if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName] == nil ) { \
 [[CTFUserDefaultsController standardUserDefaults] setObject: initialValue forKey: defaultName]; \
 }
@@ -117,33 +117,33 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	
 	// set up initial defaults
 	// be enabled
-	CTFInitialDefault( [NSNumber numberWithBool: YES], sPluginEnabledDefaultsKey, )
+	CTFInitialDefault( [NSNumber numberWithBool: YES], sPluginEnabledDefaultsKey )
 	// do not automatically load smaill Flash views
-	CTFInitialDefault( [NSNumber numberWithBool: NO], sAutoLoadInvisibleFlashViewsDefaultsKey, )
+	CTFInitialDefault( [NSNumber numberWithBool: NO], sAutoLoadInvisibleFlashViewsDefaultsKey )
 	// use 'new style' UI if possible
-	CTFInitialDefault( [NSNumber numberWithBool: YES], sUseNewStyleUIDefaultsKey, )
+	CTFInitialDefault( [NSNumber numberWithBool: YES], sUseNewStyleUIDefaultsKey )
 
 	// for CTFKillerVideo
 	// use non-Flash video if possible
-	CTFInitialDefault( [NSNumber numberWithBool: YES], sUseYouTubeH264DefaultsKey, )
+	CTFInitialDefault( [NSNumber numberWithBool: YES], sUseYouTubeH264DefaultsKey )
 	// use HD video if possible
-	CTFInitialDefault( [NSNumber numberWithBool: NO], sUseYouTubeHDH264DefaultsKey, )
+	CTFInitialDefault( [NSNumber numberWithBool: NO], sUseYouTubeHDH264DefaultsKey )
 	// use HTML5 video element or QuickTime plug-in?
-	CTFInitialDefault( [NSNumber numberWithBool: NO], sDisableVideoElementDefaultsKey, )
+	CTFInitialDefault( [NSNumber numberWithBool: NO], sDisableVideoElementDefaultsKey )
 	// start playback of videos automatically
-	CTFInitialDefault( [NSNumber numberWithBool: YES], sYouTubeAutoPlayDefaultsKey, )
+	CTFInitialDefault( [NSNumber numberWithBool: YES], sYouTubeAutoPlayDefaultsKey )
 									  
 	// for QTKit usage in CTFKillerVideo
 	// use QTKit
-	CTFInitialDefault( [NSNumber numberWithBool: YES], sUseQTKitDefaultsKey, )
+	CTFInitialDefault( [NSNumber numberWithBool: YES], sUseQTKitDefaultsKey )
 	// default volume level when using QTKit for playback
-	CTFInitialDefault( [NSNumber numberWithFloat: 1.0], sVideoVolumeLevelDefaultsKey, )
+	CTFInitialDefault( [NSNumber numberWithFloat: 1.0], sVideoVolumeLevelDefaultsKey )
 									  
 	// for CTFKillerSIFR
 	// automatically handle SiFR?
-	CTFInitialDefault( [NSNumber numberWithBool: YES], sSifrAutoHandleDefaultsKey, )
+	CTFInitialDefault( [NSNumber numberWithBool: YES], sSifrAutoHandleDefaultsKey )
 	// automatically remove SiFR (and use normal text instead)?
-	CTFInitialDefault( [NSNumber numberWithBool: NO], sSifrDeSifrDefaultsKey, )
+	CTFInitialDefault( [NSNumber numberWithBool: NO], sSifrDeSifrDefaultsKey )
 }
 
 
