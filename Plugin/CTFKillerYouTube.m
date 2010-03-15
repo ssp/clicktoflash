@@ -279,20 +279,20 @@
 
 
 - (void) HEADDownloadFinished: (CTFLoader *) loader {
-	[self decreaseActiveLookups];
-	
 	if ( [self canPlayResponseResult: [loader response]] ) {
 		[self setHasVideo: YES];
 	}
+
+	[self decreaseActiveLookups];
 }
 
 
 - (void) HEADHDDownloadFinished: (CTFLoader *) loader {
-	[self decreaseActiveLookups];
-	
 	if ( [self canPlayResponseResult: [loader response]] ) {
 		[self setHasVideoHD: YES];
 	}
+
+	[self decreaseActiveLookups];
 }
 
 
