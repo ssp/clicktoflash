@@ -100,6 +100,7 @@ enum subviewTags {
 - (void) browseToURLString: (NSString*) URLString;
 - (void) downloadURLString: (NSString*) URLString;
 - (BOOL) useNewStyleUI;
++ (BOOL) CTFIsInactive;
 - (CGFloat) overlayOpacityHighlighted: (BOOL) highlighted;
 
 - (IBAction) enterFullScreen: (id) sender;

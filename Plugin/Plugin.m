@@ -158,13 +158,21 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 {
     self = [super init];
     if (self) {
+		// check whether plugin is disabled, load all content as normal if so
+		if ([CTFClickToFlashPlugin CTFIsInactive]) {
+			_isLoadingFromWhitelist = YES;
+			[self convertTypesForContainer:NO];
+			return self;
+		}
+
 		isConverted = NO;
 		_sparkleUpdateInProgress = NO;
 		
 		[self setWebView:[[[arguments objectForKey:WebPlugInContainerKey] webFrame] webView]];
-		
         [self setContainer:[arguments objectForKey:WebPlugInContainingElementKey]];
-        
+		[self setFrameSize:NSMakeSize(1., 1.)];
+		[self setFullScreenWindow: nil];
+		
         // Get URL
         
         NSURL *base = [arguments objectForKey:WebPlugInBaseURLKey];
@@ -213,22 +221,6 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 #endif
 		
 		
-		// check whether plugin is disabled, load all content as normal if so
-		
-		CTFUserDefaultsController *standardUserDefaults = [CTFUserDefaultsController standardUserDefaults];
-		BOOL pluginEnabled = [standardUserDefaults boolForKey:sPluginEnabledDefaultsKey ];
-		NSString *hostAppBundleID = [[NSBundle mainBundle] bundleIdentifier];
-		BOOL hostAppIsInDefaultWhitelist = [CTFDefaultWhitelist containsObject:hostAppBundleID];
-		BOOL hostAppIsInUserWhitelist = [[standardUserDefaults arrayForKey:sApplicationWhitelist] containsObject:hostAppBundleID];
-		BOOL hostAppWhitelistedInInfoPlist = NO;
-		if ([[[NSBundle mainBundle] infoDictionary] objectForKey:sCTFOptOutKey]) hostAppWhitelistedInInfoPlist = YES;
-		if ( (! pluginEnabled) || (hostAppIsInDefaultWhitelist || hostAppIsInUserWhitelist || hostAppWhitelistedInInfoPlist) ) {
-            _isLoadingFromWhitelist = YES;
-			[self convertTypesForContainer:NO];
-			return self;
-		}		
-		
-
 		// Set up the CTFKiller subclass, if appropriate.
 		[self setKiller: [CTFKiller killerForURL:[NSURL URLWithString:[self baseURL]] src:[self src] attributes:[self attributes] forPlugin:self]];
 				
@@ -354,9 +346,6 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		}
 		
 		[self setOriginalOpacityAttributes:originalOpacityDict];
-		[self setFrameSize:NSMakeSize(1., 1.)];
-		
-		[self setFullScreenWindow: nil];
 	}
 		
     return self;
@@ -837,6 +826,26 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	
 	return result;
 }
+
+
+
+// returns whether CtF should run or not (depending on preferences and application whitelists, but not the URL)
++ (BOOL) CTFIsInactive {
+	CTFUserDefaultsController * standardUserDefaults = [CTFUserDefaultsController standardUserDefaults];
+	BOOL pluginEnabled = [standardUserDefaults boolForKey:sPluginEnabledDefaultsKey];
+
+	NSString * hostAppBundleID = [[NSBundle mainBundle] bundleIdentifier];
+	BOOL hostAppIsInDefaultWhitelist = [CTFDefaultWhitelist containsObject:hostAppBundleID];
+	BOOL hostAppIsInUserWhitelist = [[standardUserDefaults arrayForKey:sApplicationWhitelist] containsObject:hostAppBundleID];
+
+	BOOL hostAppWhitelistedInInfoPlist = NO;
+	if ([[[NSBundle mainBundle] infoDictionary] objectForKey:sCTFOptOutKey]) hostAppWhitelistedInInfoPlist = YES;
+
+	BOOL inactive = (!pluginEnabled) || hostAppIsInDefaultWhitelist || hostAppIsInUserWhitelist || hostAppWhitelistedInInfoPlist;
+	
+	return inactive;
+}
+
 
 
 
