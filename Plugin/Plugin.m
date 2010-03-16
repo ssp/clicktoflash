@@ -192,6 +192,8 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		
 		[self setPreviewURL: nil];
 		[self setPreviewImage: nil];
+		[self setPreviewImageLoader: nil];
+		
 
 #if LOGGING_ENABLED
 		NSLog(@"ClickToFlashPlugin %@ -initWithArguments, src: %@", [self description], [self src]);
@@ -434,15 +436,18 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	[self setOriginalOpacityAttributes:nil];
 	
 	[self setKiller:nil];
+	
 	[self setContainerView:nil];
 	[self setMainButton:nil];
 	[self setButtonsContainer:nil];
 	[self setActionButton:nil];
 	[self setButtonsView:nil];
+
 	[self setFullScreenWindow:nil];
+
 	[self setPreviewURL:nil];
 	[self setPreviewImage:nil];
-	
+	[self setPreviewImageLoader:nil];
 
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -1433,6 +1438,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	
 	if (previewURL != nil) {
 		CTFLoader * loader = [[[CTFLoader alloc] initWithURL: newPreviewURL delegate: self selector:@selector(receivedPreviewImage:)] autorelease];
+		[self setPreviewImageLoader: loader];
 		[loader start];
 	}
 }
@@ -1451,11 +1457,24 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	[[self containerView] setNeedsDisplay: YES];
 }
 
+
+
+- (CTFLoader *) previewImageLoader {
+	return previewImageLoader;
+}
+
+- (void) setPreviewImageLoader: (CTFLoader *) newPreviewImageLoader {
+	[newPreviewImageLoader retain];
+	[previewImageLoader release];
+	previewImageLoader = newPreviewImageLoader;
+}
+
 - (void) receivedPreviewImage: (CTFLoader*) loader {
 	NSImage * image = [[[NSImage alloc] initWithData: [loader data]] autorelease];
 	if (image != nil) {
 		[self setPreviewImage: image];
 	}
+	[self setPreviewImageLoader: nil];
 }
 
 @end

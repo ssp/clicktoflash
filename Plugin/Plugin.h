@@ -40,6 +40,7 @@ enum subviewTags {
 };
 
 
+@class CTFLoader;
 @class CTFKiller;
 @class CTFMainButton;
 @class CTFActionButton;
@@ -72,6 +73,7 @@ enum subviewTags {
 
 	NSURL * previewURL;
 	NSImage * previewImage;
+	CTFLoader * previewImageLoader;
 	
 	// used by CTFClickToFlashPlugin+Whitelist
     NSAlert* _activeAlert;
@@ -164,5 +166,8 @@ enum subviewTags {
 - (void) setPreviewURL: (NSURL *) newPreviewURL;
 - (NSImage *) previewImage;
 - (void) setPreviewImage: (NSImage *) newPreviewImage;
+- (CTFLoader *) previewImageLoader;
+- (void) setPreviewImageLoader: (CTFLoader *) newPreviewImageLoader;
+
 
 @end

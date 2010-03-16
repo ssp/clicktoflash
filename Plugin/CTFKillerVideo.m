@@ -4,7 +4,7 @@
  
  The MIT License
  
- Copyright (c) 2009 ClickToFlash Developers
+ Copyright (c) 2009-2010 ClickToFlash Developers
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -55,6 +55,8 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 		
 		[self setTitle: nil];
 		
+		[self setVideoLookup: nil];
+		[self setVideoHDLookup: nil];
 		activeLookups = 0;
 		lookupStatus = nothing;
 		requiresConversion = NO;
@@ -146,11 +148,13 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 		[button unbind:@"value"];		
 	}
 	[self setTitle: nil];
+	[self setVideoLookup: nil];
+	[self setVideoHDLookup: nil];
+	[self setProgressIndicator: nil];
 	[self setMovie:nil];
 	[[self movieView] setMovie:nil];
 	[self setMovieView: nil];
 	[self setMovieSetupThread: nil];
-	[self setProgressIndicator: nil];
 	[self setEndOfMovieButtonsView: nil];
 }
 
@@ -620,18 +624,6 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 }
 
 
-- (enum CTFKVLookupStatus) lookupStatus {
-	return lookupStatus;
-}
-
-- (void) setLookupStatus: (enum CTFKVLookupStatus) newLookupStatus {
-	lookupStatus = newLookupStatus;
-	if (lookupStatus == finished || lookupStatus == failed) {
-		[self finishedLookups];
-	}
-	[[[self plugin] mainButton] setNeedsDisplay: YES];
-}
-
 
 - (void) increaseActiveLookups {
 	activeLookups++;
@@ -643,6 +635,41 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 	if ( activeLookups == 0 && [self lookupStatus] != failed ) {
 		[self setLookupStatus: finished];
 	}
+}
+
+
+- (CTFLoader *) videoLookup {
+	return videoLookup;
+}
+
+- (void) setVideoLookup: (CTFLoader *) newVideoLookup {
+	[newVideoLookup retain];
+	[videoLookup release];
+	videoLookup = newVideoLookup;
+}
+
+
+- (CTFLoader *) videoHDLookup {
+	return videoHDLookup;
+}
+
+- (void) setVideoHDLookup: (CTFLoader *) newVideoHDLookup {
+	[newVideoHDLookup retain];
+	[videoHDLookup release];
+	videoHDLookup = newVideoHDLookup;
+}
+
+
+- (enum CTFKVLookupStatus) lookupStatus {
+	return lookupStatus;
+}
+
+- (void) setLookupStatus: (enum CTFKVLookupStatus) newLookupStatus {
+	lookupStatus = newLookupStatus;
+	if (lookupStatus == finished || lookupStatus == failed) {
+		[self finishedLookups];
+	}
+	[[[self plugin] mainButton] setNeedsDisplay: YES];
 }
 
 

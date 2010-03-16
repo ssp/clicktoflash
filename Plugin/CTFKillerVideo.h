@@ -4,7 +4,7 @@
  
  The MIT License
  
- Copyright (c) 2009 ClickToFlash Developers
+ Copyright (c) 2009-2010 ClickToFlash Developers
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@
 @class DOMElement;
 @class QTMovie;
 @class QTMovieView;
+@class CTFLoader;
 
 enum CTFKVLookupStatus {
 	nothing = 0,
@@ -57,18 +58,21 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 	
 	NSString * title;
 	
+	CTFLoader * videoLookup;
+	CTFLoader * videoHDLookup;
 	NSInteger activeLookups;
 	enum CTFKVLookupStatus lookupStatus;
 	BOOL requiresConversion;
 	
+	BOOL hasRefreshedURLs;
+
+	// used in CTFKillerVideo-QT
 	NSProgressIndicator * progressIndicator;
 	
 	QTMovieView * movieView;
 	QTMovie * movie;
 	NSThread * movieSetupThread;
 	NSView * endOfMovieButtonsView;
-	
-	BOOL hasRefreshedURLs;
 }
 
 
@@ -129,6 +133,7 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 - (void) finishedLookups;
 - (BOOL) canPlayResponseResult: (NSURLResponse *) result;
 
+
 // Accessors
 - (NSString *) title;
 - (void) setTitle: (NSString *) newTitle;
@@ -138,12 +143,18 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 - (void) setHasVideo:(BOOL)newHasVideo;
 - (BOOL) hasVideoHD;
 - (void) setHasVideoHD:(BOOL)newHasVideoHD;
-- (enum CTFKVLookupStatus) lookupStatus;
-- (void) setLookupStatus: (enum CTFKVLookupStatus) newLookupStatus;
+
 - (void) increaseActiveLookups;
 - (void) decreaseActiveLookups;
+- (CTFLoader *) videoLookup;
+- (void) setVideoLookup: (CTFLoader *) newVideoLookup;
+- (CTFLoader *) videoHDLookup;
+- (void) setVideoHDLookup: (CTFLoader *) newVideoHDLookup;
+- (enum CTFKVLookupStatus) lookupStatus;
+- (void) setLookupStatus: (enum CTFKVLookupStatus) newLookupStatus;
 - (BOOL) requiresConversion;
 - (void) setRequiresConversion: (BOOL) newRequiresConversion;
+
 - (BOOL) hasRefreshedURLs;
 - (void) setHasRefreshedURLs: (BOOL) newHasRefreshedURLs;
 

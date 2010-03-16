@@ -4,7 +4,7 @@
  
  The MIT License
  
- Copyright (c) 2009 ClickToFlash Developers
+ Copyright (c) 2009-2010 ClickToFlash Developers
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -256,6 +256,7 @@
 	CTFLoader * loader;
 	
 	loader= [[[CTFLoader alloc] initWithURL: [NSURL URLWithString:[self videoURLString]] delegate: self selector: @selector(HEADDownloadFinished:)] autorelease];
+	[self setVideoLookup: loader];
 	if (loader != nil) {
 		[loader setHEADOnly: YES];
 		[loader start];
@@ -266,6 +267,7 @@
 	}
 	
 	loader= [[[CTFLoader alloc] initWithURL: [NSURL URLWithString:[self videoHDURLString]] delegate: self selector: @selector(HEADHDDownloadFinished:)] autorelease];
+	[self setVideoHDLookup: loader];
 	if (loader != nil) {
 		[loader setHEADOnly: YES];
 		[loader start];
@@ -284,6 +286,7 @@
 	}
 
 	[self decreaseActiveLookups];
+	[self setVideoLookup: nil];
 }
 
 
@@ -293,6 +296,7 @@
 	}
 
 	[self decreaseActiveLookups];
+	[self setVideoHDLookup: nil];
 }
 
 

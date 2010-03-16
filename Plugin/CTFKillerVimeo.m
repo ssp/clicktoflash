@@ -4,7 +4,7 @@
  
  The MIT License
  
- Copyright (c) 2009 ClickToFlash Developers
+ Copyright (c) 2009-2010 ClickToFlash Developers
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -59,6 +59,7 @@
 	[self setClipExpires: nil];
 	[self setRedirectedURLString: nil];
 	[self setRedirectedHDURLString: nil];
+	[self setXMLLoader: nil];
 	
 	NSString * myID = [ self flashVarWithName:@"clip_id" ]; 
 
@@ -86,6 +87,7 @@
 	[self setClipExpires: nil];
 	[self setRedirectedURLString: nil];
 	[self setRedirectedHDURLString: nil];
+	[self setXMLLoader: nil];
 	[super dealloc];
 }
 
@@ -154,6 +156,8 @@
 - (void) getXML {
 	NSString * XMLURLString = [NSString stringWithFormat:@"http://vimeo.com/moogaloop/load/clip:%@", [self clipID]];
 	CTFLoader * loader = [[[CTFLoader alloc] initWithURL: [NSURL URLWithString:XMLURLString] delegate: self selector: @selector(XMLDownloadFinished:)] autorelease];
+	[self setXMLLoader: loader];
+	
 	if (loader != nil) {
 		[loader start];
 		[self increaseActiveLookups];
@@ -232,6 +236,7 @@
 		}
 	}
 	[self decreaseActiveLookups];
+	[self setXMLLoader: nil];
 	
 	if (activeLookups == 0) {
 		[self setLookupStatus: failed];
@@ -251,6 +256,7 @@
 	}
 	
 	[self decreaseActiveLookups];
+	[self setVideoLookup: nil];
 }
 
 
@@ -266,6 +272,7 @@
 	}
 	
 	[self decreaseActiveLookups];
+	[self setVideoHDLookup: nil];
 }
 
 
@@ -330,6 +337,18 @@
 	[redirectedHDURLString release];
 	redirectedHDURLString = newRedirectedHDURLString;
 }
+
+
+- (CTFLoader *) XMLLoader {
+	return XMLLoader;
+}
+
+- (void) setXMLLoader: (CTFLoader *) newXMLLoader {
+	[newXMLLoader retain];
+	[XMLLoader release];
+	XMLLoader = newXMLLoader;
+}
+
 
 
 @end

@@ -1,7 +1,7 @@
 /* 
  The MIT License
  
- Copyright (c) 2009 ClickToFlash Developers
+ Copyright (c) 2009-2010 ClickToFlash Developers
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -94,7 +94,15 @@ NSString * CTFLoaderCancelNotification = @"CTFLoaderCancel";
 #if LOGGING_ENABLED
 	NSLog(@"CTFLoader %@ -finish", [self description]);
 #endif
-	[delegate performSelector:callbackSelector withObject:self];
+	
+	[self setConnection: nil];
+	
+	if ( [[self delegate] respondsToSelector:[self callbackSelector]] ) {
+		[[self delegate] performSelector:[self callbackSelector] withObject:self];
+	}
+	else {
+		NSLog(@"CTFLoader %@ -finish: could NOT use callbackSelector on delegate %@", [self description], [[self delegate] description]);
+	}
 }
 
 
@@ -121,7 +129,6 @@ NSString * CTFLoaderCancelNotification = @"CTFLoaderCancel";
     [response release];
     [lastRequest release];
 	[connection release];
-	[delegate release];
 	[identifier release];
 	[super dealloc];
 }
@@ -272,8 +279,7 @@ NSString * CTFLoaderCancelNotification = @"CTFLoaderCancel";
 }
 
 - (void)setDelegate:(id)newDelegate {
-	[newDelegate retain];
-	[delegate release];
+	// don't retain delegates
 	delegate = newDelegate;
 }
 
