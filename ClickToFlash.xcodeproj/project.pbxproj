@@ -187,6 +187,7 @@
 		6C09630B107FCA610006923A /* CTFActionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFActionButton.m; path = Plugin/CTFActionButton.m; sourceTree = "<group>"; };
 		6C09647E10808D4B0006923A /* CTFMainButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFMainButton.h; path = Plugin/CTFMainButton.h; sourceTree = "<group>"; };
 		6C09647F10808D4B0006923A /* CTFMainButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFMainButton.m; path = Plugin/CTFMainButton.m; sourceTree = "<group>"; };
+		6C1211B1114ACB550071ABD2 /* com.github.rentzsch.clicktoflash.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = com.github.rentzsch.clicktoflash.plist; path = ../../../Library/Preferences/com.github.rentzsch.clicktoflash.plist; sourceTree = SOURCE_ROOT; };
 		6C436DAE107830A200A0D525 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		6C8815BA10A1903F00A381D6 /* CTFButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFButton.h; path = Plugin/CTFButton.h; sourceTree = "<group>"; };
 		6C8815BB10A1903F00A381D6 /* CTFButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFButton.m; path = Plugin/CTFButton.m; sourceTree = "<group>"; };
@@ -289,6 +290,7 @@
 		55EB70300E04A8410016593D = {
 			isa = PBXGroup;
 			children = (
+				6C1211B1114ACB550071ABD2 /* com.github.rentzsch.clicktoflash.plist */,
 				55EB70540E04A89C0016593D /* Plugin */,
 				A46A5A3D1096C93C00E1ABAA /* Updater */,
 				55EB70550E04A8A40016593D /* Frameworks */,
@@ -794,7 +796,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
-				PRODUCT_VERSION = 1.6b7;
+				PRODUCT_VERSION = "1.6b8-ssp";
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Debug;
@@ -809,7 +811,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
-				PRODUCT_VERSION = 1.6b7;
+				PRODUCT_VERSION = "1.6b8-ssp";
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Release;
