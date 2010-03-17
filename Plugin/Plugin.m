@@ -339,11 +339,11 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
  
  self (CTFClickToFlashPlugin)
  -> containerView (NSView)
-    -> mainButton (CTFMainButton)
 	-> buttonsContainer (NSView)
-	   -> actionButton (CTFActionButton)
-       -> buttonsView (CTFButtonsView) - new style display only
-          -> array of buttons (CTFButton) added as needed by CTFKiller classes
+		-> mainButton (CTFMainButton)
+		-> actionButton (CTFActionButton)
+		-> buttonsView (CTFButtonsView) - new style display only
+			-> array of buttons (CTFButton) added as needed by CTFKiller classes
  
  This setup can be changed by CTFKillers, e.g. CTFVideoKiller hides the mainButton when clicked and adds a QTMovieView.
  The layout is made in a way that also supports zooming to full screen (used in 'new style' UI only).
@@ -355,6 +355,12 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	[myContainerView setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
 	[self addSubview: myContainerView];
 	[self setContainerView: myContainerView];
+
+	// Add view containing all of the buttons
+	NSView * theButtonsContainer = [[[NSView alloc] initWithFrame:[self bounds]] autorelease];
+	[theButtonsContainer setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
+	[myContainerView addSubview: theButtonsContainer];
+	[self setButtonsContainer: theButtonsContainer];
 		
 	// Add main control button, covering the full view. This does the main drawing.
 	CTFMainButton * myMainButton = [[[CTFMainButton alloc] initWithFrame: [self bounds]] autorelease];
@@ -364,14 +370,8 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	[myMainButton setTarget: self];
 	[myMainButton setAction: @selector(clicked:)];
 	[myMainButton setPlugin: self];
-	[myContainerView addSubview: myMainButton];
+	[theButtonsContainer addSubview: myMainButton];
 	[self setMainButton: myMainButton];
-	
-	// Add view containing all of the buttons
-	NSView * theButtonsContainer = [[[NSView alloc] initWithFrame:[self bounds]] autorelease];
-	[theButtonsContainer setAutoresizingMask: (NSViewHeightSizable | NSViewWidthSizable) ];
-	[myContainerView addSubview: theButtonsContainer];
-	[self setButtonsContainer: theButtonsContainer];
 	
 	// Add action button control
 	CTFActionButton * theActionButton = [CTFActionButton actionButton];
