@@ -42,6 +42,7 @@
 	BOOL clipIsHD;
 }
 
++ (BOOL) isVimeoSiteURL: (NSURL*) theURL;
 
 - (void) getXML;
 

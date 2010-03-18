@@ -77,6 +77,10 @@
 		[self setClipID: myID];		
 		[self getXML];
 	}
+	
+	if ([CTFKillerVimeo isVimeoSiteURL: pageURL]) {
+		[self setAutoPlay: YES];
+	}
 }
 
 
@@ -140,6 +144,20 @@
 	return URLString;
 }
 
+
+
+
+
+
+#pragma mark -
+#pragma mark Helper methods
+
++ (BOOL) isVimeoSiteURL: (NSURL*) theURL {
+	NSString * host = [theURL host];
+	BOOL result = [host rangeOfString:@"vimeo.com" options: NSBackwardsSearch || NSAnchoredSearch].location != NSNotFound;
+	
+	return result;
+}
 
 
 
