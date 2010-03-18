@@ -113,6 +113,7 @@ NSString * CTFLoaderCancelNotification = @"CTFLoaderCancel";
 #endif
 	
 	[[self connection] cancel];
+	[self setConnection: nil];
 }
 
 
@@ -146,12 +147,18 @@ NSString * CTFLoaderCancelNotification = @"CTFLoaderCancel";
 
 
 - (void)connection:(NSURLConnection *)theConnection didReceiveResponse:(NSURLResponse *)theResponse {
+#if LOGGING_ENABLED
+	NSLog(@"CTFLoader %@ --connection:didReceiveResponse with status: %i", [self description], [(NSHTTPURLResponse*) theResponse statusCode]);
+#endif
 	[self setResponse: theResponse];
 	
 	// We need to cancel HEAD fetching connections here as 10.5 may proceed to download the whole file otherwise ( http://openradar.appspot.com/7019347 )
 	if ( [self HEADOnly] && [(NSHTTPURLResponse*) theResponse statusCode] == 200 ) {
-		[self finish];
 		[theConnection cancel];
+#if LOGGING_ENABLED
+		NSLog(@"CTFLoader %@ --connection:didReceiveResponse: cancelled connection: %@", [self description], [theConnection description]);
+#endif
+		[self finish];
 	}
 }
 
