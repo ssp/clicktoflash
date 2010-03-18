@@ -82,8 +82,9 @@ enum subviewTags {
 + (NSView *) plugInViewWithArguments: (NSDictionary *) arguments;
 - (id) initWithArguments: (NSDictionary *) arguments;
 
-- (void) setupSubviews;
 - (void) opacitySetup;
+- (void) setupSubviews;
+- (BOOL) shouldConvertImmediately;
 
 - (BOOL) isConsideredInvisible;
 

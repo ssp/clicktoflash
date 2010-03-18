@@ -223,34 +223,6 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 									   forPlugin:self] ];
 		
 		
-		// Automatically load small/invisible Flash elements if so desired.
-		if ( [ [ CTFUserDefaultsController standardUserDefaults ] boolForKey: sAutoLoadInvisibleFlashViewsDefaultsKey ]
-			&& [ self isConsideredInvisible ] ) {
-			// auto-loading is on and this view meets the size constraints
-			[self convertTypesForContainer:YES];
-			return self;
-		}
-		
-		
-		// Automatically load Flash on whitelisted URLs
-		BOOL loadFromWhiteList = [self _isHostWhitelisted];
-		
-		// Check the SWF src URL itself against the whitelist (allows embbeded videos from whitelisted sites to play, e.g. YouTube)
-		if( !loadFromWhiteList ) {
-            if ( [self src] ) {
-				if( [self _isWhiteListedForHostString: [self src] ] ) {
-                    loadFromWhiteList = YES;
-                }
-            }
-		}
-		
-		// Convert if we are loading a whitelisted item.
-        if( loadFromWhiteList && ![self _isOptionPressed] ) {
-			[self convertTypesForContainer:YES];
-			return self;
-        }
-		
-		
 		// Send a notification so that all flash objects can be tracked.
 		// We only want to track it if we don't auto-load it.
 		[[CTFMenubarMenuController sharedController] registerView: self];
@@ -276,6 +248,12 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 					   name: kCTFLoadInvisibleFlashViewsForWindow
 					 object: nil ];
 
+		
+
+		if ( [self shouldConvertImmediately] ) {
+			[self convertTypesForContainer:YES];
+		}
+	
 	}
 	
 	return self;
@@ -407,6 +385,50 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		[myContainerView setWantsLayer: YES];
 	}
 }
+
+
+
+// We want to convert immediately if ANY of the following is true:
+// - we are whitelisted
+// - we are considered small/invisible and the user wants to load those automatically
+// - our killer wants to convert immediately
+// UNLESS the option key is pressed
+- (BOOL) shouldConvertImmediately {
+	// Whitelisting: check current site as well as SWF src URL (for embedding)
+	BOOL loadFromWhiteList = [self _isHostWhitelisted];
+	if( !loadFromWhiteList ) {
+		if ( [self src] ) {
+			if( [self _isWhiteListedForHostString: [self src] ] ) {
+				loadFromWhiteList = YES;
+			}
+		}
+	}
+	
+	
+	// Small/invisible Flash
+	BOOL autoLoadInvisibles = NO;
+	if ( [ [ CTFUserDefaultsController standardUserDefaults ] boolForKey: sAutoLoadInvisibleFlashViewsDefaultsKey ]
+		&& [ self isConsideredInvisible ] ) {
+		autoLoadInvisibles = YES;
+	}
+	
+
+	// Killers
+	BOOL killerWantsConversion = NO;
+	if ( [self killer] != nil ) {
+		killerWantsConversion = [[self killer] shouldConvertImmediately];
+	}
+	
+	
+	BOOL result = loadFromWhiteList || autoLoadInvisibles || killerWantsConversion;
+
+	// prevent automatic conversion is the option key is pressed
+	result = result && ![self _isOptionPressed];
+
+	return result;
+}
+
+
 
 
 

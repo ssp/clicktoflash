@@ -98,8 +98,11 @@
 // Set up the subclass. If further data is needed, fetching it is started here.
 - (void) setup { }
 
-// Called when our plug-in is destroyed, so pending actions can be stopped in a controlled way
+// Called when our plug-in is destroyed, so pending actions can be stopped in a controlled way.
 - (void) pluginDestroy { }
+
+// Indicate whether we want the CtF view to be converted right away.
+- (BOOL) shouldConvertImmediately { return NO; }
 
 // The label displayed in the plug-in. Subclasses can provide their own name here which is read whenever the plug-in view is redrawn.
 - (NSString*) badgeLabelText { return nil; }
