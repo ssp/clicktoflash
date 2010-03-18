@@ -35,7 +35,7 @@ extern NSString *sSifrDeSifrDefaultsKey;
 
 
 @interface CTFKillerSIFR : CTFKiller {
-	NSUInteger sifrVersion;
+	BOOL convertImmediately;
 }
 
 
