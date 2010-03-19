@@ -198,12 +198,13 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 */
 - (void) movieVolumeChanged: (NSNotification *) notification {
 	[QTMovie enterQTKitOnThread];
-	[[self movie] attachToCurrentThread];
+	QTMovie * const myMovie = [self movie];
+	[myMovie attachToCurrentThread];
 
-	NSNumber * volumeNumber = [NSNumber numberWithFloat:[[self movie] volume]];
+	NSNumber * volumeNumber = [NSNumber numberWithFloat:[myMovie volume]];
 	[[CTFUserDefaultsController standardUserDefaults] setObject:volumeNumber forKey: sVideoVolumeLevelDefaultsKey];
 
-	[[self movie] detachFromCurrentThread];
+	[myMovie detachFromCurrentThread];
 	[QTMovie exitQTKitOnThread];
 }
 
@@ -221,9 +222,11 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 */
 - (void) movieLoadStateChanged: (NSNotification *) notification {
 	[QTMovie enterQTKitOnThread];
-	[[self movie] attachToCurrentThread];
+	QTMovie * const myMovie = [self movie];
+	[myMovie attachToCurrentThread];
 	
-    long loadState = [[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
+    long loadState = [[myMovie attributeForKey:QTMovieLoadStateAttribute] longValue];
+	
 #if LOGGING_ENABLED
 	NSLog(@"CTFKillerVideo -movieLoadStateChanged: %i", loadState);
 #endif
@@ -234,7 +237,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		
 		// Sometimes loading is slow and the load state keeps toggling between Playable and PlaythroughOK. This can cause the film to toggle stopping and starting many times in a row. To prevent that from happening, make sure we only autoPlay once.
 		if ([self autoPlay] && ![self hasAutoPlayed]) {
-			[[self movie] play];
+			[myMovie play];
 			[self setHasAutoPlayed:YES];
 		}
     }
@@ -258,11 +261,11 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 			// Refreshing the URL did not do the trick. Remove progress indicator.
 			[self removeProgressIndicator];
 			// It'd be nice to do something helpful here (fall back to Flash? display error message?)
-			NSLog(@"CTFKillerVideo -movieLoadStateChanged: An error occurred when trying to load the movie\n%@", [[[self movie] movieAttributes] description]);
+			NSLog(@"CTFKillerVideo -movieLoadStateChanged: An error occurred when trying to load the movie\n%@", [[myMovie movieAttributes] description]);
 		}
     }
 	
-	[[self movie] detachFromCurrentThread];
+	[myMovie detachFromCurrentThread];
 	[QTMovie exitQTKitOnThread];
 }
 
@@ -292,16 +295,17 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 #endif
 
 	[QTMovie enterQTKitOnThread];
-	[[self movie] attachToCurrentThread];
+	QTMovie * const myMovie = [self movie];
+	[myMovie attachToCurrentThread];
 	
-	if ( [[self movie] currentTime].timeValue == [[self movie] duration].timeValue ) {
+	if ( [myMovie currentTime].timeValue == [myMovie duration].timeValue ) {
 		[self showEndOfMovieButtons];
 	}
 	else{
 		[self hideEndOfMovieButtons];
 	}
 	
-	[[self movie] detachFromCurrentThread];
+	[myMovie detachFromCurrentThread];
 	[QTMovie exitQTKitOnThread];
 }
 
@@ -449,24 +453,26 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 */
 - (IBAction) saveMovie: (id) sender {
 	[QTMovie enterQTKitOnThread];
-	[[self movie] attachToCurrentThread];
+	QTMovie * const myMovie = [self movie];
+	[myMovie attachToCurrentThread];
 	
-	NSAssert( [self movie] != nil, @"CTFKillerVideo-QT -saveMovie called even though movie == nil");
-    long loadState = [[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
+	NSAssert( myMovie != nil, @"CTFKillerVideo-QT -saveMovie called even though movie == nil");
+	long loadState = [[myMovie attributeForKey:QTMovieLoadStateAttribute] longValue];
+	
 	NSAssert( loadState == QTMovieLoadStateComplete, @"CTFKillerVideo-QT -saveMovie called even though the movie is not loaded completely");
 	
 	NSString * destinationPath = [self pathForSavingMovie];
 	if (destinationPath != nil) {
 		NSError * error = nil;
 		NSDictionary * saveAttributes = [NSDictionary dictionaryWithObjectsAndKeys: [NSNumber numberWithBool: YES], QTMovieFlatten, nil];
-		BOOL saveSuccessful = [[self movie] writeToFile: destinationPath withAttributes: saveAttributes error: &error];
+		BOOL saveSuccessful = [myMovie writeToFile: destinationPath withAttributes: saveAttributes error: &error];
 		
 		// Careful: whacky code which tries to work around a save problem by removing a frame from the movie.
 		if ( !saveSuccessful && error ) {
 			// Check whether we are in a 'vimeo-type' situation which gives a -2015 "The movie contains an incorrect time value." error when saving. In that case, trimming a frame from the film's beginning seems to fix things.
 			if ( [error code] == -2015 ) {
 				// Find out frame rate. It is stored in movie -> video track -> media -> QTMediaTimeScaleAttribute and has to be divided by 1000.
-				NSArray * videoTracks = [[self movie] tracksOfMediaType: QTMediaTypeVideo];
+				NSArray * videoTracks = [myMovie tracksOfMediaType: QTMediaTypeVideo];
 				if ( [videoTracks count] > 0 ) {
 					QTTrack * track = [videoTracks objectAtIndex: 0];
 					QTMedia * media = [track media];
@@ -477,10 +483,10 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 						QTTimeRange timeRange = QTMakeTimeRange(QTMakeTimeWithTimeInterval(0), QTMakeTimeWithTimeInterval(length));
 						
 						// Need to make movie editable before removing frame.
-						[[self movie] setAttribute: [NSNumber numberWithBool:YES] forKey: QTMovieEditableAttribute];
-						[[self movie] deleteSegment: timeRange];
+						[myMovie setAttribute: [NSNumber numberWithBool:YES] forKey: QTMovieEditableAttribute];
+						[myMovie deleteSegment: timeRange];
 						
-						saveSuccessful = [[self movie] writeToFile: destinationPath withAttributes: saveAttributes error: &error];
+						saveSuccessful = [myMovie writeToFile: destinationPath withAttributes: saveAttributes error: &error];
 					}
 				}
 			}
@@ -531,7 +537,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		NSLog(@"ClickToFlash: Could not save the movie because we couldn't figure out a good file name. This should not happen.");
 	}
 
-	[[self movie] detachFromCurrentThread];
+	[myMovie detachFromCurrentThread];
 	[QTMovie exitQTKitOnThread];
 }
 
