@@ -51,9 +51,15 @@ static NSString * divCSS = @"margin:auto;padding:0px;border:0px none;text-align:
 	if ([self autoPlay]) {
 		[ element setAttribute: @"autoplay" value:@"autoplay" ];
 	} else {
-		if ( [element hasAttribute:@"autoplay"] )
+		if ( [element hasAttribute:@"autoplay"] ) {
 			[ element removeAttribute:@"autoplay" ];
+		}
+		// we're not autoplaying, so don't preload the film if supported by WebKit
+		if ( [self isVideoPreloadAvailable] && [[self plugin] isImmediatelyConverted] ) {
+			[element setAttribute:@"preload" value:@"none"];
+		}
 	}
+	
 	if ([[self plugin] previewURL] != nil) {
 		[element setAttribute: @"poster"  value: [[[self plugin] previewURL] absoluteString]];
 	}
@@ -274,6 +280,35 @@ static NSString * divCSS = @"margin:auto;padding:0px;border:0px none;text-align:
 
 
 
+// The preload parmeter for media elements was added to the HTML5 spec in spring 2010.
+// It seems to be in WebKit since revision 55463.
+// That seems to work out as a bundle version of 533+.
+- (BOOL) isVideoPreloadAvailable {
+	BOOL result = NO;
+	NSBundle* webKitBundle;
+    webKitBundle = [ NSBundle bundleForClass: [ WebView class ] ];
+
+    if (webKitBundle) {
+		/* ref. http://lists.apple.com/archives/webkitsdk-dev/2008/Nov/msg00003.html:
+		 * CFBundleVersion is Nxxx.y on WebKits built into Mac OS X.N.
+		 * Unspecific builds (such as the ones in OmniWeb) get xxx.y numbers without a prefix.
+		 */
+		int normalizedVersion;
+		float wkVersion = [ (NSString*) [ [ webKitBundle infoDictionary ]
+										 valueForKey: @"CFBundleVersion" ]
+						   floatValue ];
+		if (wkVersion > 4000)
+			normalizedVersion = ((int)wkVersion % 1000);
+		else
+			normalizedVersion = wkVersion;
+		
+		if (normalizedVersion >= 533) {
+			result = YES;
+		}
+	}
+	
+	return result;
+}
 
 
 

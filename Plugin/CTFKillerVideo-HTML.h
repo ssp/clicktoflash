@@ -20,6 +20,7 @@
 
 // Helper
 - (BOOL) isVideoElementAvailable;
+- (BOOL) isVideoPreloadAvailable;
 
 
 
