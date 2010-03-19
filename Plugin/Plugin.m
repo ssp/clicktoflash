@@ -1504,7 +1504,8 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	[previewImage release];
 	previewImage = newPreviewImage;
 	
-	[[self containerView] setNeedsDisplay: YES];
+	[[self mainButton] setNeedsDisplay: YES];
+	NSLog(@"setting preview image from thread %@", [[NSThread currentThread] description]);
 }
 
 
