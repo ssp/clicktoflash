@@ -280,6 +280,22 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 /*
+ Called by QTMovieRateDidChangeNotification.
+ Hide the 'loading' progress indicator.
+ It seems that the QTMovieLoadStateChanged notification is not sent reliably (occasionally happens with the movies from vimeo). This is to make sure the progress indicator is removed when the film starts playing.
+*/
+- (void) movieRateDidChange: (NSNotification *) notification {
+#ifdef LOGGING_ENABLED
+	NSLog(@"CTFKillerVideo QuickTime: movie rate changed");
+#endif
+	
+	[self removeProgressIndicator];
+	[self adjustButtonPositions:YES];
+}
+
+
+
+/*
  Fade in buttons.
  Create them when needed.
  TODO: sort out key loop?
@@ -782,6 +798,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		// track playback end and manual position changes, so we can show/hide the end of movie buttons
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieDidEnd:) name:QTMovieDidEndNotification object:newMovie];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieTimeDidChange:) name:QTMovieTimeDidChangeNotification object:newMovie];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieRateDidChange:) name:QTMovieRateDidChangeNotification object:newMovie];
 	}
 	
 	if (movie != nil) {
