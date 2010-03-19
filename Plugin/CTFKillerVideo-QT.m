@@ -48,16 +48,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 #pragma mark Insert Video using QTKit - 10.5 and higher only
 
 - (void) setupQuickTimeUsingHD: (NSNumber*) useHDNumber {
-	NSThread * thread = [[[NSThread alloc] initWithTarget:self selector:@selector(reallySetupQuickTimeUsingHD:) object:useHDNumber] autorelease];
-	[thread setName: @"CTFKillerVideo movieSetup"];
-	[self setMovieSetupThread: thread];
-	[thread start];
-}
-
-
-
-- (void) reallySetupQuickTimeUsingHD: (NSNumber *) useHDNumber {
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	NSView * mainContainer = [[self plugin] containerView];
 	NSRect bounds;
 	if (mainContainer != nil) {
@@ -95,11 +85,31 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		needToInsertMovieView = YES;
 	}
 	
+	if (needToInsertMovieView) {
+		[mainContainer addSubview: myMovieView positioned: NSWindowBelow relativeTo: nil];
+		[[self plugin] setNextKeyView: myMovieView];
+		[myMovieView setNextKeyView: (NSView*)[[self plugin] mainButton]];
+	}
+	
 	// Add progress indicator. It will be removed when the film has loaded sufficiently or when loading fails.
 	[self addProgressIndicator];
 	
+	// Create QTMovie and start it
+	NSThread * thread = [[[NSThread alloc] initWithTarget:self selector:@selector(reallySetupQuickTimeUsingHD:) object:useHDNumber] autorelease];
+	[thread setName: @"CTFKillerVideo movieSetup"];
+	[self setMovieSetupThread: thread];
+	[thread start];
+}
+
+
+
+- (void) reallySetupQuickTimeUsingHD: (NSNumber *) useHDNumber {
+	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+	
+	QTMovieView * myMovieView = [self movieView];
 	QTMovie * myMovie = [self movieForHD: useHDNumber];
-	if ( myMovie != nil && ![[self movieSetupThread] isCancelled] ) {
+	
+	if ( myMovie != nil && ![[self movieSetupThread] isCancelled] && myMovieView ) {
 		[self setMovie: myMovie];
 		[myMovieView setMovie: myMovie];
 		
@@ -110,17 +120,12 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 			[view setWantsLayer:YES];
 		}
 		
-		if (needToInsertMovieView) {
-			[mainContainer addSubview: myMovieView positioned: NSWindowBelow relativeTo: nil];
-			[[self plugin] setNextKeyView: myMovieView];
-			[myMovieView setNextKeyView: (NSView*)[[self plugin] mainButton]];
-		}
 		[[[self plugin] mainButton] setHidden:YES];
 		[[[self plugin] window] makeFirstResponder: myMovieView];
 	}
 	
 	[self setMovieSetupThread: nil];
-
+	
 	// not doing this on the main thread seems to hang the application
 	// [self performSelectorOnMainThread:@selector(resizeToFitMovie) withObject:nil waitUntilDone:NO];
 	
@@ -130,6 +135,8 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 - (QTMovie *) movieForHD: (NSNumber *) useHDNumber {
+	[QTMovie enterQTKitOnThread];
+
 	BOOL useHD = [self useVideoHD];
 	if ( useHDNumber != nil ) {
 		useHD = [useHDNumber boolValue];
@@ -170,6 +177,9 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		}		
 	}
 	
+	[myMovie detachFromCurrentThread];
+	[QTMovie exitQTKitOnThread];
+	
 	return myMovie;	
 }
 
@@ -187,8 +197,14 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  Stores the new volume level in defaults, so future movies can use it.
 */
 - (void) movieVolumeChanged: (NSNotification *) notification {
+	[QTMovie enterQTKitOnThread];
+	[[self movie] attachToCurrentThread];
+
 	NSNumber * volumeNumber = [NSNumber numberWithFloat:[[self movie] volume]];
 	[[CTFUserDefaultsController standardUserDefaults] setObject:volumeNumber forKey: sVideoVolumeLevelDefaultsKey];
+
+	[[self movie] detachFromCurrentThread];
+	[QTMovie exitQTKitOnThread];
 }
 
 
@@ -204,6 +220,9 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  TODO: figure out how to handle persistent failures of video loading
 */
 - (void) movieLoadStateChanged: (NSNotification *) notification {
+	[QTMovie enterQTKitOnThread];
+	[[self movie] attachToCurrentThread];
+	
     long loadState = [[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
 #if LOGGING_ENABLED
 	NSLog(@"CTFKillerVideo -movieLoadStateChanged: %i", loadState);
@@ -242,6 +261,9 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 			NSLog(@"CTFKillerVideo -movieLoadStateChanged: An error occurred when trying to load the movie\n%@", [[[self movie] movieAttributes] description]);
 		}
     }
+	
+	[[self movie] detachFromCurrentThread];
+	[QTMovie exitQTKitOnThread];
 }
 
 
@@ -269,12 +291,18 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	NSLog(@"CTFKillerVideo QuickTime: movie time changed");
 #endif
 
+	[QTMovie enterQTKitOnThread];
+	[[self movie] attachToCurrentThread];
+	
 	if ( [[self movie] currentTime].timeValue == [[self movie] duration].timeValue ) {
 		[self showEndOfMovieButtons];
 	}
 	else{
 		[self hideEndOfMovieButtons];
 	}
+	
+	[[self movie] detachFromCurrentThread];
+	[QTMovie exitQTKitOnThread];
 }
 
 
@@ -358,7 +386,11 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		NSView * endOfMovieButtonsContainer = [[[NSView alloc] initWithFrame: containerRect] autorelease];
 		[endOfMovieButtonsContainer setAlphaValue: .0];
 		[endOfMovieButtonsContainer setWantsLayer: YES];
-		
+/*		[[endOfMovieButtonsContainer layer] setBackgroundColor: CGColorCreateGenericGray(1., .7)];
+		CIFilter * blurFilter = [CIFilter filterWithName: @"CIGaussianBlur"];
+		[blurFilter setDefaults];
+		[endOfMovieButtonsContainer setBackgroundFilters: [NSArray arrayWithObject: blurFilter]];
+*/
 		[endOfMovieButtonsContainer addSubview: downloadButton];
 	
 		if ( gotoVideoPageButton != nil ) {
@@ -416,6 +448,9 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  Make sure file names are unique.
 */
 - (IBAction) saveMovie: (id) sender {
+	[QTMovie enterQTKitOnThread];
+	[[self movie] attachToCurrentThread];
+	
 	NSAssert( [self movie] != nil, @"CTFKillerVideo-QT -saveMovie called even though movie == nil");
     long loadState = [[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
 	NSAssert( loadState == QTMovieLoadStateComplete, @"CTFKillerVideo-QT -saveMovie called even though the movie is not loaded completely");
@@ -495,6 +530,9 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	else {
 		NSLog(@"ClickToFlash: Could not save the movie because we couldn't figure out a good file name. This should not happen.");
 	}
+
+	[[self movie] detachFromCurrentThread];
+	[QTMovie exitQTKitOnThread];
 }
 
 
