@@ -140,8 +140,6 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 
 // Called when our plug-in is destroyed, so pending actions can be stopped in a controlled way
 - (void) pluginDestroy {
-	[[NSNotificationCenter defaultCenter] postNotificationName: CTFLoaderCancelNotification object: [self plugin]];
-	
 	NSButton * button = [[[self plugin] buttonsView] viewWithTag: CTFHDButtonTag];
 	if (button != nil) {
 		[button unbind:@"toolTip"];
@@ -644,6 +642,7 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 
 - (void) setVideoLookup: (CTFLoader *) newVideoLookup {
 	[newVideoLookup retain];
+	[videoLookup cancel];
 	[videoLookup release];
 	videoLookup = newVideoLookup;
 }
@@ -655,6 +654,7 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 
 - (void) setVideoHDLookup: (CTFLoader *) newVideoHDLookup {
 	[newVideoHDLookup retain];
+	[videoHDLookup cancel];
 	[videoHDLookup release];
 	videoHDLookup = newVideoHDLookup;
 }

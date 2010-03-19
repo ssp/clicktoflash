@@ -1515,6 +1515,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 - (void) setPreviewImageLoader: (CTFLoader *) newPreviewImageLoader {
 	[newPreviewImageLoader retain];
+	[previewImageLoader cancel];
 	[previewImageLoader release];
 	previewImageLoader = newPreviewImageLoader;
 }

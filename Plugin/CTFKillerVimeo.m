@@ -363,6 +363,7 @@
 
 - (void) setXMLLoader: (CTFLoader *) newXMLLoader {
 	[newXMLLoader retain];
+	[XMLLoader cancel];
 	[XMLLoader release];
 	XMLLoader = newXMLLoader;
 }

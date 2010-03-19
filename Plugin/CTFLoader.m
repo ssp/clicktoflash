@@ -26,9 +26,6 @@
 #import "CTFUtilities.h"
 
 
-NSString * CTFLoaderCancelNotification = @"CTFLoaderCancel";
-
-
 
 @implementation CTFLoader
 
@@ -47,16 +44,6 @@ NSString * CTFLoaderCancelNotification = @"CTFLoaderCancel";
 		connection = nil;
 		
 		result = self;
-		
-		// listen to cancel notifications. Try to use the plug-in as the object (so we can catch everything) belonging to our plug-in. Otherwise use the delegate.
-		id notificationObject = delegate;
-		if ([delegate respondsToSelector:@selector(plugin)]) {
-			notificationObject = [delegate performSelector:@selector(plugin)];
-		}
-		[[NSNotificationCenter defaultCenter] addObserver: self
-												 selector: @selector(cancel:)
-													 name: CTFLoaderCancelNotification
-												   object: notificationObject];
 	}
 	
 	return result;
@@ -107,9 +94,9 @@ NSString * CTFLoaderCancelNotification = @"CTFLoaderCancel";
 
 
 
-- (void) cancel: (NSNotification *) notification {
+- (void) cancel {
 #if LOGGING_ENABLED
-	NSLog(@"CTFLoader %@ -cancel:", [self description]);
+	NSLog(@"CTFLoader %@ -cancel", [self description]);
 #endif
 	
 	[[self connection] cancel];
@@ -122,8 +109,6 @@ NSString * CTFLoaderCancelNotification = @"CTFLoaderCancel";
 #if LOGGING_ENABLED
 	NSLog(@"CTFLoader %@ -dealloc", [self description]);
 #endif
-	
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	[data release];
     [URL release];

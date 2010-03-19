@@ -27,7 +27,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-extern NSString * CTFLoaderCancelNotification;
 
 
 
@@ -48,7 +47,7 @@ extern NSString * CTFLoaderCancelNotification;
 - (id) initWithURL: (NSURL *) theURL delegate: (id) theDelegate selector: (SEL) theSelector;
 - (void) start;
 - (void) finish;
-	
+- (void) cancel;
 
 
 - (NSData*)data;
