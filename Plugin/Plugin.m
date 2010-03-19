@@ -184,6 +184,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		
 		[self opacitySetup]; // sets up original opacity attributes and changes our opacity
 
+		isImmediatelyConverted = NO;
 		isConverted = NO;
 		
 		[self setupSubviews]; // sets up subview variables
@@ -251,6 +252,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		
 
 		if ( [self shouldConvertImmediately] ) {
+			isImmediatelyConverted = YES;
 			[self convertTypesForContainer:YES];
 		}
 	
@@ -1364,6 +1366,16 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
     [newValue retain];
     [_originalOpacityAttributes release];
     _originalOpacityAttributes = newValue;
+}
+
+
+
+- (BOOL) isImmediatelyConverted {
+	return isImmediatelyConverted;
+}
+
+- (void) setIsImmediatelyConverted: (BOOL) newIsImmediatelyConverted {
+	isImmediatelyConverted = newIsImmediatelyConverted;
 }
 
 

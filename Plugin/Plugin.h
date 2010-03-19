@@ -59,6 +59,7 @@ enum subviewTags {
 	NSDictionary * _flashVars;
 	NSDictionary * _originalOpacityAttributes;
 
+	BOOL isImmediatelyConverted;
 	BOOL isConverted;
 	
 	NSView * containerView;
@@ -141,6 +142,8 @@ enum subviewTags {
 - (NSDictionary *) originalOpacityAttributes;
 - (void) setOriginalOpacityAttributes: (NSDictionary *) newValue;
 
+- (BOOL) isImmediatelyConverted;
+- (void) setIsImmediatelyConverted: (BOOL) newIsImmediatelyConverted;
 - (BOOL) isConverted;
 - (void) setIsConverted: (BOOL) newIsConverted;
 
