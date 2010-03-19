@@ -99,7 +99,7 @@
 - (void) setup { }
 
 // Called when our plug-in is destroyed, so pending actions can be stopped in a controlled way.
-- (void) pluginDestroy { }
+- (void) pluginDestroy { [NSObject cancelPreviousPerformRequestsWithTarget: self]; }
 
 // Indicate whether we want the CtF view to be converted right away.
 - (BOOL) shouldConvertImmediately { return NO; }

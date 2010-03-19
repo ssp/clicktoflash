@@ -119,7 +119,6 @@ static NSString *sSifr3AddOnJSFilename = @"sifr3-addons";
 
 - (void) pluginDestroy {
 	[super pluginDestroy];
-	[[NSRunLoop currentRunLoop] cancelPerformSelectorsWithTarget:self];
 }
 
 
