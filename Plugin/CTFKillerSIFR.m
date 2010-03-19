@@ -112,8 +112,6 @@ static NSString *sSifr3AddOnJSFilename = @"sifr3-addons";
 	BOOL result = [CTFKillerSIFR shouldAutoLoadSIFR];
 	result = result || [self shouldDeSIFR];
 	
-	convertImmediately = result;
-	
 	return result;
 }
 
@@ -144,8 +142,8 @@ static NSString *sSifr3AddOnJSFilename = @"sifr3-addons";
 	// default to NO, meaning that CTFClickToFlashPlugin will convert by inserting the Flash
 	BOOL result = NO;
 	
-	if (convertImmediately) {
-		// we are marked for immediate conversion: potentially deSIFR
+	if ([[self plugin] isImmediatelyConverted]) {
+		// we have been converted 'immediately': potentially deSIFR
 		if ([self shouldDeSIFR]) {
 			[self performSelector:@selector(disableSIFR) withObject:nil afterDelay:0];
 			result = YES;
