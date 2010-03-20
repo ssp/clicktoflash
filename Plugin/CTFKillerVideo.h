@@ -45,6 +45,7 @@ extern NSString * sUseYouTubeH264DefaultsKey;
 extern NSString * sUseYouTubeHDH264DefaultsKey;
 extern NSString * sYouTubeAutoPlayDefaultsKey;
 extern NSString * sUseQTKitDefaultsKey;
+// defined in CTFKillerVideo-QT
 extern NSString * sVideoVolumeLevelDefaultsKey;
 
 
@@ -123,6 +124,12 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 - (IBAction) downloadVideo: (id) sender;
 - (IBAction) downloadVideoSD: (id) sender;
 - (IBAction) downloadVideoHD: (id) sender;
+- (IBAction) gotoVideoPage: (id) sender;
+- (void) openFullscreenInQTPlayerUsingHD: (BOOL) useHD;
+- (IBAction) openFullscreenInQTPlayer: (id) sender;
+- (IBAction) openFullscreenInQTPlayerSD: (id) sender;
+- (IBAction) openFullscreenInQTPlayerHD: (id) sender;
+
 
 // Helpers
 - (BOOL) useVideo;
