@@ -91,6 +91,9 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 - (NSString*) videoURLString;
 - (NSString*) videoHDURLString;
 
+// HTML needed to embed the video
+- (NSString *) embedString;
+
 // If lookups are required to determine the correct URL to the video, redo them. When returning, the URLs should be refreshed and ready to use.
 - (void) refreshVideoURLs;
 
@@ -125,6 +128,7 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 - (IBAction) downloadVideoSD: (id) sender;
 - (IBAction) downloadVideoHD: (id) sender;
 - (IBAction) gotoVideoPage: (id) sender;
+- (IBAction) copyEmbedTag: (id) sender;
 - (void) openFullscreenInQTPlayerUsingHD: (BOOL) useHD;
 - (IBAction) openFullscreenInQTPlayer: (id) sender;
 - (IBAction) openFullscreenInQTPlayerSD: (id) sender;

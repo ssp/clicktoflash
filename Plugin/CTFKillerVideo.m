@@ -98,6 +98,9 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 - (NSString*) videoURLString { return nil;} 
 - (NSString*) videoHDURLString { return nil; }
 
+// HTML needed to embed the video
+- (NSString *) embedString { return nil; }
+
 // If lookups are required to determine the correct URL to the video, redo them. When returning, the URLs should be refreshed and ready to use.
 - (void) refreshVideoURLs { }
 
@@ -280,7 +283,17 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 			[menuItem setAlternate:YES];
 			[menuItem setKeyEquivalentModifierMask:NSAlternateKeyMask];
 		}
-	}	
+	}
+
+	// menu item to copy <embed> tag
+	NSString * myEmbedString = [self embedString];
+	if ( myEmbedString != nil ) {
+		labelString = CtFLocalizedString( @"Copy embed tag to Clipboard", @"CTFKillerVideo: Copy embed tag to Clipboard menu item" );
+		menuItem = [[self plugin] addContextualMenuItemWithTitle: labelString
+														  action: @selector( copyEmbedTag: )
+														  target: self ];
+		[menuItem setToolTip: myEmbedString];
+	}
 }
 
 
@@ -396,6 +409,12 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 	[[self plugin] browseToURLString:[self videoPageURLString]];
 }
 
+
+- (IBAction) copyEmbedTag: (id) sender {
+	NSPasteboard * pB = [NSPasteboard generalPasteboard];
+	[pB declareTypes: [NSArray arrayWithObject:NSStringPboardType] owner:self];
+	[pB setString: [self embedString] forType:NSStringPboardType];
+}
 
 
 // Play the film fullscreen in QuickTime Player

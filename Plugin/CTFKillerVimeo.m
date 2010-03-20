@@ -57,6 +57,7 @@
 	[self setClipID: nil];
 	[self setClipSignature: nil];
 	[self setClipExpires: nil];
+	[self setEmbedCode: nil];
 	[self setRedirectedURLString: nil];
 	[self setRedirectedHDURLString: nil];
 	[self setXMLLoader: nil];
@@ -89,6 +90,7 @@
 	[self setClipID: nil];
 	[self setClipSignature: nil];
 	[self setClipExpires: nil];
+	[self setEmbedCode: nil];
 	[self setRedirectedURLString: nil];
 	[self setRedirectedHDURLString: nil];
 	[self setXMLLoader: nil];
@@ -131,6 +133,18 @@
 - (NSString *) videoHDURLString {
 	NSString * URLString = [self redirectedHDURLString];
 	return URLString;
+}
+
+
+
+// HTML needed to embed the video
+- (NSString *) embedString {
+	NSString * code = [self embedCode];
+	if ( code != nil ) {
+		code = [code stringByAppendingString: @"\n"];
+	}
+	
+	return code;
 }
 
 
@@ -232,6 +246,11 @@
 			node = [nodes objectAtIndex:0];
 			[self setTitle: [node stringValue]];
 		}
+		nodes = [XML nodesForXPath:@"//embed_code" error:&error];
+		if ([nodes count] > 0) {
+			node = [nodes objectAtIndex:0];
+			[self setEmbedCode: [node stringValue]];
+		}
 		
 
 		// Now we collected the data but vimeo seem to have two video formats in the background flv/mp4. The only way I see so far to tell those apart is from the MIME Type of the video file's URL. Any better way to do this would be great.		
@@ -332,6 +351,18 @@
 	[newClipExpires retain];
 	[clipExpires release];
 	clipExpires = newClipExpires;
+}
+
+
+- (NSString *) embedCode {
+	return embedCode;
+}
+
+
+- (void) setEmbedCode: (NSString *) newEmbedCode {
+	[newEmbedCode retain];
+	[embedCode release];
+	embedCode = newEmbedCode;
 }
 
 

@@ -68,6 +68,9 @@
 /* CTFKillerVideo: HD H.264 badge text */
 "HD H.264" = "QuickTime HD";
 
+/* CTFKillerVideo: Copy embed tag to Clipboard menu item */
+"Copy embed tag to Clipboard" = "Copy code for embedding";
+
 
 
 /* CTFKillerVideo: Load H.264 context menu item */

@@ -219,6 +219,19 @@
 
 
 
+// HTML needed to embed the video
+- (NSString *) embedString {
+	NSString * youTubeEmbedTemplate = @"<object width='480' height='385'>\n<param name='movie' value='http://www.youtube.com/v/%1$@&amp;hl=%2$@&amp;fs=1'></param>\n<param name='allowFullScreen' value='true'></param>\n<param name='allowscriptaccess' value='always'></param>\n<embed src='http://www.youtube.com/v/%1$@&amp;hl=%2$@&amp;fs=1' type='application/x-shockwave-flash' allowscriptaccess='always' allowfullscreen='true' width='480' height='385'></embed>\n</object>\n";
+	NSString * countryCode = @"de";
+	
+	NSString * youTubeEmbedTag = [NSString stringWithFormat:youTubeEmbedTemplate, [self videoID], countryCode];
+	
+	return youTubeEmbedTag;
+}
+
+
+
+
 // If lookups are required to determine the correct URL to the video, redo them. When returning, the URLs should be refreshed and ready to use.
 - (void) refreshVideoURLs {
 	[self retrieveYouTubeInfoAndCheckWithVideoID: [self videoID]];

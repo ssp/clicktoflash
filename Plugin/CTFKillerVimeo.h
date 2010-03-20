@@ -34,6 +34,8 @@
 	NSString * clipID;
 	NSString * clipSignature;
 	NSString * clipExpires;
+	NSString * embedCode;
+
 	NSString * redirectedURLString;
 	NSString * redirectedHDURLString;
 	
@@ -52,6 +54,9 @@
 - (void) setClipSignature: (NSString *) newClipSignature;
 - (NSString *) clipExpires;
 - (void) setClipExpires: (NSString *) newClipExpires;
+- (NSString *) embedCode;
+- (void) setEmbedCode: (NSString *) newEmbedCode;
+
 - (NSString *) redirectedURLString;
 - (void) setRedirectedURLString: (NSString *) newRedirectedURLString;
 - (NSString *) redirectedHDURLString;
