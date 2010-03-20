@@ -111,6 +111,7 @@ enum subviewTags {
 - (CGFloat) overlayOpacityHighlighted: (BOOL) highlighted;
 
 - (void) convertTypesForContainer: (BOOL) keepIt;
+- (void) convertTypesForFlashContainer;
 - (void) prepareForConversion;
 - (void) revertToOriginalOpacityAttributes;
 

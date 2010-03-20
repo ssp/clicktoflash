@@ -563,7 +563,9 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 // Called when asynchronous lookups are finished. This will convert the element if it has been marked for conversion previously but the kind of conversion wasn't clear yet because of the pending lookups.
 - (void) finishedLookups {
 	if ([self requiresConversion]) {
-		[self convert];
+		if (![self convert]) {
+			[[self plugin] convertTypesForFlashContainer];
+		}
 	}
 }
 

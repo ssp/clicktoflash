@@ -933,21 +933,21 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	}
 
 	if (!success) {
-        [self _convertTypesForFlashContainer];
+        [self convertTypesForFlashContainer];
 	}
 	
 	[self setIsConverted: YES];
 }
 
 
-- (void) _convertTypesForFlashContainer
-{
+- (void) convertTypesForFlashContainer {
 	[self revertToOriginalOpacityAttributes];
 	
 	// Delay this until the end of the event loop, because it may cause self to be deallocated
 	[self prepareForConversion];
 	[self performSelector:@selector(_convertTypesForFlashContainerAfterDelay) withObject:nil afterDelay:0.0];
 }
+
 
 - (void) _convertTypesForFlashContainerAfterDelay
 {
@@ -1505,7 +1505,6 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	previewImage = newPreviewImage;
 	
 	[[self mainButton] setNeedsDisplay: YES];
-	NSLog(@"setting preview image from thread %@", [[NSThread currentThread] description]);
 }
 
 
