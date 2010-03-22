@@ -987,8 +987,15 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	[ self _abortAlert ];
 }
 
-- (void) revertToOriginalOpacityAttributes
-{
+
+
+- (void) revertToOriginalOpacityAttributes {
+	[self performSelectorOnMainThread:@selector(reallyRevertToOriginalOpacityAttributes) withObject:nil waitUntilDone:YES];
+}
+
+
+// Should be run on main thread only because DOM... stuff is manipulated which can raise a WebKitThreadingException.
+- (void) reallyRevertToOriginalOpacityAttributes {
 	NSString *selfWmode = [[self originalOpacityAttributes] objectForKey:@"self-wmode"];
 	if (selfWmode != nil ) {
 		[[self container] setAttribute:@"wmode" value:selfWmode];
