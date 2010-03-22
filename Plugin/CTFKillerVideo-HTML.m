@@ -74,31 +74,36 @@ static NSString * divCSS = @"margin:auto;padding:0px;border:0px none;text-align:
  Passing nil invokes the default behaviour based on user preferences and HD availability.
 */
 - (void) convertToMP4ContainerUsingHD: (NSNumber*) useHD {
-	[plugin revertToOriginalOpacityAttributes];
+	NSNumber * myUseHD = useHD;
+	if ( useHD == nil ) {
+		myUseHD = [NSNumber numberWithBool:[self useVideoHD]];
+	}
 	
-	// Delay this until the end of the event loop, because it may cause self to be deallocated
-	[plugin prepareForConversion];
+	// Delay this until the end of the event loop, because it may cause self to be deallocated.
 	[self performSelector:@selector(_convertToMP4ContainerAfterDelayUsingHD:) withObject:useHD afterDelay:0.0];
 }
 
 
 
-
+// Is called from CTFKillerVideo-HTML -convertToMP4ContainerUsingHD: only.
 - (void) _convertToMP4ContainerAfterDelayUsingHD: (NSNumber*) useHDNumber {
-	BOOL useHD = [ self useVideoHD ];
-	if (useHDNumber != nil) {
-		useHD = [useHDNumber boolValue];
-	}
-	
-	[self _convertToMP4ContainerUsingHD: useHD];
+ 	// Continue on main thread as DOM will be changed.
+	[self performSelectorOnMainThread:@selector(_convertToMP4ContainerUsingHD:) withObject:useHDNumber waitUntilDone:YES];
 }
 
 
 
-/* 
- Replace our plugin element in DOM by a <video> or <embed> element for the video.
-*/
+// Replace our plugin element in DOM by a <video> or <embed> element for the video.
+// Changes the DOM, thus needs to be called on main thread.
+// Is called from CTFKillerVideo-HTML -_convertToMP4ContainerAfterDelayUsingHD: only.
 - (void) _convertToMP4ContainerUsingHD: (BOOL) useHD {
+	CtFMainThreadAssertion
+	
+	[plugin revertToOriginalOpacityAttributes];
+	[plugin prepareForConversion];
+
+	[self _convertToMP4ContainerUsingHD: useHD];
+
 	DOMElement * container = [[self plugin] container];
 	DOMDocument * document = [container ownerDocument];
 	NSString * URLString = [self videoURLStringForHD: useHD];

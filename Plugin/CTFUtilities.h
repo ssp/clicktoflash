@@ -80,3 +80,9 @@ typedef float CGFloat;
 
     // Load our localised strings from the correct bundle [use genstrings -s CtFLocalizedString]
 #define CtFLocalizedString(key, explanation) [[NSBundle bundleForClass:[self class]] localizedStringForKey:(key) value:@"" table:(nil)]
+
+
+    // Assert that we're running on the main thread
+#define CtFMainThreadAssertion NSString * assertionMessage = [NSString stringWithFormat:@"%@ not called on main thread", [NSString stringWithUTF8String:__PRETTY_FUNCTION__]]; NSAssert([[NSThread currentThread] isEqual: [NSThread mainThread]], assertionMessage);
+
+

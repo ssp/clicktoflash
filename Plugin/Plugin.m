@@ -277,7 +277,11 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 // so it seemed reasonable to check both self and parent for potential
 // problems with opacity.
 
+// Changes the DOM, thus needs to be called on main thread only.
+// Is only called from -initWithArguments: which WebKit calls on the main thread (?)
 - (void) opacitySetup {
+	CtFMainThreadAssertion
+	
 	NSMutableDictionary *originalOpacityDict = [NSMutableDictionary dictionary];
 	NSString *opacityResetString = @"; opacity: 1.000 !important; -moz-opacity: 1 !important; filter: alpha(opacity=1) !important;";
 	
@@ -915,12 +919,13 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 #pragma mark -
 #pragma mark DOM Conversion
 
-
-- (void) _convertTypesForElement:(DOMElement *)element
-{
+// Changes the DOM, thus needs to be called on main thread only.
+// Is called from -_convertTypesForFlashContainerAfterDelay which is called on the main thread.
+- (void) _convertTypesForElement:(DOMElement *)element {
     NSString *type = [element getAttribute:@"type"];
 
     if ([type isEqualToString:sFlashOldMIMEType] || [type length] == 0) {
+		CtFMainThreadAssertion
         [element setAttribute:@"type" value:sFlashNewMIMEType];
     }
 }
@@ -933,22 +938,32 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	}
 
 	if (!success) {
-        [self convertTypesForFlashContainer];
+        [self performSelectorOnMainThread:@selector(convertTypesForFlashContainer) withObject:nil waitUntilDone:YES];
 	}
 	
 	[self setIsConverted: YES];
 }
 
 
+
+// Changes the DOM, thus needs to be called on main thread only.
+// Is called from:
+//   CTFClickToFlashPlugin -convertTypesForContainer (calls us on main thread)
+//   CTFKillerVideo -finishedLookups (called by CTFLoader callback on main thread)
 - (void) convertTypesForFlashContainer {
-	[self revertToOriginalOpacityAttributes];
+	CtFMainThreadAssertion
 	
-	// Delay this until the end of the event loop, because it may cause self to be deallocated
+	[self revertToOriginalOpacityAttributes];
 	[self prepareForConversion];
+	
+	// Delay this until the end of the event loop, because it may cause self to be deallocated.
 	[self performSelector:@selector(_convertTypesForFlashContainerAfterDelay) withObject:nil afterDelay:0.0];
 }
 
 
+
+// Changes the DOM, thus needs to be called on main thread only.
+// Is called from CTFClickToFlashPlugin -convertTypesForFlashContainer.
 - (void) _convertTypesForFlashContainerAfterDelay
 {
     DOMNodeList *nodeList = nil;
@@ -990,12 +1005,14 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 
 - (void) revertToOriginalOpacityAttributes {
-	[self performSelectorOnMainThread:@selector(reallyRevertToOriginalOpacityAttributes) withObject:nil waitUntilDone:YES];
+	[self performSelectorOnMainThread:@selector(_reallyRevertToOriginalOpacityAttributes) withObject:nil waitUntilDone:YES];
 }
 
 
-// Should be run on main thread only because DOM... stuff is manipulated which can raise a WebKitThreadingException.
-- (void) reallyRevertToOriginalOpacityAttributes {
+// Changes the DOM, thus needs to be called on main thread only.
+// Is called from -revertToOriginalOpacityAttributes only
+- (void) _reallyRevertToOriginalOpacityAttributes {
+	CtFMainThreadAssertion
 	NSString *selfWmode = [[self originalOpacityAttributes] objectForKey:@"self-wmode"];
 	if (selfWmode != nil ) {
 		[[self container] setAttribute:@"wmode" value:selfWmode];
