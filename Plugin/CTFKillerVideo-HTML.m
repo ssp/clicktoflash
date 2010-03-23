@@ -98,7 +98,7 @@ static NSString * divCSS = @"margin:auto;padding:0px;border:0px none;text-align:
 	}
 	
 	// Delay this until the end of the event loop, because it may cause self to be deallocated.
-	[self performSelector:@selector(_convertToMP4ContainerAfterDelayUsingHD:) withObject:useHD afterDelay:0.0];
+	[self performSelector:@selector(_convertToMP4ContainerAfterDelayUsingHD:) withObject:myUseHD afterDelay:0.0];
 }
 
 
