@@ -1137,9 +1137,10 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 - (NSButton *) addFullScreenButton {
 	NSButton * button = nil;
 	
-	if ([[self buttonsView] viewWithTag: CTFFullScreenButtonTag] == nil) {
+	// Only add the button if we have the buttons view (are using 'new style' UI on 10.5 and above) and the button doesn't exist yet.
+	if ([self buttonsView] && [[self buttonsView] viewWithTag: CTFFullScreenButtonTag] == nil) {
 		button = [CTFButton button];
-		[button setImage: [NSImage imageNamed:NSImageNameEnterFullScreenTemplate]];
+		[button setImage: [NSImage imageNamed:NSImageNameEnterFullScreenTemplate]]; // variable requires 10.5
 		[button setToolTip: CtFLocalizedString( @"Fill entire screen", @"Tooltip for fullscreen button" )];
 		[button sizeToFit];
 		[button setTag: CTFFullScreenButtonTag];
