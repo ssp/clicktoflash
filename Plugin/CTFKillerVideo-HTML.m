@@ -120,8 +120,6 @@ static NSString * divCSS = @"margin:auto;padding:0px;border:0px none;text-align:
 	[plugin revertToOriginalOpacityAttributes];
 	[plugin prepareForConversion];
 
-	[self _convertToMP4ContainerUsingHD: useHD];
-
 	DOMElement * container = [[self plugin] container];
 	DOMDocument * document = [container ownerDocument];
 	NSString * URLString = [self videoURLStringForHD: useHD];
