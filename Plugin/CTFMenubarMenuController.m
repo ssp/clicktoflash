@@ -40,6 +40,7 @@ static NSString* kApplicationsToInstallMenuInto[] = {
     @"com.apple.Safari",
     @"uk.co.opencommunity.vienna2",
 	@"com.omnigroup.OmniWeb5",
+	@"org.fluidium.Fluidium",
 #if 0
     @"com.panic.Coda", // for debugging an app that includes its own old Sparkle framework.
 #endif
