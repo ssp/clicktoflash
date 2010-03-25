@@ -1,6 +1,28 @@
-# Visit the [Official ClickToFlash Site Here](http://rentzsch.github.com/clicktoflash/)
+# Visit the [Official ClickToFlash Site Here](http://clicktoflash.com/)
 
-This is the ClickToFlash developer site.
+This ssp’s branch of the ClickToFlash Source code.
+
+##Current work
+
+… is done on the cutting-edge branch which contains:
+
+* changes that are supposed to go into the 1.6 version
+	* Refactoring to use the CTFKiller subclasses for different kinds of Flash
+	* Using NSViews to and proper buttons to draw ourselves and react to mouse clicks. This also paves the way to Accessibility.
+	* CTFLoader class to handle getting the relevant data from the net
+	* gazillions of other changes
+* future additions
+	* Using QuickTime to display videos. This includes a full screen mode and the ability to save movie files from QuickTime. It requires X.5 or higher.
+
+
+On X.5 and higher there are three ways of watching video:
+# Using QuickTime in our view (code from CTFKillerVideo-QT)
+# Using the QuickTime plug-in in Safari (code from CTFKillerVideo-HTML)
+# Using the HTML5 video element in Safari (code from CTFKillerVideo-HTML)
+
+The first gives us more control and abilities and runs on X.5 and above only. The third seems to be hip and modern, but means a lack of control and appears to have poor performance, the second is a bit old fashioned but appears to work better.
+
+
 
 ##Version History
 
