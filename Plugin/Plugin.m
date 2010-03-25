@@ -77,7 +77,6 @@ nil]
 
 
 @interface CTFClickToFlashPlugin (Internal)
-- (void) _convertTypesForFlashContainer;
 - (void) _convertTypesForFlashContainerAfterDelay;
 
 - (void) _drawBackground;
@@ -723,7 +722,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 - (IBAction)loadFlash:(id)sender;
 {
-    [self _convertTypesForFlashContainer];
+    [self convertTypesForFlashContainer];
 }
 
 - (IBAction)loadAllOnPage:(id)sender
