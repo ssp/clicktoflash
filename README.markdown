@@ -37,5 +37,6 @@ I put out a few test versions over time. Those are close to – but not quite i
 
 
 ## Links
-* main ClickToFlash repository
+* [main ClickToFlash repository](http://github.com/rentzsch/clicktoflash/)
+* [ClickToFlash Homepage](http://clicktoflash.com)
 * [my ClickToFlash Wiki](http://wiki.github.com/ssp/clicktoflash/) with questions
