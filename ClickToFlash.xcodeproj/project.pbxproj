@@ -59,6 +59,7 @@
 		6CB3034910D539700036544E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6CB3034710D539700036544E /* InfoPlist.strings */; };
 		6CB3039310D544480036544E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6CB3032910D5377F0036544E /* Localizable.strings */; };
 		6CC18AE61076D09B00D9E1A0 /* CTFKillerVimeo.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CC18AE51076D09B00D9E1A0 /* CTFKillerVimeo.m */; };
+		6CF2F08F115B640400C609E0 /* ClickToFlash Updater.app in Resources */ = {isa = PBXBuildFile; fileRef = A46A59FE1096C2A700E1ABAA /* ClickToFlash Updater.app */; };
 		6CF9E9EF1083D8D7004C0C1C /* CTFFullscreenWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CF9E9EE1083D8D7004C0C1C /* CTFFullscreenWindow.m */; };
 		79166CBD0FF69E1800B1F69B /* CTFGradient.m in Sources */ = {isa = PBXBuildFile; fileRef = 79166CBB0FF69E1800B1F69B /* CTFGradient.m */; };
 		79A21C4D0F30B735009424B8 /* CTFWhitelistWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79A21C490F30B735009424B8 /* CTFWhitelistWindowController.m */; };
@@ -213,6 +214,7 @@
 		6CC8F8EA10D5979D00F31573 /* CTFKillerVideo-HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CTFKillerVideo-HTML.m"; path = "Plugin/CTFKillerVideo-HTML.m"; sourceTree = "<group>"; };
 		6CC8F8EE10D597AE00F31573 /* CTFKillerVideo-QT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CTFKillerVideo-QT.h"; path = "Plugin/CTFKillerVideo-QT.h"; sourceTree = "<group>"; };
 		6CC8F8EF10D597AE00F31573 /* CTFKillerVideo-QT.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CTFKillerVideo-QT.m"; path = "Plugin/CTFKillerVideo-QT.m"; sourceTree = "<group>"; };
+		6CF2F0B8115B6C2B00C609E0 /* com.github.rentzsch.clicktoflash-updater.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = "com.github.rentzsch.clicktoflash-updater.plist"; path = "../../../Library/Preferences/com.github.rentzsch.clicktoflash-updater.plist"; sourceTree = SOURCE_ROOT; };
 		6CF9E9ED1083D8D7004C0C1C /* CTFFullScreenWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFFullScreenWindow.h; path = Plugin/CTFFullScreenWindow.h; sourceTree = "<group>"; };
 		6CF9E9EE1083D8D7004C0C1C /* CTFFullscreenWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFFullscreenWindow.m; path = Plugin/CTFFullscreenWindow.m; sourceTree = "<group>"; };
 		79166CBB0FF69E1800B1F69B /* CTFGradient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFGradient.m; path = Plugin/CTFGradient.m; sourceTree = "<group>"; };
@@ -413,6 +415,7 @@
 		A46A5A3D1096C93C00E1ABAA /* Updater */ = {
 			isa = PBXGroup;
 			children = (
+				6CF2F0B8115B6C2B00C609E0 /* com.github.rentzsch.clicktoflash-updater.plist */,
 				A46A5A001096C2A700E1ABAA /* Info-Updater.plist */,
 				A46A5A421096C95500E1ABAA /* CTFSparkleManager.h */,
 				A46A5A431096C95500E1ABAA /* CTFSparkleManager.m */,
@@ -560,6 +563,7 @@
 				A40485B910629B0E00FDC4E2 /* Credits.html in Resources */,
 				A40485BA10629B0E00FDC4E2 /* InfoPlist.strings in Resources */,
 				A40485BB10629B0E00FDC4E2 /* Localizable.strings in Resources */,
+				6CF2F08F115B640400C609E0 /* ClickToFlash Updater.app in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -796,7 +800,8 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
-				PRODUCT_VERSION = "1.6b8-ssp";
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PRODUCT_VERSION = "1.6b12-ssp";
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Debug;
@@ -811,7 +816,8 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
-				PRODUCT_VERSION = "1.6b8-ssp";
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PRODUCT_VERSION = "1.6b12-ssp";
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Release;
