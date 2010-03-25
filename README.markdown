@@ -25,11 +25,11 @@ The first gives us more control and abilities and runs on X.5 and above only. Th
 
 I put out a few test versions over time. Those are close to – but not quite identical to code on the cutting-edge branch:
 
-* 1.6b12-ssp
+* [1.6b12-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b12-ssp.zip)
 	* fixes assertion issues on X.4 as suggested by Chris Johnsen
 	* copy updater.app to plugin
 	* add updater preferences to plugin
-	* 
+	* Make Prefs window NSWindow so it appears in the window list
 * 1.6b11-ssp fixes 1.6b10 issues
 * 1.6b10-ssp (screwed up, infinite recursion when converting to HTML)
 * 1.6b9-ssp
