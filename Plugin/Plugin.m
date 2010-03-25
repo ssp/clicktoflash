@@ -280,7 +280,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 // Changes the DOM, thus needs to be called on main thread only.
 // Is only called from -initWithArguments: which WebKit calls on the main thread (?)
 - (void) opacitySetup {
-	CtFMainThreadAssertion
+	CtFMainThreadAssertion();
 	
 	NSMutableDictionary *originalOpacityDict = [NSMutableDictionary dictionary];
 	NSString *opacityResetString = @"; opacity: 1.000 !important; -moz-opacity: 1 !important; filter: alpha(opacity=1) !important;";
@@ -925,7 +925,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
     NSString *type = [element getAttribute:@"type"];
 
     if ([type isEqualToString:sFlashOldMIMEType] || [type length] == 0) {
-		CtFMainThreadAssertion
+		CtFMainThreadAssertion();
         [element setAttribute:@"type" value:sFlashNewMIMEType];
     }
 }
@@ -951,7 +951,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 //   CTFClickToFlashPlugin -convertTypesForContainer (calls us on main thread)
 //   CTFKillerVideo -finishedLookups (called by CTFLoader callback on main thread)
 - (void) convertTypesForFlashContainer {
-	CtFMainThreadAssertion
+	CtFMainThreadAssertion();
 	
 	[self revertToOriginalOpacityAttributes];
 	[self prepareForConversion];
@@ -1012,7 +1012,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 // Changes the DOM, thus needs to be called on main thread only.
 // Is called from -revertToOriginalOpacityAttributes only
 - (void) _reallyRevertToOriginalOpacityAttributes {
-	CtFMainThreadAssertion
+	CtFMainThreadAssertion();
 	NSString *selfWmode = [[self originalOpacityAttributes] objectForKey:@"self-wmode"];
 	if (selfWmode != nil ) {
 		[[self container] setAttribute:@"wmode" value:selfWmode];

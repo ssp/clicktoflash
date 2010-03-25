@@ -115,7 +115,7 @@ static NSString * divCSS = @"margin:auto;padding:0px;border:0px none;text-align:
 // Changes the DOM, thus needs to be called on main thread.
 // Is called from CTFKillerVideo-HTML -_convertToMP4ContainerAfterDelayUsingHD: only.
 - (void) _convertToMP4ContainerUsingHD: (BOOL) useHD {
-	CtFMainThreadAssertion
+	CtFMainThreadAssertion();
 	
 	[plugin revertToOriginalOpacityAttributes];
 	[plugin prepareForConversion];

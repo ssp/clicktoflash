@@ -2,7 +2,7 @@
 
 The MIT License
 
-Copyright (c) 2008-2009 ClickToFlash Developers
+Copyright (c) 2008-2010 ClickToFlash Developers
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -83,6 +83,10 @@ typedef float CGFloat;
 
 
     // Assert that we're running on the main thread
-#define CtFMainThreadAssertion NSString * assertionMessage = [NSString stringWithFormat:@"%@ not called on main thread", [NSString stringWithUTF8String:__PRETTY_FUNCTION__]]; NSAssert([[NSThread currentThread] isEqual: [NSThread mainThread]], assertionMessage);
-
-
+#define CtFMainThreadAssertion() \
+do { \
+   if ([NSThread respondsToSelector:@selector(mainThread)]) { \
+      NSString * assertionMessage = [NSString stringWithFormat:@"%@ not called on main thread", [NSString stringWithUTF8String:__PRETTY_FUNCTION__]]; \
+      NSAssert([[NSThread currentThread] isEqual: [NSThread mainThread]], assertionMessage); \
+   } \
+} while(0)
