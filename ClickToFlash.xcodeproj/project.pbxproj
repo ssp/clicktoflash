@@ -50,6 +50,7 @@
 		6C2B4EC110D5A8C6000764BF /* CTFKillerVideo-HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CC8F8EA10D5979D00F31573 /* CTFKillerVideo-HTML.m */; };
 		6C2C5A6A1068CE8700A90A54 /* Credits.css in Resources */ = {isa = PBXBuildFile; fileRef = A40485B110629B0E00FDC4E2 /* Credits.css */; };
 		6C436DAF107830A200A0D525 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C436DAE107830A200A0D525 /* QTKit.framework */; };
+		6C6C1097116397CC00FE8088 /* CTFMovieView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C6C108B1163922200FE8088 /* CTFMovieView.m */; };
 		6C8815BC10A1903F00A381D6 /* CTFButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8815BB10A1903F00A381D6 /* CTFButton.m */; };
 		6C8E03FF10795EB900E21A50 /* CTFLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8E03FE10795EB900E21A50 /* CTFLoader.m */; };
 		6C8EC6F410764F810053587F /* CTFKiller.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EC6F310764F810053587F /* CTFKiller.m */; };
@@ -190,6 +191,8 @@
 		6C09647F10808D4B0006923A /* CTFMainButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFMainButton.m; path = Plugin/CTFMainButton.m; sourceTree = "<group>"; };
 		6C1211B1114ACB550071ABD2 /* com.github.rentzsch.clicktoflash.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = com.github.rentzsch.clicktoflash.plist; path = ../../../Library/Preferences/com.github.rentzsch.clicktoflash.plist; sourceTree = SOURCE_ROOT; };
 		6C436DAE107830A200A0D525 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
+		6C6C108A1163922200FE8088 /* CTFMovieView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFMovieView.h; path = Plugin/CTFMovieView.h; sourceTree = "<group>"; };
+		6C6C108B1163922200FE8088 /* CTFMovieView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFMovieView.m; path = Plugin/CTFMovieView.m; sourceTree = "<group>"; };
 		6C8815BA10A1903F00A381D6 /* CTFButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFButton.h; path = Plugin/CTFButton.h; sourceTree = "<group>"; };
 		6C8815BB10A1903F00A381D6 /* CTFButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFButton.m; path = Plugin/CTFButton.m; sourceTree = "<group>"; };
 		6C8E03FD10795EB900E21A50 /* CTFLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFLoader.h; path = Plugin/CTFLoader.h; sourceTree = "<group>"; };
@@ -329,10 +332,12 @@
 				6C8EC6F210764F810053587F /* CTFKiller.h */,
 				6C8EC774107671F20053587F /* CTFKillerVideo.m */,
 				6C8EC773107671F20053587F /* CTFKillerVideo.h */,
-				6CC8F8EF10D597AE00F31573 /* CTFKillerVideo-QT.m */,
-				6CC8F8EE10D597AE00F31573 /* CTFKillerVideo-QT.h */,
 				6CC8F8EA10D5979D00F31573 /* CTFKillerVideo-HTML.m */,
 				6CC8F8E910D5979D00F31573 /* CTFKillerVideo-HTML.h */,
+				6CC8F8EF10D597AE00F31573 /* CTFKillerVideo-QT.m */,
+				6CC8F8EE10D597AE00F31573 /* CTFKillerVideo-QT.h */,
+				6C6C108B1163922200FE8088 /* CTFMovieView.m */,
+				6C6C108A1163922200FE8088 /* CTFMovieView.h */,
 				A4627825107ED6CD005B88C4 /* CTFKillerPlistFiles.m */,
 				A4627824107ED6CD005B88C4 /* CTFKillerPlistFiles.h */,
 				6C8EC7041076544D0053587F /* CTFKillerYouTube.m */,
@@ -644,6 +649,7 @@
 				6C8EC6F410764F810053587F /* CTFKiller.m in Sources */,
 				6C8EC775107671F20053587F /* CTFKillerVideo.m in Sources */,
 				6C2B4EC010D5A8C6000764BF /* CTFKillerVideo-QT.m in Sources */,
+				6C6C1097116397CC00FE8088 /* CTFMovieView.m in Sources */,
 				6C2B4EC110D5A8C6000764BF /* CTFKillerVideo-HTML.m in Sources */,
 				6C8EC7051076544D0053587F /* CTFKillerYouTube.m in Sources */,
 				6C8EC7E9107686780053587F /* CTFKillerSIFR.m in Sources */,

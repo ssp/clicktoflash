@@ -30,6 +30,7 @@
 #import <QTKit/QTKit.h>
 #import "CTFButtonsView.h"
 #import "CTFButton.h"
+#import "CTFMovieView.h"
 #import <sys/xattr.h>
 
 
@@ -82,7 +83,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	BOOL needToInsertMovieView = NO;
 	
 	if ( myMovieView == nil ) {
-		myMovieView = [[[QTMovieView alloc] initWithFrame:bounds] autorelease];
+		myMovieView = [[[CTFMovieView alloc] initWithFrame:bounds] autorelease];
 		[myMovieView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];		
 		[myMovieView setPreservesAspectRatio:YES];
 		[myMovieView setWantsLayer: YES]; // video seems invisible without the layer
