@@ -28,18 +28,13 @@
 	BOOL canScrub = YES;
 	QTMovie * myMovie = [self movie];
 	
-	if ( myMovie != nil ) {
-		if ( QTTimeCompare([myMovie currentTime], [myMovie duration]) == NSOrderedSame ) {
-			// at the end of the film: don't scrub 'downwards'
-			if ( [theEvent type] == NSScrollWheel && [theEvent deltaY] < 0 ) {
+	if ( myMovie != nil ) {		
+		if ( QTTimeCompare([myMovie currentTime], [myMovie duration]) == NSOrderedSame  ||
+			 [myMovie currentTime].timeValue == 0 ) {
+			// at the beginning or end of the film: do not scrub but go scrolling
+			if ( [theEvent type] == NSScrollWheel && [theEvent deltaY] != 0 ) {
 				canScrub = NO;
 			}
-		}
-		else if ( QTTimeCompare([myMovie currentTime], QTZeroTime) == NSOrderedSame ) {
-			// at the beginning of the film: don't scrub 'upwards'
-			if ( [theEvent type] == NSScrollWheel && [theEvent deltaY] > 0 ) {
-				canScrub = NO;
-			}			
 		}
 	}
 	else {
