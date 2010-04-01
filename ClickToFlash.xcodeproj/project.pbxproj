@@ -193,6 +193,7 @@
 		6C436DAE107830A200A0D525 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		6C6C108A1163922200FE8088 /* CTFMovieView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFMovieView.h; path = Plugin/CTFMovieView.h; sourceTree = "<group>"; };
 		6C6C108B1163922200FE8088 /* CTFMovieView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFMovieView.m; path = Plugin/CTFMovieView.m; sourceTree = "<group>"; };
+		6C6C11221163A64B00FE8088 /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
 		6C8815BA10A1903F00A381D6 /* CTFButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFButton.h; path = Plugin/CTFButton.h; sourceTree = "<group>"; };
 		6C8815BB10A1903F00A381D6 /* CTFButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFButton.m; path = Plugin/CTFButton.m; sourceTree = "<group>"; };
 		6C8E03FD10795EB900E21A50 /* CTFLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFLoader.h; path = Plugin/CTFLoader.h; sourceTree = "<group>"; };
@@ -295,6 +296,7 @@
 		55EB70300E04A8410016593D = {
 			isa = PBXGroup;
 			children = (
+				6C6C11221163A64B00FE8088 /* README.markdown */,
 				6C1211B1114ACB550071ABD2 /* com.github.rentzsch.clicktoflash.plist */,
 				55EB70540E04A89C0016593D /* Plugin */,
 				A46A5A3D1096C93C00E1ABAA /* Updater */,
