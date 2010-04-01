@@ -346,7 +346,15 @@
 		
 		NSString * myTitle = [self flashVarWithName: @"title"];
 		if ( myTitle != nil ) {
-			NSLog(@"CTFKillerYouTube - setInfoFramFlashVars: found 'title' flash var and setting name from it");
+			// NSLog(@"CTFKillerYouTube - setInfoFramFlashVars: found 'title' flash var and setting name from it: %@", myTitle);
+			// There seem to exist cases in which all spaces in the Title are represented as +:
+			// Replace all + by a space if no spaces are present.
+			if ( [myTitle rangeOfString:@" "].location == NSNotFound ) {
+				NSMutableString * changedTitle = [[myTitle mutableCopy] autorelease];
+				if ([changedTitle replaceOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, [changedTitle length])] > 0 ) {
+					myTitle = changedTitle;
+				}
+			}
 			[self setTitle: myTitle];
 		}
 		
