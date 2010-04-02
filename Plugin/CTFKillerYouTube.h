@@ -28,28 +28,34 @@
 
 #import <Cocoa/Cocoa.h>
 #import "CTFKillerVideo.h"
-
+#import "CTFLoader.h"
 
 @interface CTFKillerYouTube : CTFKillerVideo {
 	NSString * videoID;
 	NSString * videoHash;
 		
 	unsigned expectedResponses;
+	
+	CTFLoader * infoLoader;
 }
 
 
 + (BOOL) isYouTubeSiteURL: (NSURL*) theURL;
+- (NSURL *) YouTubeInfoURL;
 
 - (void) _checkForH264VideoVariants;
 
 - (void) setInfoFromFlashVars;
-- (void) retrieveYouTubeInfoAndCheckWithVideoID: (NSString *) theVideoID;
-- (void) _getEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId:(NSString *)videoId;
-
+- (void) evaluateYouTubeInfoString: (NSString *) YouTubeInfoString;
+- (void) retrieveYouTubeInfoAndCheck;
+- (void) synchronouslyRetrieveYouTubeInfoAndCheck;
 
 - (NSString *) videoID;
 - (void) setVideoID:(NSString *)newVideoID;
 - (NSString *) videoHash;
 - (void) setVideoHash:(NSString *)newVideoHash;
+
+- (CTFLoader *) infoLoader;
+- (void) setInfoLoader: (CTFLoader *) newInfoLoader;
 
 @end
