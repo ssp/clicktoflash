@@ -150,11 +150,9 @@
 		
 		if (myVideoID != nil) {
 			[self setVideoID: myVideoID];
-
-			// this block of code introduces a situation where we have to download
-			// additional data from the internets, so we want to spin this off
-			// to another thread to prevent blocking of the Safari user interface
-			[self _getEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId:videoID];
+			
+			// Download the video information asynchronously.
+			[self retrieveYouTubeInfoAndCheck];
 		}
 	}
 	
@@ -174,6 +172,7 @@
 - (void) dealloc {
 	[self setVideoID: nil];
 	[self setVideoHash: nil];
+	[self setInfoLoader: nil];
 	
 	[super dealloc];
 }
@@ -234,16 +233,16 @@
 
 // If lookups are required to determine the correct URL to the video, redo them. When returning, the URLs should be refreshed and ready to use.
 - (void) refreshVideoURLs {
-	[self retrieveYouTubeInfoAndCheckWithVideoID: [self videoID]];
+	[self synchronouslyRetrieveYouTubeInfoAndCheck];
 }
 
 
 
 // URL of the web page displaying the video. Return nil if there is none.
-- (NSString *) videoPageURLString
-{
+- (NSString *) videoPageURLString {
 	return [ NSString stringWithFormat: @"http://www.youtube.com/watch?v=%@", [self videoID] ];
 }
+
 
 
 
@@ -258,6 +257,22 @@
 
 	return result;
 }
+
+
+
+- (NSURL *) YouTubeInfoURL {
+	NSURL * infoURL = nil;
+	NSString * theVideoID = [self videoID];
+	
+	if ( theVideoID != nil ) {
+		NSString * YouTubeInfoURLString = [NSString stringWithFormat:@"http://www.youtube.com/get_video_info?video_id=%@", theVideoID];
+		infoURL = [NSURL URLWithString: YouTubeInfoURLString];
+	}
+	
+	return infoURL;
+}
+
+
 
 
 
@@ -318,7 +333,7 @@
 
 
 #pragma mark -
-#pragma mark Other
+#pragma mark Get and evaluate Video Information
 
 
 - (void) setInfoFromFlashVars {
@@ -363,16 +378,7 @@
 
 
 
-- (void) retrieveYouTubeInfoAndCheckWithVideoID: (NSString *) theVideoID {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	[self increaseActiveLookups];
-
-	NSString * YouTubeInfoURLString = [NSString stringWithFormat:@"http://www.youtube.com/get_video_info?video_id=%@", theVideoID];
-	NSURL * YouTubeInfoURL = [NSURL URLWithString: YouTubeInfoURLString];
-	NSError * YouTubeInfoError = nil;
-	NSString * YouTubeInfoString = [NSString stringWithContentsOfURL: YouTubeInfoURL
-														usedEncoding: nil
-															   error: &YouTubeInfoError];
+- (void) evaluateYouTubeInfoString: (NSString *) YouTubeInfoString {
 	if (YouTubeInfoString != nil) {
 		NSArray * argumentArray = [YouTubeInfoString componentsSeparatedByString:@"&"];
 		NSMutableDictionary * myFlashVars = [NSMutableDictionary dictionaryWithCapacity: [argumentArray count]];
@@ -389,23 +395,62 @@
 		[self setFlashVars: myFlashVars];
 		[self setInfoFromFlashVars];
 	}
-	else {
-		if (YouTubeInfoError != nil) {
-			NSLog(@"ClickToFlashKillerYouTube, Error in -retrieveYouTubeInfoAndCheckWithVideoID: %@", [YouTubeInfoError localizedDescription]);
-		}
+}
+
+
+
+// get video information from the net _a_synchronously
+- (void) retrieveYouTubeInfoAndCheck {
+	CTFLoader * loader = [[[CTFLoader alloc] initWithURL: [self YouTubeInfoURL]
+												delegate: self
+												selector: @selector(YouTubeInfoDownloadFinished:)] autorelease];
+	[self setInfoLoader: loader];
+	
+	if ( loader != nil ) {
+		[loader start];
+		[self increaseActiveLookups];
+	}
+}
+
+
+
+// Callback for the infoLoader
+- (void) YouTubeInfoDownloadFinished: (CTFLoader *) loader {
+	NSString * YouTubeInfo = [[[NSString alloc] initWithData: [loader data] encoding:NSUTF8StringEncoding] autorelease];
+	
+	if ( YouTubeInfo != nil ) {
+		[self evaluateYouTubeInfoString: YouTubeInfo];
 	}
 
 	[self decreaseActiveLookups];
-	[pool drain];
+	[self setInfoLoader: nil];
 }
 
 
 
-- (void)_getEmbeddedPlayerFlashVarsAndCheckForVariantsWithVideoId:(NSString *)videoId {
-	[NSThread detachNewThreadSelector:@selector(retrieveYouTubeInfoAndCheckWithVideoID:)
-							 toTarget:self
-						   withObject:videoId];
+// get video information from the net _synchronously_
+// if possible, use the asynchronous -retrieveYouTubeInfoAndCheck instead
+- (void) synchronouslyRetrieveYouTubeInfoAndCheck {
+	[self increaseActiveLookups];
+	
+	NSError * YouTubeInfoError = nil;
+	NSString * YouTubeInfoString = [NSString stringWithContentsOfURL: [self YouTubeInfoURL]
+														usedEncoding: nil
+															   error: &YouTubeInfoError];
+	
+	if ( YouTubeInfoString != nil ) {
+		[self evaluateYouTubeInfoString: YouTubeInfoString];
+	}
+	else {
+		if (YouTubeInfoError != nil) {
+			NSLog(@"ClickToFlashKillerYouTube, Error in -synchronouslyRetrieveYouTubeInfoAndCheck: %@", [YouTubeInfoError localizedDescription]);
+		}
+	}
+	 
+	[self decreaseActiveLookups];
 }
+
+
 
 
 
@@ -433,6 +478,18 @@
 	[videoHash release];
 	videoHash = newVideoHash;
 }
+
+
+- (CTFLoader *) infoLoader {
+	return infoLoader;
+}
+
+- (void) setInfoLoader: (CTFLoader *) newInfoLoader {
+	[newInfoLoader retain];
+	[infoLoader release];
+	infoLoader = newInfoLoader;
+}
+
 
 
 @end
