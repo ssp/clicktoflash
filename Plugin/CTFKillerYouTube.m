@@ -283,7 +283,9 @@
 - (void)_checkForH264VideoVariants {
 	CTFLoader * loader;
 	
-	loader= [[[CTFLoader alloc] initWithURL: [NSURL URLWithString:[self videoURLString]] delegate: self selector: @selector(HEADDownloadFinished:)] autorelease];
+	loader = [CTFLoader loaderWithURL: [NSURL URLWithString:[self videoURLString]]
+							 delegate: self
+							 selector: @selector(HEADDownloadFinished:)];
 	[self setVideoLookup: loader];
 	if (loader != nil) {
 		[loader setHEADOnly: YES];
@@ -294,7 +296,9 @@
 		[self setLookupStatus: failed];
 	}
 	
-	loader= [[[CTFLoader alloc] initWithURL: [NSURL URLWithString:[self videoHDURLString]] delegate: self selector: @selector(HEADHDDownloadFinished:)] autorelease];
+	loader = [CTFLoader loaderWithURL: [NSURL URLWithString:[self videoHDURLString]]
+							 delegate: self
+							 selector: @selector(HEADHDDownloadFinished:)];
 	[self setVideoHDLookup: loader];
 	if (loader != nil) {
 		[loader setHEADOnly: YES];

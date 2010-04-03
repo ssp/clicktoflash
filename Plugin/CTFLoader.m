@@ -29,6 +29,12 @@
 
 @implementation CTFLoader
 
++ (CTFLoader *) loaderWithURL: (NSURL *) theURL delegate: (id) theDelegate selector: (SEL) theSelector {
+	return [[[CTFLoader alloc] initWithURL:theURL delegate:theDelegate selector:theSelector] autorelease];
+}
+
+
+
 - (id) initWithURL: (NSURL *) theURL delegate: (id) theDelegate selector: (SEL) theSelector {
 	self = [super init];
 	id result = nil;
