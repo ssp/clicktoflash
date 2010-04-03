@@ -1,0 +1,52 @@
+Result from http://gdata.youtube.com/feeds/api/videos/OMFBuHsKXb0
+
+Contains a lot of interesting info, but no captioning info.
+
+
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:yt="http://gdata.youtube.com/schemas/2007">
+	<id>http://gdata.youtube.com/feeds/api/videos/OMFBuHsKXb0</id>
+	<published>2010-03-13T00:22:46.000Z</published>
+	<updated>2010-04-02T08:02:17.000Z</updated>
+	<category scheme="http://schemas.google.com/g/2005#kind" term="http://gdata.youtube.com/schemas/2007#video"/>
+	<category scheme="http://gdata.youtube.com/schemas/2007/categories.cat" term="Comedy" label="Comedy"/>
+	<category scheme="http://gdata.youtube.com/schemas/2007/keywords.cat" term="heute"/>
+	<category scheme="http://gdata.youtube.com/schemas/2007/keywords.cat" term="show"/>
+	<category scheme="http://gdata.youtube.com/schemas/2007/keywords.cat" term="martin"/>
+	<category scheme="http://gdata.youtube.com/schemas/2007/keywords.cat" term="sonneborn"/>
+	<category scheme="http://gdata.youtube.com/schemas/2007/keywords.cat" term="google"/>
+	<category scheme="http://gdata.youtube.com/schemas/2007/keywords.cat" term="home"/>
+	<category scheme="http://gdata.youtube.com/schemas/2007/keywords.cat" term="view"/>
+	<title type="text">heute show 12.03.10: Sonneborn - google home view</title>
+	<content type="text">Martin Sonneborn besucht diese Woche die Menschen zu Hause - und nimmt dort schon mal die ersten Bilder für das neue "google home view" auf. Danke an nicochto für die Untertitel.</content>
+	<link rel="alternate" type="text/html" href="http://www.youtube.com/watch?v=OMFBuHsKXb0&amp;feature=youtube_gdata"/>
+	<link rel="http://gdata.youtube.com/schemas/2007#video.responses" type="application/atom+xml" href="http://gdata.youtube.com/feeds/api/videos/OMFBuHsKXb0/responses"/>
+	<link rel="http://gdata.youtube.com/schemas/2007#video.related" type="application/atom+xml" href="http://gdata.youtube.com/feeds/api/videos/OMFBuHsKXb0/related"/>
+	<link rel="http://gdata.youtube.com/schemas/2007#mobile" type="text/html" href="http://m.youtube.com/details?v=OMFBuHsKXb0"/>
+	<link rel="self" type="application/atom+xml" href="http://gdata.youtube.com/feeds/api/videos/OMFBuHsKXb0"/>
+	<author>
+		<name>BertiBuschmann</name>
+		<uri>http://gdata.youtube.com/feeds/api/users/bertibuschmann</uri>
+	</author>
+	<gd:comments>
+		<gd:feedLink href="http://gdata.youtube.com/feeds/api/videos/OMFBuHsKXb0/comments" countHint="115"/>
+	</gd:comments>
+	<media:group>
+		<media:category label="Comedy" scheme="http://gdata.youtube.com/schemas/2007/categories.cat">Comedy</media:category>
+		<media:content url="http://www.youtube.com/v/OMFBuHsKXb0?f=videos&amp;app=youtube_gdata" type="application/x-shockwave-flash" medium="video" isDefault="true" expression="full" duration="197" yt:format="5"/>
+		<media:content url="rtsp://v2.cache3.c.youtube.com/CiILENy73wIaGQm9XQp7uEHBOBMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp" type="video/3gpp" medium="video" expression="full" duration="197" yt:format="1"/>
+		<media:content url="rtsp://v6.cache6.c.youtube.com/CiILENy73wIaGQm9XQp7uEHBOBMYESARFEgGUgZ2aWRlb3MM/0/0/0/video.3gp" type="video/3gpp" medium="video" expression="full" duration="197" yt:format="6"/>
+		<media:description type="plain">Martin Sonneborn besucht diese Woche die Menschen zu Hause - und nimmt dort schon mal die ersten Bilder für das neue "google home view" auf. Danke an nicochto für die Untertitel.</media:description>
+		<media:keywords>heute, show, martin, sonneborn, google, home, view</media:keywords>
+		<media:player url="http://www.youtube.com/watch?v=OMFBuHsKXb0&amp;feature=youtube_gdata"/>
+		<media:thumbnail url="http://i.ytimg.com/vi/OMFBuHsKXb0/2.jpg" height="90" width="120" time="00:01:38.500"/>
+		<media:thumbnail url="http://i.ytimg.com/vi/OMFBuHsKXb0/1.jpg" height="90" width="120" time="00:00:49.250"/>
+		<media:thumbnail url="http://i.ytimg.com/vi/OMFBuHsKXb0/3.jpg" height="90" width="120" time="00:02:27.750"/>
+		<media:thumbnail url="http://i.ytimg.com/vi/OMFBuHsKXb0/0.jpg" height="240" width="320" time="00:01:38.500"/>
+		<media:title type="plain">heute show 12.03.10: Sonneborn - google home view</media:title>
+		<yt:duration seconds="197"/>
+	</media:group>
+	<gd:rating average="4.8756475" max="5" min="1" numRaters="579" rel="http://schemas.google.com/g/2005#overall"/>
+	<yt:statistics favoriteCount="947" viewCount="206784"/>
+</entry>

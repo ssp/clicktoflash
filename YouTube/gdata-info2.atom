@@ -1,0 +1,59 @@
+Result from http://gdata.youtube.com/feeds/api/videos/QRS8MkLhQmM
+
+Contains a lot of interesting info, but no captioning info.
+
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:yt="http://gdata.youtube.com/schemas/2007">
+	<id>http://gdata.youtube.com/feeds/api/videos/QRS8MkLhQmM</id>
+	<published>2008-09-22T15:02:21.000Z</published>
+	<updated>2010-04-02T02:29:44.000Z</updated>
+	<category scheme="http://schemas.google.com/g/2005#kind" term="http://gdata.youtube.com/schemas/2007#video"/>
+	<category scheme="http://gdata.youtube.com/schemas/2007/categories.cat" term="Howto" label="Howto &amp; Style"/>
+	<category scheme="http://gdata.youtube.com/schemas/2007/keywords.cat" term="YouTube"/>
+	<category scheme="http://gdata.youtube.com/schemas/2007/keywords.cat" term="Captions"/>
+	<category scheme="http://gdata.youtube.com/schemas/2007/keywords.cat" term="Subtitles"/>
+	<title type="text">YouTube Captions and Subtitles</title>
+	<content type="text">Add multiple captions or subtitle tracks to your videos!
+
+About captions and subtitles feature
+http://www.youtube.com/t/captions_about
+
+English script can be found here.
+http://sites.google.com/site/youtubecaptoinsandsubtitles/</content>
+	<link rel="alternate" type="text/html" href="http://www.youtube.com/watch?v=QRS8MkLhQmM&amp;feature=youtube_gdata"/>
+	<link rel="http://gdata.youtube.com/schemas/2007#video.responses" type="application/atom+xml" href="http://gdata.youtube.com/feeds/api/videos/QRS8MkLhQmM/responses"/>
+	<link rel="http://gdata.youtube.com/schemas/2007#video.related" type="application/atom+xml" href="http://gdata.youtube.com/feeds/api/videos/QRS8MkLhQmM/related"/>
+	<link rel="http://gdata.youtube.com/schemas/2007#mobile" type="text/html" href="http://m.youtube.com/details?v=QRS8MkLhQmM"/>
+	<link rel="self" type="application/atom+xml" href="http://gdata.youtube.com/feeds/api/videos/QRS8MkLhQmM"/>
+	<author>
+		<name>YouTube</name>
+		<uri>http://gdata.youtube.com/feeds/api/users/youtube</uri>
+	</author>
+	<gd:comments>
+		<gd:feedLink href="http://gdata.youtube.com/feeds/api/videos/QRS8MkLhQmM/comments" countHint="1025"/>
+	</gd:comments>
+	<media:group>
+		<media:category label="Howto &amp; Style" scheme="http://gdata.youtube.com/schemas/2007/categories.cat">Howto</media:category>
+		<media:content url="http://www.youtube.com/v/QRS8MkLhQmM?f=videos&amp;app=youtube_gdata" type="application/x-shockwave-flash" medium="video" isDefault="true" expression="full" duration="97" yt:format="5"/>
+		<media:content url="rtsp://v6.cache8.c.youtube.com/CiILENy73wIaGQljQuFCMrwUQRMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp" type="video/3gpp" medium="video" expression="full" duration="97" yt:format="1"/>
+		<media:content url="rtsp://v1.cache1.c.youtube.com/CiILENy73wIaGQljQuFCMrwUQRMYESARFEgGUgZ2aWRlb3MM/0/0/0/video.3gp" type="video/3gpp" medium="video" expression="full" duration="97" yt:format="6"/>
+		<media:description type="plain">Add multiple captions or subtitle tracks to your videos!
+
+About captions and subtitles feature
+http://www.youtube.com/t/captions_about
+
+English script can be found here.
+http://sites.google.com/site/youtubecaptoinsandsubtitles/</media:description>
+		<media:keywords>YouTube, Captions, Subtitles</media:keywords>
+		<media:player url="http://www.youtube.com/watch?v=QRS8MkLhQmM&amp;feature=youtube_gdata"/>
+		<media:thumbnail url="http://i.ytimg.com/vi/QRS8MkLhQmM/2.jpg" height="90" width="120" time="00:00:48.500"/>
+		<media:thumbnail url="http://i.ytimg.com/vi/QRS8MkLhQmM/1.jpg" height="90" width="120" time="00:00:24.250"/>
+		<media:thumbnail url="http://i.ytimg.com/vi/QRS8MkLhQmM/3.jpg" height="90" width="120" time="00:01:12.750"/>
+		<media:thumbnail url="http://i.ytimg.com/vi/QRS8MkLhQmM/0.jpg" height="240" width="320" time="00:00:48.500"/>
+		<media:title type="plain">YouTube Captions and Subtitles</media:title>
+		<yt:duration seconds="97"/>
+	</media:group>
+	<gd:rating average="4.4547677" max="5" min="1" numRaters="818" rel="http://schemas.google.com/g/2005#overall"/>
+	<yt:statistics favoriteCount="382" viewCount="637718"/>
+</entry>
