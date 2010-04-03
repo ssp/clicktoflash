@@ -611,32 +611,32 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 }
 
 
-- (BOOL)autoPlay {
+- (BOOL) autoPlay {
 	BOOL result = autoPlay;
 	result = result && [[CTFUserDefaultsController standardUserDefaults] objectForKey:sYouTubeAutoPlayDefaultsKey];
 	return result;
 }
 
-- (void)setAutoPlay:(BOOL)newAutoPlay {
+- (void) setAutoPlay: (BOOL) newAutoPlay {
 	autoPlay = newAutoPlay;
 }
 
-- (BOOL)hasVideo {
+- (BOOL) hasVideo {
 	return hasVideo;
 }
 
-- (void)setHasVideo:(BOOL)newHasVideo {
+- (void) setHasVideo: (BOOL) newHasVideo {
 	hasVideo = newHasVideo;
 	[self addButtons];
 	[[[self plugin] mainButton] setNeedsDisplay:YES];
 }
 
 
-- (BOOL)hasVideoHD {
+- (BOOL) hasVideoHD {
 	return hasVideoHD;
 }
 
-- (void)setHasVideoHD:(BOOL)newHasVideoHD {
+- (void) setHasVideoHD: (BOOL) newHasVideoHD {
 	hasVideoHD = newHasVideoHD;
 	[self addButtons];
 	[[[self plugin] mainButton] setNeedsDisplay: YES];
