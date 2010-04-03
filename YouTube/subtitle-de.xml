@@ -1,0 +1,43 @@
+Sample YouTube subtitles from
+
+http://video.google.com/timedtext?v=QRS8MkLhQmM&lang=de
+
+
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<transcript>
+	<text start="6.5" dur="1.7">[Herb, YouTuber]
+Dieses Video demonstriert Zwischen- und Untertitel für Videos</text>
+	<text start="8.3" dur="2.7">Um die Funktion für Untertitel einzuschalten, klicke auf das Icon hier </text>
+	<text start="12.5" dur="3.9">[Greg, Gehörloser Sänger]
+Früher, als das Internet grade entstand, hatten Gehörlose eine tolle Zeit damit.</text>
+	<text start="16.5" dur="2">Alles war lesbar.
+Dann ...</text>
+	<text start="19" dur="3.2">[Ken, Gehörloser Hörer]
+Filme tauchten auf.
+Wir konnten sie nicht verstehen...</text>
+	<text start="22.5" dur="1.5">Sie hatten keine Untertitel!</text>
+	<text start="24.5" dur="2.5">Glücklicherweise entwarf Google Video eine Untertitelfunktion.</text>
+	<text start="27.5" dur="1">Danke, Ken!</text>
+	<text start="28.5" dur="3">Jetzt haben wir diese Funktion zu YouTube hinzugefügt. </text>
+	<text start="32" dur="3">Das erste, was er damit gemacht hat, war, mich zu RickRollen! </text>
+	<text start="35.5" dur="3.5">♪ Never gonna give you up, ♪
+♪ never gonna let you down...</text>
+	<text start="41.3" dur="2.7">[Franck, Fashion Icon]
+Zwischen- und Untertitel sind auch nützlich</text>
+	<text start="44.2" dur="2">für Leute, die andere Sprachen sprechen - so wie ich.</text>
+	<text start="46.8" dur="3.2">Mit Untertiteln kann ich mir US Komödien ansehen und Nachrichten aus Russland </text>
+	<text start="50.1" dur="1.4">- in meiner eigenen Sprache! </text>
+	<text start="52" dur="4">Für Leute, die Videos hochladen, bedeutet das, dass sie Leute rund um den Globus erreichen können, </text>
+	<text start="56.8" dur="1.7">unabhängig von der Sprache.</text>
+	<text start="59.5" dur="2.5">[Hiroto, Bedhead]
+Du kannst mehrere Sprachen, wie Englisch und Französisch, hochladen </text>
+	<text start="62.5" dur="3.5">und Zuschauer können sich die Sprache beliebig aussuchen.</text>
+	<text start="67.5" dur="4">[Toliver, Japanisch Lerner]
+Wenn du zum Beispiel YouTube in Französisch benutzt</text>
+	<text start="72">dann werden französische Untertitel automatisch erscheinen. </text>
+	<text start="77.5" dur="3">Mit einem einzigen Video</text>
+	<text start="81" dur="5">kannst du nun Leute in aller Welt erreichen!</text>
+	<text start="88" dur="3">Die Funktion für Zwischen- und Untertitel wurde erst diesen Sommer gelauncht</text>
+	<text start="91.3" dur="2.7">und wir plannen, weitere Funktionen hinzuzufügen.</text>
+	<text start="94.2" dur="2.3">Bitte lasst uns wissen, wenn ihr Feeback für uns habt!</text>
+</transcript>
