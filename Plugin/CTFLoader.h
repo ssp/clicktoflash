@@ -44,6 +44,7 @@
 	SEL callbackSelector;
 }
 
++ (CTFLoader *) loaderWithURL: (NSURL *) theURL delegate: (id) theDelegate selector: (SEL) theSelector;
 - (id) initWithURL: (NSURL *) theURL delegate: (id) theDelegate selector: (SEL) theSelector;
 - (void) start;
 - (void) finish;

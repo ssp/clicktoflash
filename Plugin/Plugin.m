@@ -1511,7 +1511,9 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	previewURL = newPreviewURL;
 	
 	if (previewURL != nil) {
-		CTFLoader * loader = [[[CTFLoader alloc] initWithURL: newPreviewURL delegate: self selector:@selector(receivedPreviewImage:)] autorelease];
+		CTFLoader * loader = [CTFLoader loaderWithURL: newPreviewURL
+											 delegate: self
+											 selector: @selector(receivedPreviewImage:)];
 		[self setPreviewImageLoader: loader];
 		[loader start];
 	}
