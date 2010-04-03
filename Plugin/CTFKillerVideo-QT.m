@@ -611,7 +611,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
-// Removes the progress indicator shown while loading the video
+// Removes the progress indicator shown while loading the video.
 - (void) removeProgressIndicator {
 	if ([self progressIndicator]) {
 		[[self progressIndicator] stopAnimation: self];
@@ -653,7 +653,8 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
-/* Adds button to toggle between the SD and HD version of a film. Only appears when two versions are available and serves as an indicator for the currently playing version */
+// Adds button to toggle between the SD and HD version of a film.
+// Only appears when two versions are available and serves as an indicator for the currently playing version.
 - (NSButton *) addHDButton {
 	NSButton * button = nil;
 	
@@ -681,7 +682,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 
-/* Used for tooltip in HD button via bindings */
+// Used for tooltip in HD button via bindings
 - (NSString *) HDButtonTooltip {
 	NSString * tooltip = @"";
 	
