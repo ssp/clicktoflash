@@ -27,8 +27,11 @@ The first gives us more control and abilities and runs on X.5 and above only. Th
 I put out a few test versions over time. Those are close to – but not quite identical to code on the cutting-edge branch:
 
 * current [ssp/cutting-edge](http://github.com/ssp/clicktoflash/tree/cutting-edge)
+* [1.6b13-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b13-ssp.zip)
 	* forward scroll wheel from QTMovieView to WebView: ad4dc3f5b3
-
+	* handle YouTube film titles which use + instead of spaces: 180b518cc
+	* asynchronously load info from YouTube: 8b020ce (#615)
+	* tweak Whitelist handling to include the src URL: 20ff2d46c (#622)
 * [1.6b12-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b12-ssp.zip)
 	* fixes assertion issues on X.4 as suggested by Chris Johnsen
 	* copy updater.app to plugin
