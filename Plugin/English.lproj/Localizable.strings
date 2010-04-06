@@ -35,6 +35,9 @@
 /* CTFClickToFlashPlugin: Add <sitename> to Whitelist menu item */
 "Add %@ to Whitelist" = "Automatically Load Flash on “%@”";
 
+/* CTFClickToFlashPlugin: Add this Flash item to Whitelist menu item */
+"Add this Flash item to Whitelist" = "Automatically Load this Flash Item";
+
 /* CTFClickToFlashPlugin: Preferences Contextual Menu Item */
 "ClickToFlash Preferences..." = "ClickToFlash Preferences…";
 

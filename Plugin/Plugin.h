@@ -51,7 +51,7 @@ enum subviewTags {
 	WebView * _webView;
     DOMElement * _container;
 	
-	NSString * _baseURL;
+	NSURL * _baseURL;
     NSString * _host;
 
    	NSDictionary * _attributes;
@@ -131,10 +131,9 @@ enum subviewTags {
 - (DOMElement *) container;
 - (void) setContainer: (DOMElement *) newValue;
 
-- (NSString *) baseURL;
-- (void) setBaseURL: (NSString *) newValue;
+- (NSURL *) baseURL;
+- (void) setBaseURL: (NSURL *) newValue;
 - (NSString *) host;
-- (void) setHost: (NSString *) newValue;
 
 - (NSDictionary *) attributes;
 - (void) setAttributes: (NSDictionary *) newValue;

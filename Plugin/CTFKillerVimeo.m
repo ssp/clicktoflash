@@ -110,7 +110,7 @@
 */
 - (NSString*) siteName {
 	NSString * name = nil;
-	if ( [[[self plugin] baseURL] rangeOfString:@"collegehumor.com" options:NSCaseInsensitiveSearch].location != NSNotFound ) {
+	if ( [[[[self plugin] baseURL] host] rangeOfString:@"collegehumor.com" options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch].location != NSNotFound ) {
 		// we're on collegehumor.com
 		name = CtFLocalizedString(@"CollegeHumor", "Name of CollegeHumor");
 	}

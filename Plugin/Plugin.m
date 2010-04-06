@@ -162,8 +162,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		
 		// URL related
 		NSURL * base = [arguments objectForKey:WebPlugInBaseURLKey];
-		[self setBaseURL:[base absoluteString]];
-		[self setHost:[base host]];
+		[self setBaseURL: base];
 		
 		// attribute & variable related
 		[self setAttributes:[arguments objectForKey:WebPlugInAttributesKey]];
@@ -217,7 +216,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 
 		// Set up the CTFKiller subclass if appropriate.
-		[self setKiller: [CTFKiller killerForURL:[NSURL URLWithString:[self baseURL]]
+		[self setKiller: [CTFKiller killerForURL:[self baseURL]
 											 src:[self src]
 									  attributes:[self attributes]
 									   forPlugin:self] ];
@@ -400,15 +399,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 // UNLESS the option key is pressed
 - (BOOL) shouldConvertImmediately {
 	// Whitelisting: check current site as well as SWF src URL (for embedding)
-	BOOL loadFromWhiteList = [self _isHostWhitelisted];
-	if( !loadFromWhiteList ) {
-		if ( [self src] ) {
-			if( [self _isWhiteListedForHostString: [self src] ] ) {
-				loadFromWhiteList = YES;
-			}
-		}
-	}
-	
+	BOOL loadFromWhiteList = [self isWhitelisted];
 	
 	// Small/invisible Flash
 	BOOL autoLoadInvisibles = NO;
@@ -455,7 +446,6 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	[self setContainer:nil];
 
 	[self setBaseURL:nil];
-	[self setHost:nil];
 
 	[self setAttributes:nil];
 	[self setSrc:nil];
@@ -637,7 +627,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		[[self killer] addPrincipalMenuItemToContextualMenu];
 	}
 	
-	[self addContextualMenuItemWithTitle:CtFLocalizedString( @"Load Flash", @"Contextual Menu Item: Load Flash" ) 
+	[self addContextualMenuItemWithTitle: CtFLocalizedString( @"Load Flash", @"Contextual Menu Item: Load Flash" ) 
 								  action: @selector( loadFlash: )];
 		
 	if ([[CTFMenubarMenuController sharedController] multipleFlashViewsExistForWindow:[self window]]) {
@@ -662,22 +652,30 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		}
 	}
 	
-	if ([self host] && ![self _isHostWhitelisted]) {
+	if ([self host] && ![self isWhitelisted]) {
 		[self addContextualMenuItemWithTitle: [NSString stringWithFormat:CtFLocalizedString( @"Add %@ to Whitelist", @"Add <sitename> to Whitelist contextual menu item" ), [self host]]
-									   action: @selector( addToWhitelist: )];
+									  action: @selector( addHostToWhitelist: )];
+		
+		menuItem = [self addContextualMenuItemWithTitle: CtFLocalizedString( @"Add this Flash item to Whitelist", @"Add this Flash item (src URL) to whitelist") 
+												 action: @selector( addSrcToWhitelist: )];
+		[menuItem setAlternate: YES];
+		[menuItem setKeyEquivalentModifierMask: NSAlternateKeyMask];
+		[menuItem setToolTip: [self src]];
+		
 		[[self menu] addItem: [NSMenuItem separatorItem]];
+		
 	}
 	
 	[self addContextualMenuItemWithTitle: CtFLocalizedString( @"ClickToFlash Preferences...", @"Preferences contextual menu item" )
-									action: @selector( editWhitelist: )];
+								  action: @selector( editWhitelist: )];
 	
 	
     return [self menu];
 }
 
 
-- (BOOL) validateMenuItem: (NSMenuItem *)menuItem
-{
+
+- (BOOL) validateMenuItem: (NSMenuItem *) menuItem {
 	return YES;
 }
 
@@ -699,7 +697,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 			} else {
 				[self hideFlash:self];
 			}
-		} else if ([self _isOptionPressed] && ![self _isHostWhitelisted]) {
+		} else if ([self _isOptionPressed] && ![self isWhitelisted]) {
 			[self _askToAddCurrentSiteToWhitelist];
 		} else {
 				[self convertTypesForContainer:YES];
@@ -1334,26 +1332,18 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 
 
-- (NSString *) baseURL {
+- (NSURL *) baseURL {
     return _baseURL;
 }
 
-- (void) setBaseURL: (NSString *) newValue {
+- (void) setBaseURL: (NSURL *) newValue {
     [newValue retain];
     [_baseURL release];
     _baseURL = newValue;
 }
 
-
-
 - (NSString *) host {
-    return _host;
-}
-
-- (void) setHost: (NSString *) newValue {
-    [newValue retain];
-    [_host release];
-    _host = newValue;
+    return [[self baseURL] host];
 }
 
 
