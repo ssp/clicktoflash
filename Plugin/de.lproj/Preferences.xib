@@ -2,16 +2,17 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1040</int>
-		<string key="IBDocument.SystemVersion">10D572</string>
-		<string key="IBDocument.InterfaceBuilderVersion">740</string>
+		<string key="IBDocument.SystemVersion">10D573</string>
+		<string key="IBDocument.InterfaceBuilderVersion">762</string>
 		<string key="IBDocument.AppKitVersion">1038.29</string>
 		<string key="IBDocument.HIToolboxVersion">460.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">740</string>
+			<string key="NS.object.0">762</string>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="1"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -45,10 +46,10 @@
 				<string key="NSWindowTitle">ClickToFlash Einstellungen</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
-				<string key="NSWindowContentMaxSize">{445, 2535}</string>
+				<string key="NSWindowContentMaxSize">{768, 2535}</string>
 				<string key="NSWindowContentMinSize">{445, 445}</string>
 				<object class="NSView" key="NSWindowView" id="1006">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">274</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -532,10 +533,11 @@
 						</object>
 					</object>
 					<string key="NSFrameSize">{445, 445}</string>
+					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
 				<string key="NSMinSize">{445, 467}</string>
-				<string key="NSMaxSize">{445, 2557}</string>
+				<string key="NSMaxSize">{768, 2557}</string>
 				<string key="NSFrameAutosaveName">ClickToFlash_settingsWindow</string>
 			</object>
 			<object class="NSArrayController" id="258102979">
@@ -2038,16 +2040,16 @@
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{288, 215}, {429, 436}}</string>
+					<string>{{288, 215}, {445, 445}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
-					<string>{{288, 215}, {429, 436}}</string>
+					<string>{{288, 215}, {445, 445}}</string>
 					<integer value="1"/>
 					<string>{196, 240}</string>
 					<string>{{202, 428}, {480, 270}}</string>
 					<boolean value="YES"/>
 					<boolean value="YES"/>
-					<string>{445, 2535}</string>
+					<string>{768, 2535}</string>
 					<string>{445, 445}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2499,6 +2501,7 @@ cyBuaWNodCB6dXIgVmVyZsO8Z3VuZy4</string>
 			</object>
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
+		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
 			<integer value="1040" key="NS.object.0"/>
@@ -2514,5 +2517,22 @@ cyBuaWNodCB6dXIgVmVyZsO8Z3VuZy4</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<string key="IBDocument.LastKnownRelativeProjectPath">../../ClickToFlash.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
+		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
+			<bool key="EncodedWithXMLCoder">YES</bool>
+			<object class="NSArray" key="dict.sortedKeys">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<string>NSAddTemplate</string>
+				<string>NSRemoveTemplate</string>
+				<string>NSSwitch</string>
+				<string>ctf</string>
+			</object>
+			<object class="NSMutableArray" key="dict.values">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<string>{8, 8}</string>
+				<string>{8, 8}</string>
+				<string>{15, 15}</string>
+				<string>{256, 256}</string>
+			</object>
+		</object>
 	</data>
 </archive>
