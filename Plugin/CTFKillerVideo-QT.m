@@ -246,7 +246,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		// Set refresh status back to NO in case a HD toggle is coming and could use a refresh again.
 		hasRefreshedURLs = NO;
     }
-    else if (loadState == -1) {
+    else if (loadState == QTMovieLoadStateError) {
 		// Loading the movie failed.
 		
 		// Try refreshing the URL once. It may just be that the hash/token used in our URL has expired because it has been a while since we set things up.
