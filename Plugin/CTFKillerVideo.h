@@ -72,7 +72,6 @@ extern NSString * sVideoVolumeLevelDefaultsKey;
 	
 	QTMovieView * movieView;
 	QTMovie * movie;
-	NSThread * movieSetupThread;
 	NSView * endOfMovieButtonsView;
 }
 

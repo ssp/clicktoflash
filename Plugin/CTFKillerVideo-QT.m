@@ -64,75 +64,30 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 
 
 #pragma mark -
-#pragma mark Insert Video using QTKit - 10.5 and higher only
+#pragma mark Insert Video using QTKit
 
 - (void) setupQuickTimeUsingHD: (NSNumber*) useHDNumber {
-	NSView * mainContainer = [[self plugin] containerView];
-	NSRect bounds;
-	if (mainContainer != nil) {
-		bounds = [mainContainer bounds];
-	}
-	else {
-		bounds = NSZeroRect;
-	}
-	
-	// remove Save button in case it is visible (e.g. when switching to HD version)
+	CtFMainThreadAssertion();
+
+	// Remove Save button in case it is visible (e.g. when switching to HD version).
 	[self hideEndOfMovieButtons];
 	
+	// Create QTMovieView if necessary.
+	[self createAndInsertMovieView];
 	QTMovieView * myMovieView = [self movieView];
-	BOOL needToInsertMovieView = NO;
-	
-	if ( myMovieView == nil ) {
-		myMovieView = [[[CTFMovieView alloc] initWithFrame:bounds] autorelease];
-		[myMovieView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];		
-		[myMovieView setPreservesAspectRatio:YES];
-		[myMovieView setWantsLayer: YES]; // video seems invisible without the layer
-		//		[myMovieView setCustomButtonVisible:YES];
-		if ( [[self plugin] isFullScreen] ) {
-			[myMovieView setFillColor: [NSColor blackColor]];			
-		}
-		else {
-			[myMovieView setFillColor: [NSColor clearColor]];
-		}
 		
-		if ( myMovieView == nil ) { // ERROR
-			NSLog(@"CTFKillerVideo: Could not create movie view in -reallySetupQuickTimeUsingHD:");
-			return; 
-		}
-		
-		[self setMovieView: myMovieView];
-		needToInsertMovieView = YES;
-	}
-	
-	if (needToInsertMovieView) {
-		[mainContainer addSubview: myMovieView positioned: NSWindowBelow relativeTo: nil];
-		[[self plugin] setNextKeyView: myMovieView];
-		[myMovieView setNextKeyView: (NSView*)[[self plugin] mainButton]];
-	}
-	
 	// Add progress indicator. It will be removed when the film has loaded sufficiently or when loading fails.
 	[self addProgressIndicator];
 	
-	// Create QTMovie and start it
-	NSThread * thread = [[[NSThread alloc] initWithTarget:self selector:@selector(reallySetupQuickTimeUsingHD:) object:useHDNumber] autorelease];
-	[thread setName: @"CTFKillerVideo movieSetup"];
-	[self setMovieSetupThread: thread];
-	[thread start];
-}
-
-
-
-- (void) reallySetupQuickTimeUsingHD: (NSNumber *) useHDNumber {
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	
-	QTMovieView * myMovieView = [self movieView];
+	// Create the movie.
 	QTMovie * myMovie = [self movieForHD: useHDNumber];
 	
-	if ( myMovie != nil && ![[self movieSetupThread] isCancelled] && myMovieView ) {
+	// Add movie to QTMovie view and set it up.
+	if ( myMovie != nil && myMovieView ) {
 		[self setMovie: myMovie];
 		[myMovieView setMovie: myMovie];
-		
-		// It seems like QTMovieView has two subviews: one displaying the film, one for the controller. The controller view seems to end up _not_ wanting the layer. This can cause the controller to disappear after switching tags. So we sneakily set all subviews of the QTMovieView to want a layer here.
+
+		// It seems like QTMovieView has two subviews: one displaying the film, one for the controller. The controller view seems to end up _not_ wanting the layer. This can cause the controller to disappear after switching tabs. So we sneakily set all subviews of the QTMovieView to want a layer here.
 		NSEnumerator * viewEnumerator = [[myMovieView subviews] objectEnumerator];
 		NSView * view;
 		while ( ( view = [viewEnumerator nextObject] ) ) {
@@ -143,29 +98,65 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		[[[self plugin] window] makeFirstResponder: myMovieView];
 	}
 	
-	[self setMovieSetupThread: nil];
-	
 	// not doing this on the main thread seems to hang the application
 	// [self performSelectorOnMainThread:@selector(resizeToFitMovie) withObject:nil waitUntilDone:NO];
-	
-	[pool drain];
 }
 
 
 
-- (QTMovie *) movieForHD: (NSNumber *) useHDNumber {
-	[QTMovie enterQTKitOnThread];
+// Creates the movieView if it doesn't exist already.
+// Should run on main thread only as it potentially changes views.
+// Is called from -setupQuickTimeUsingHD: only.
+- (void) createAndInsertMovieView {
+	if ( [self movieView] == nil ) {
+		NSView * mainContainer = [[self plugin] containerView];
+		NSRect bounds;
+		if (mainContainer != nil) {
+			bounds = [mainContainer bounds];
+		}
+		else {
+			bounds = NSZeroRect;
+		}
+		
+		QTMovieView * myMovieView = [[[CTFMovieView alloc] initWithFrame:bounds] autorelease];
+		
+		if ( myMovieView != nil ) {
+			[myMovieView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+			[myMovieView setPreservesAspectRatio:YES];
+			[myMovieView setWantsLayer: YES]; // video seems invisible without the layer
+			
+			// Use black background in full screen mode.
+			if ( [[self plugin] isFullScreen] ) {
+				[myMovieView setFillColor: [NSColor blackColor]];
+			}
+			else {
+				[myMovieView setFillColor: [NSColor clearColor]];
+			}
+			
+			// Insert movieView into view hierarchy
+			[mainContainer addSubview: myMovieView positioned: NSWindowBelow relativeTo: nil];
+			[[self plugin] setNextKeyView: myMovieView];
+			[myMovieView setNextKeyView: (NSView *)[[self plugin] mainButton]];
+			
+			[self setMovieView: myMovieView];
+		}
+		else {
+			NSLog(@"CTFKillerVideo -createAndInsertMovieView: Could not create movieView");
+		}
+	}
+}
 
+
+
+// Should run on main thread only as initialising QTMovie causes strange behaviour on X.5 otherwise.
+// Is called from -setupQuickTimeUsingHD: only.
+- (QTMovie *) movieForHD: (NSNumber *) useHDNumber {
 	BOOL useHD = [self useVideoHD];
 	if ( useHDNumber != nil ) {
 		useHD = [useHDNumber boolValue];
 	}
 	
-	NSString * movieURLString = [self videoURLStringForHD: useHD];
-	NSURL * movieURL = [NSURL URLWithString: movieURLString];
-	NSError * error = nil;
-	QTMovie * myMovie = nil;
-	//	movie = [QTMovie movieWithURL: movieURL error: &error];
+	NSURL * movieURL = [NSURL URLWithString: [self videoURLStringForHD: useHD]];
 	float volumeLevel = 1.;
 	NSNumber * volumeNumber = [[CTFUserDefaultsController standardUserDefaults] objectForKey: sVideoVolumeLevelDefaultsKey];
 	if ( volumeNumber != nil ) {
@@ -180,24 +171,23 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 									  [self title], QTMovieDisplayNameAttribute,
 									  nil];
 	
-	myMovie = [QTMovie movieWithAttributes:movieAttributes error:&error];
-	//	NSLog(@"CTFKillerVideo -movieForHD: movie attributes %@", [[myMovie movieAttributes] description]);
+	NSError * error = nil;
+	QTMovie * myMovie = [QTMovie movieWithAttributes:movieAttributes error:&error];
+
 	if ( myMovie == nil ) {
 		// If we get nil, just try again. This seems to cover a bunch of the random loading problems. It would probably be better to load the 'hash' or other extra info again before retrying to also cover timeout problems
 		myMovie = [QTMovie movieWithAttributes:movieAttributes error:&error];
 	}
+	
 	if (myMovie == nil){
 		// It seems like we occasionally get an error "The file is not a movie file" here. No idea why as the same URL appears to work again a bit later. Some clever retrying or reasonable handling of that might be nice.
-		NSLog(@"ClickToFlash CTFKillerVideo -movieForHD: Error: %@ (%@)", [error localizedDescription], movieURLString);
+		NSLog(@"ClickToFlash CTFKillerVideo -movieForHD: Error: %@ (%@)", [error localizedDescription], [self videoURLStringForHD: useHD]);
 	}	
 	else {
 		if ([self autoPlay]) {
 			[myMovie autoplay];
 		}		
 	}
-	
-	[myMovie detachFromCurrentThread];
-	[QTMovie exitQTKitOnThread];
 	
 	return myMovie;	
 }
@@ -216,15 +206,8 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  Stores the new volume level in defaults, so future movies can use it.
 */
 - (void) movieVolumeChanged: (NSNotification *) notification {
-	[QTMovie enterQTKitOnThread];
-	QTMovie * const myMovie = [self movie];
-	[myMovie attachToCurrentThread];
-
-	NSNumber * volumeNumber = [NSNumber numberWithFloat:[myMovie volume]];
+	NSNumber * volumeNumber = [NSNumber numberWithFloat:[[self movie] volume]];
 	[[CTFUserDefaultsController standardUserDefaults] setObject:volumeNumber forKey: sVideoVolumeLevelDefaultsKey];
-
-	[myMovie detachFromCurrentThread];
-	[QTMovie exitQTKitOnThread];
 }
 
 
@@ -240,11 +223,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  TODO: figure out how to handle persistent failures of video loading
 */
 - (void) movieLoadStateChanged: (NSNotification *) notification {
-	[QTMovie enterQTKitOnThread];
-	QTMovie * const myMovie = [self movie];
-	[myMovie attachToCurrentThread];
-	
-    long loadState = [[myMovie attributeForKey:QTMovieLoadStateAttribute] longValue];
+    long loadState = [[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
 	
 #if LOGGING_ENABLED
 	NSLog(@"CTFKillerVideo -movieLoadStateChanged: %i", loadState);
@@ -256,7 +235,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		
 		// Sometimes loading is slow and the load state keeps toggling between Playable and PlaythroughOK. This can cause the film to toggle stopping and starting many times in a row. To prevent that from happening, make sure we only autoPlay once.
 		if ([self autoPlay] && ![self hasAutoPlayed] && loadState >= QTMovieLoadStatePlaythroughOK) {
-			[myMovie play];
+			[[self movie] play];
 			[self setHasAutoPlayed:YES];
 		}
     }
@@ -280,12 +259,9 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 			// Refreshing the URL did not do the trick. Remove progress indicator.
 			[self removeProgressIndicator];
 			// It'd be nice to do something helpful here (fall back to Flash? display error message?)
-			NSLog(@"CTFKillerVideo -movieLoadStateChanged: An error occurred when trying to load the movie\n%@", [[myMovie movieAttributes] description]);
+			NSLog(@"CTFKillerVideo -movieLoadStateChanged: An error occurred when trying to load the movie\n%@", [[[self movie] movieAttributes] description]);
 		}
     }
-	
-	[myMovie detachFromCurrentThread];
-	[QTMovie exitQTKitOnThread];
 }
 
 
@@ -313,9 +289,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	NSLog(@"CTFKillerVideo QuickTime: movie time changed");
 #endif
 
-	[QTMovie enterQTKitOnThread];
 	QTMovie * const myMovie = [self movie];
-	[myMovie attachToCurrentThread];
 	
 	if ( [myMovie currentTime].timeValue == [myMovie duration].timeValue ) {
 		[self showEndOfMovieButtons];
@@ -323,9 +297,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	else{
 		[self hideEndOfMovieButtons];
 	}
-	
-	[myMovie detachFromCurrentThread];
-	[QTMovie exitQTKitOnThread];
 }
 
 
@@ -471,9 +442,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  Make sure file names are unique.
 */
 - (IBAction) saveMovie: (id) sender {
-	[QTMovie enterQTKitOnThread];
 	QTMovie * const myMovie = [self movie];
-	[myMovie attachToCurrentThread];
 	
 	NSAssert( myMovie != nil, @"CTFKillerVideo-QT -saveMovie called even though movie == nil");
 	long loadState = [[myMovie attributeForKey:QTMovieLoadStateAttribute] longValue];
@@ -555,9 +524,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	else {
 		NSLog(@"ClickToFlash: Could not save the movie because we couldn't figure out a good file name. This should not happen.");
 	}
-
-	[myMovie detachFromCurrentThread];
-	[QTMovie exitQTKitOnThread];
 }
 
 
@@ -872,21 +838,6 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 	}
 	
 	movie = newMovie;
-}
-
-
-- (NSThread *) movieSetupThread {
-	return movieSetupThread;
-}
-
-- (void) setMovieSetupThread: (NSThread *) newMovieSetupThread {
-	[newMovieSetupThread retain];
-	// Cancelling threads requires 10.5. We only use QTKit video playback on 10.5 and higher, so we should be fine.
-	if ( [movieSetupThread respondsToSelector: @selector(cancel)] ) {
-		[movieSetupThread performSelector:@selector(cancel)];
-	}
-	[movieSetupThread release];
-	movieSetupThread = newMovieSetupThread;
 }
 
 

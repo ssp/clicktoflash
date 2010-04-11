@@ -65,7 +65,6 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 		
 		[self setMovieView: nil];
 		[self setMovie: nil];
-		[self setMovieSetupThread: nil];
 		[self setEndOfMovieButtonsView: nil];
 		
 		hasRefreshedURLs = NO;

@@ -35,7 +35,7 @@
 
 // QuickTime
 - (void) setupQuickTimeUsingHD: (NSNumber*) useHDNumber;
-- (void) reallySetupQuickTimeUsingHD: (NSNumber *) useHDNumber;
+- (void) createAndInsertMovieView;
 - (QTMovie *) movieForHD: (NSNumber *) useHDNumber;
 - (void) showEndOfMovieButtons;
 - (void) hideEndOfMovieButtons;
@@ -59,8 +59,6 @@
 - (void) setMovieView: (QTMovieView *) newMovieView;
 - (QTMovie *) movie;
 - (void) setMovie: (QTMovie *) newMovie;
-- (NSThread *) movieSetupThread;
-- (void) setMovieSetupThread: (NSThread *) newMovieSetupThread;
 - (NSView *) endOfMovieButtonsView;
 - (void) setEndOfMovieButtonsView: (NSView *) newEndOfMovieButtonsView;
 
