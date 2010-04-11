@@ -35,6 +35,9 @@
 /* CTFClickToFlashPlugin: Add <sitename> to Whitelist menu item */
 "Add %@ to Whitelist" = "Flash auf „%@“ automatisch laden";
 
+/* CTFClickToFlashPlugin: Add this Flash item to Whitelist menu item */
+"Add this Flash item to Whitelist" = "Diesen Flash-Inhalt automatisch laden";
+
 /* CTFClickToFlashPlugin: Preferences Contextual Menu Item */
 "ClickToFlash Preferences..." = "ClickToFlash Einstellungen …";
 
@@ -116,6 +119,7 @@
 
 /* CTFKillerVideo HTML: Text of link to Video Download appearing beneath the video
  CTFKillerVideo QuickTime: Tooltip for Video Download button */
+
 
 
 "Download video file" = "Filmdatei laden";
