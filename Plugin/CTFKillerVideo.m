@@ -154,7 +154,6 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 	[self setMovie:nil];
 	[[self movieView] setMovie:nil];
 	[self setMovieView: nil];
-	[self setMovieSetupThread: nil];
 	[self setEndOfMovieButtonsView: nil];
 }
 
