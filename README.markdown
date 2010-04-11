@@ -27,6 +27,17 @@ The first gives us more control and abilities and runs on X.5 and above only. Th
 I put out a few test versions over time. Those are close to – but not quite identical to code on the cutting-edge branch:
 
 * current [ssp/cutting-edge](http://github.com/ssp/clicktoflash/tree/cutting-edge)
+* [1.6b14-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b14-ssp.zip)
+	* Use menu in Fluidium (from nevali): 84835050f3
+	* Sparkle preference synchronisation (from simX): c83c950c63
+	* Improve About Box (#628 and more): b00b6e2727
+	* Variable width preferences window: 92d8e7c30
+	* e7cdb45249 (de localisation: + whitelist flash file string)
+	* 3f70088f84 (Remove unneeded Framework search paths.)
+	* 035886bd20 (fix logic of autoplaying)
+	* dd79ef5954 (Do QTMovie stuff on the main thread.) + 5fc8f6aaff (QuickTime main thread commit: missing line) to not crash or give exceptions on X.5.
+	* 397b949022 (Use proper constant for QTMovieLoadStateError)
+	* 3b0f10ae35 (increase logging threshold in CTFLoader)
 * [1.6b13-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b13-ssp.zip)
 	* forward scroll wheel from QTMovieView to WebView: ad4dc3f5b3
 	* handle YouTube film titles which use + instead of spaces: 180b518cc
