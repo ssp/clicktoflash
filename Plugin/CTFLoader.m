@@ -59,7 +59,7 @@
 
 // Calls -reallyStart on the main thread. -reallyStart opens an NSURLConnection which calls its delegate methods on the same thread it was initialised on (and does nothing when that thread doesn't exist anymore). As this method can be called on a different thread, we make sure that the delegate methods can be called when they are due.
 - (void) start {
-#if LOGGING_ENABLED
+#if LOGGING_ENABLED > 1
 	NSLog(@"CTFLoader %@ -start for address: %@", [self description], [[self URL] absoluteString]);
 #endif
 	
@@ -76,7 +76,7 @@
 	}
 	NSURLConnection * myConnection = [[[NSURLConnection alloc] initWithRequest:request delegate:self] autorelease];
 	[self setConnection: myConnection];
-#if LOGGING_ENABLED
+#if LOGGING_ENABLED > 2
 	NSLog(@"CTFLoader %@ -reallyStart: started URLConnection %@", [self description], [myConnection description]);
 #endif
 }
@@ -84,7 +84,7 @@
 
 
 - (void) finish {
-#if LOGGING_ENABLED
+#if LOGGING_ENABLED > 2
 	NSLog(@"CTFLoader %@ -finish", [self description]);
 #endif
 	
@@ -101,7 +101,7 @@
 
 
 - (void) cancel {
-#if LOGGING_ENABLED
+#if LOGGING_ENABLED > 2
 	NSLog(@"CTFLoader %@ -cancel", [self description]);
 #endif
 	
@@ -112,7 +112,7 @@
 
 
 - (void) dealloc {
-#if LOGGING_ENABLED
+#if LOGGING_ENABLED > 2
 	NSLog(@"CTFLoader %@ -dealloc", [self description]);
 #endif
 	
@@ -138,7 +138,7 @@
 
 
 - (void)connection:(NSURLConnection *)theConnection didReceiveResponse:(NSURLResponse *)theResponse {
-#if LOGGING_ENABLED
+#if LOGGING_ENABLED > 1
 	NSLog(@"CTFLoader %@ --connection:didReceiveResponse with status: %i", [self description], [(NSHTTPURLResponse*) theResponse statusCode]);
 #endif
 	[self setResponse: theResponse];
@@ -146,7 +146,7 @@
 	// We need to cancel HEAD fetching connections here as 10.5 may proceed to download the whole file otherwise ( http://openradar.appspot.com/7019347 )
 	if ( [self HEADOnly] && [(NSHTTPURLResponse*) theResponse statusCode] == 200 ) {
 		[theConnection cancel];
-#if LOGGING_ENABLED
+#if LOGGING_ENABLED > 2
 		NSLog(@"CTFLoader %@ --connection:didReceiveResponse: cancelled connection: %@", [self description], [theConnection description]);
 #endif
 		[self finish];
@@ -156,7 +156,7 @@
 
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-#if LOGGING_ENABLED
+#if LOGGING_ENABLED > 1
 	NSLog(@"CTFLoader %@ finished Loading for delegate: %@", [self description], [[self delegate] description]);
 #endif
 	
@@ -176,7 +176,7 @@
 			 willSendRequest:(NSURLRequest *)request 
 			redirectResponse:(NSURLResponse *)redirectResponse
 {
-#if LOGGING_ENABLED
+#if LOGGING_ENABLED > 1
 	NSLog(@"CTFLoader %@ redirect to: %@", [self description], [[request URL] absoluteString]);
 #endif
 	NSURLRequest * result = request;
