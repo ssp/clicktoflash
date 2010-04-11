@@ -255,7 +255,7 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
 		[self removeProgressIndicator];
 		
 		// Sometimes loading is slow and the load state keeps toggling between Playable and PlaythroughOK. This can cause the film to toggle stopping and starting many times in a row. To prevent that from happening, make sure we only autoPlay once.
-		if ([self autoPlay] && ![self hasAutoPlayed]) {
+		if ([self autoPlay] && ![self hasAutoPlayed] && loadState >= QTMovieLoadStatePlaythroughOK) {
 			[myMovie play];
 			[self setHasAutoPlayed:YES];
 		}
