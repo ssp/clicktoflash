@@ -39,7 +39,7 @@
 + (BOOL) canHandleFlashAtURL: (NSURL*) theURL src: (NSString*) theSrc attributes: (NSDictionary*) theAttributes forPlugin:(CTFClickToFlashPlugin*) thePlugin {
 	BOOL result = NO;
 	
-	if ([CTFKillerVideo isActive]) {
+	if ([[self class] isActive]) {
 		if (theSrc != nil) {
 			NSURL * srcURL = [NSURL URLWithString: theSrc];
 			NSString * host = [srcURL host];
@@ -160,7 +160,7 @@
 		[[self plugin] setPreviewURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://img.youtube.com/vi/%@/0.jpg", myVideoID]]];
 	}
 	
-	if ([CTFKillerYouTube isYouTubeSiteURL: pageURL]) {
+	if ([[self class] isYouTubeSiteURL: pageURL]) {
 		[self setAutoPlay: YES];
 	} else {
 		[self setAutoPlay: [[self flashVarWithName: @"autoplay"] isEqualToString:@"1"]];

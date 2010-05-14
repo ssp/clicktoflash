@@ -102,14 +102,14 @@ static NSString *sSifr3AddOnJSFilename = @"sifr3-addons";
 # pragma mark CTFKiller subclassing
 
 + (BOOL) canHandleFlashAtURL: (NSURL*) theURL src: (NSString*) theSrc attributes: (NSDictionary*) attributes forPlugin:(CTFClickToFlashPlugin*) thePlugin {
-	return [CTFKillerSIFR isSIFRText: attributes];
+	return [[self class] isSIFRText: attributes];
 }
 
 
 
 // Indicate whether we want the CtF view to be converted right away.
 - (BOOL) shouldConvertImmediately {
-	BOOL result = [CTFKillerSIFR shouldAutoLoadSIFR];
+	BOOL result = [[self class] shouldAutoLoadSIFR];
 	result = result || [self shouldDeSIFR];
 	
 	return result;

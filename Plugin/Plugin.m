@@ -108,10 +108,10 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 
 + (void) initialize {
-	[CTFClickToFlashPlugin _migratePrefsToExternalFile];
-	[CTFClickToFlashPlugin _migrateWhitelist];
-	[CTFClickToFlashPlugin _uniquePrefsFileWhitelist];
-	[CTFClickToFlashPlugin _addApplicationWhitelistArrayToPrefsFile];
+	[[self class] _migratePrefsToExternalFile];
+	[[self class] _migrateWhitelist];
+	[[self class] _uniquePrefsFileWhitelist];
+	[[self class] _addApplicationWhitelistArrayToPrefsFile];
 	[CTFKillerSIFR migrateDefaults];
 	
 	// set up initial defaults
@@ -209,7 +209,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		
 		// Check whether plugin is disabled, load all content as normal if so.
 		// Do this before setting up Killers.
-		if ( [CTFClickToFlashPlugin CTFIsInactive] ) {
+		if ( [[self class] CTFIsInactive] ) {
 			[self convertTypesForContainer:NO];
 			return self;
 		}
@@ -780,7 +780,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 - (void) setFlashVarsFromString: (NSString *) string {
 	[_flashVars release];
-	_flashVars = [[CTFClickToFlashPlugin flashVarDictionary: string] retain];
+	_flashVars = [[[self class] flashVarDictionary: string] retain];
 }
 
 
@@ -846,7 +846,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 - (void) downloadURLString: (NSString*) URLString {
 	[[NSWorkspace sharedWorkspace] openURLs: [NSArray arrayWithObject:[NSURL URLWithString: URLString]]
-					withAppBundleIdentifier: [CTFClickToFlashPlugin launchedAppBundleIdentifier]
+					withAppBundleIdentifier: [[self class] launchedAppBundleIdentifier]
 									options: NSWorkspaceLaunchDefault
 			 additionalEventParamDescriptor: [NSAppleEventDescriptor nullDescriptor]
 						  launchIdentifiers: nil];		

@@ -39,7 +39,7 @@
 + (BOOL) canHandleFlashAtURL: (NSURL*) theURL src: (NSString*) theSrc attributes: (NSDictionary*) theAttributes forPlugin:(CTFClickToFlashPlugin*) thePlugin {
 	BOOL result = NO;
 	
-	if (theSrc != nil && [CTFKillerVideo isActive]) {
+	if (theSrc != nil && [[self class] isActive]) {
 		result = ([theSrc rangeOfString:@"/moogaloop" options:NSAnchoredSearch].location != NSNotFound);
 		
 		NSURL * srcURL = [NSURL URLWithString: theSrc];
@@ -79,7 +79,7 @@
 		[self getXML];
 	}
 	
-	if ([CTFKillerVimeo isVimeoSiteURL: pageURL]) {
+	if ([[self class] isVimeoSiteURL: pageURL]) {
 		[self setAutoPlay: YES];
 	}
 }

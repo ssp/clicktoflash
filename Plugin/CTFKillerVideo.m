@@ -537,8 +537,8 @@ NSString * sUseQTKitDefaultsKey = @"use QTKit";
 - (BOOL) convertUsingHD: (NSNumber *) useHD {
 	BOOL result = NO;
 	
-	if ([self lookupStatus] == finished && [self hasVideo] && [CTFKillerVideo isActive]) {
-		if ( [CTFKillerVideo shouldUseQTKit] ) {
+	if ([self lookupStatus] == finished && [self hasVideo] && [[self class] isActive]) {
+		if ( [[self class] shouldUseQTKit] ) {
 			// use QTKit
 			[self setupQuickTimeUsingHD: useHD];
 		}
