@@ -490,6 +490,7 @@
 
 - (void) setInfoLoader: (CTFLoader *) newInfoLoader {
 	[newInfoLoader retain];
+	[infoLoader cancel];
 	[infoLoader release];
 	infoLoader = newInfoLoader;
 }

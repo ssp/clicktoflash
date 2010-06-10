@@ -87,10 +87,10 @@
 #if LOGGING_ENABLED > 2
 	NSLog(@"CTFLoader %@ -finish", [self description]);
 #endif
-	
+
 	[self setConnection: nil];
 	
-	if ( [[self delegate] respondsToSelector:[self callbackSelector]] ) {
+	if ( [self delegate] && [[self delegate] respondsToSelector:[self callbackSelector]] ) {
 		[[self delegate] performSelector:[self callbackSelector] withObject:self];
 	}
 	else {
@@ -105,6 +105,7 @@
 	NSLog(@"CTFLoader %@ -cancel", [self description]);
 #endif
 	
+	[self setDelegate: nil];
 	[[self connection] cancel];
 	[self setConnection: nil];
 }
