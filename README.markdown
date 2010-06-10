@@ -24,9 +24,11 @@ The first gives us more control and abilities and runs on X.5 and above only. Th
 
 ## Test Versions
 
-I put out a few test versions over time. Those are close to – but not quite identical to code on the cutting-edge branch:
+I put out a few test versions over time. Those are close – but not quite identical – to code on the cutting-edge branch:
 
 * current [ssp/cutting-edge](http://github.com/ssp/clicktoflash/tree/cutting-edge)
+* [1.6b15-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b15-ssp.zip)
+	* Fix crash in Safari 5 with YouTube embedding (one of the loaders wasn't cancelled)
 * [1.6b14-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b14-ssp.zip)
 	* Use menu in Fluidium (from nevali): 84835050f3
 	* Sparkle preference synchronisation (from simX): c83c950c63
