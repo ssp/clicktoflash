@@ -261,6 +261,7 @@
 												delegate: self
 												selector: @selector(HEADDownloadFinished:)];
 		if (newLoader != nil) {
+			[self setVideoLookup: newLoader];
 			[newLoader setHEADOnly:YES];
 			[newLoader start];
 			[self increaseActiveLookups];
@@ -272,6 +273,7 @@
 										delegate: self
 										selector: @selector(HEADHDDownloadFinished:)];
 			if (newLoader != nil) {
+				[self setVideoHDLookup: newLoader];
 				[newLoader setHEADOnly:YES];
 				[newLoader start];
 				[self increaseActiveLookups];
