@@ -140,7 +140,7 @@
 
 - (void)connection:(NSURLConnection *)theConnection didReceiveResponse:(NSURLResponse *)theResponse {
 #if LOGGING_ENABLED > 1
-	NSLog(@"CTFLoader %@ --connection:didReceiveResponse with status: %i", [self description], [(NSHTTPURLResponse*) theResponse statusCode]);
+	NSLog(@"CTFLoader %@ --connection:didReceiveResponse with status: %ld", [self description], [(NSHTTPURLResponse*) theResponse statusCode]);
 #endif
 	[self setResponse: theResponse];
 	

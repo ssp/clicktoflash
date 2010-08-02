@@ -22,13 +22,16 @@ On X.5 and higher there are three ways of watching video:
 The first gives us more control and abilities and runs on X.5 and above only. The third seems to be hip and modern, but means a lack of control and appears to have poor performance, the second is a bit old fashioned but appears to work better.
 
 
-## Test Versions
+## Test Versions & Change notes
 
 I put out a few test versions over time. Those are close – but not quite identical – to code on the cutting-edge branch:
 
 * current [ssp/cutting-edge](http://github.com/ssp/clicktoflash/tree/cutting-edge)
+* [1.6b16-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b16-ssp.zip)
+	* Fix occasional Vimeo crashes due to the loader not being retained: 027ad3c2
+	* update Flash version information to the latest release: 6b521a48
 * [1.6b15-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b15-ssp.zip)
-	* Fix crash in Safari 5 with YouTube embedding (one of the loaders wasn't cancelled)
+	* Fix crash in Safari 5 with YouTube embedding (one of the loaders wasn't cancelled): 54cbafe2a4
 * [1.6b14-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b14-ssp.zip)
 	* Use menu in Fluidium (from nevali): 84835050f3
 	* Sparkle preference synchronisation (from simX): c83c950c63
