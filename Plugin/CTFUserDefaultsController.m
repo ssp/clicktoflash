@@ -138,7 +138,7 @@ static CTFUserDefaultsController *sharedInstance = nil;
 {
 	id value = [[self values] objectForKey:defaultName];
 	id valueToReturn = nil;
-	if ([[value className] isEqualToString:@"NSCFArray"]) valueToReturn = value;
+	if ([value isKindOfClass:[NSArray class]]) valueToReturn = value;
 	return valueToReturn;
 }
 
