@@ -197,7 +197,7 @@
 	NSString * ID = [self videoID];
 	NSString * hash = [self videoHash];
 	if (ID != nil && hash != nil) {
-		result = [ NSString stringWithFormat: @"http://www.youtube.com/get_video?fmt=18&video_id=%@&t=%@", ID, hash ];		
+		result = [ NSString stringWithFormat: @"http://www.youtube.com/get_video?fmt=18&video_id=%@&t=%@&asv=3", ID, hash ];		
 	}
 
 	return result;
@@ -210,7 +210,7 @@
 	NSString * ID = [self videoID];
 	NSString * hash = [self videoHash];
 	if (ID != nil && hash != nil) {	
-		result = [ NSString stringWithFormat: @"http://www.youtube.com/get_video?fmt=22&video_id=%@&t=%@", ID, hash ];
+		result = [ NSString stringWithFormat: @"http://www.youtube.com/get_video?fmt=22&video_id=%@&t=%@&asv=3", ID, hash ];
 	}
 	
 	return result; 
