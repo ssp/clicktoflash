@@ -223,10 +223,10 @@ NSString * sVideoVolumeLevelDefaultsKey = @"Video Volume Level";
  TODO: figure out how to handle persistent failures of video loading
 */
 - (void) movieLoadStateChanged: (NSNotification *) notification {
-    long loadState = [[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
+    NSInteger loadState = (NSInteger)[[[self movie] attributeForKey:QTMovieLoadStateAttribute] longValue];
 	
 #if LOGGING_ENABLED
-	NSLog(@"CTFKillerVideo -movieLoadStateChanged: %i", loadState);
+	NSLog(@"CTFKillerVideo -movieLoadStateChanged: %ld", loadState);
 #endif
 	
     if (loadState >= QTMovieLoadStatePlayable) {
