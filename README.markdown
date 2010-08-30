@@ -27,6 +27,9 @@ The first gives us more control and abilities and runs on X.5 and above only. Th
 I put out a few test versions over time. Those are close – but not quite identical – to code on the cutting-edge branch:
 
 * current [ssp/cutting-edge](http://github.com/ssp/clicktoflash/tree/cutting-edge)
+* [1.6b17-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b17-ssp.zip)
+	* Improve class detection in CTFUserDefaultsController (fixes #729): c4eb12c62
+	* Find YouTube H.264 again, by adding &asv=3 to the URLs (should fix #721, #724): 1fcdaf5dee 
 * [1.6b16-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b16-ssp.zip)
 	* Fix occasional Vimeo crashes due to the loader not being retained: 027ad3c2
 	* update Flash version information to the latest release: 6b521a48
