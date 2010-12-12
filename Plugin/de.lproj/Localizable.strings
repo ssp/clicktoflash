@@ -5,6 +5,9 @@
 /* CTFClickToFlashPlugin: Standard Flash badge text */
 "Flash" = "Flash";
 
+/* CTFClickToFlashPlugin: Flash not installed badge text */
+"Flash not installed" = "Flash nicht installiert";
+
 /* CTFClickToFlashPlugin: Fullscreen Window Title */
 "ClickToFlash Fullscreen" = "ClickToFlash Vollbild-Fenster";
 

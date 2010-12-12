@@ -26,10 +26,13 @@ The first gives us more control and abilities and runs on X.5 and above only. Th
 
 I put out a few test versions over time. Those are close – but not quite identical – to code on the cutting-edge branch:
 
-* current [ssp/cutting-edge](http://github.com/ssp/clicktoflash/tree/cutting-edge)
+* current [ssp/cutting-edge Code](http://github.com/ssp/clicktoflash/tree/cutting-edge)
+* download [ssp’s latest build](http://earthlingsoft.net/beta/ClickToFlash-ssp-latest.zip)
+* [1.6b19-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b19-ssp.zip)
+	* Explicitly state that Flash isn’t installed, if necessary. An attempt to clarify the situation for users on new MacBook Airs.
 * [1.6b18-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b18-ssp.zip)
 	* Find YouTube videos again (use URLs from Flashvars now, don’t explicitly check) (#758): 51266163, ebca180d41
-	* Update to current Flash version number in Info.plist: 
+	* Update to current Flash version number in Info.plist: b09baabc
 * [1.6b17-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b17-ssp.zip)
 	* Improve class detection in CTFUserDefaultsController (fixes #729): c4eb12c62
 	* Find YouTube H.264 again, by adding &asv=3 to the URLs (should fix #714, #721, #724, #726): 1fcdaf5dee

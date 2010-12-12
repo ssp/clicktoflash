@@ -109,6 +109,7 @@ enum subviewTags {
 - (BOOL) useNewStyleUI;
 + (BOOL) CTFIsInactive;
 - (CGFloat) overlayOpacityHighlighted: (BOOL) highlighted;
+- (BOOL) flashPluginIsAvailable;
 
 - (void) convertTypesForContainer: (BOOL) keepIt;
 - (void) convertTypesForFlashContainer;

@@ -176,7 +176,12 @@
 	}
 	
 	if (labelText == nil) {
-		labelText = CtFLocalizedString( @"Flash", @"Flash badge text" );
+		if ([[self plugin] flashPluginIsAvailable]) {
+			labelText = CtFLocalizedString( @"Flash", @"Flash badge text" );
+		}
+		else {
+			labelText = CtFLocalizedString( @"Flash not installed", @"Flash not installed badge text" );
+		}
 	}
 	
 	return labelText;

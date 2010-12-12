@@ -60,6 +60,7 @@
 		6CB3034910D539700036544E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6CB3034710D539700036544E /* InfoPlist.strings */; };
 		6CB3039310D544480036544E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6CB3032910D5377F0036544E /* Localizable.strings */; };
 		6CC18AE61076D09B00D9E1A0 /* CTFKillerVimeo.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CC18AE51076D09B00D9E1A0 /* CTFKillerVimeo.m */; };
+		6CCFAB6012B4E30800B6A09A /* checkFuturesplash.js in Resources */ = {isa = PBXBuildFile; fileRef = 6CCFAB5712B4E0D900B6A09A /* checkFuturesplash.js */; };
 		6CF2F08F115B640400C609E0 /* ClickToFlash Updater.app in Resources */ = {isa = PBXBuildFile; fileRef = A46A59FE1096C2A700E1ABAA /* ClickToFlash Updater.app */; };
 		6CF9E9EF1083D8D7004C0C1C /* CTFFullscreenWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CF9E9EE1083D8D7004C0C1C /* CTFFullscreenWindow.m */; };
 		79166CBD0FF69E1800B1F69B /* CTFGradient.m in Sources */ = {isa = PBXBuildFile; fileRef = 79166CBB0FF69E1800B1F69B /* CTFGradient.m */; };
@@ -218,6 +219,7 @@
 		6CC8F8EA10D5979D00F31573 /* CTFKillerVideo-HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CTFKillerVideo-HTML.m"; path = "Plugin/CTFKillerVideo-HTML.m"; sourceTree = "<group>"; };
 		6CC8F8EE10D597AE00F31573 /* CTFKillerVideo-QT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CTFKillerVideo-QT.h"; path = "Plugin/CTFKillerVideo-QT.h"; sourceTree = "<group>"; };
 		6CC8F8EF10D597AE00F31573 /* CTFKillerVideo-QT.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CTFKillerVideo-QT.m"; path = "Plugin/CTFKillerVideo-QT.m"; sourceTree = "<group>"; };
+		6CCFAB5712B4E0D900B6A09A /* checkFuturesplash.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = checkFuturesplash.js; path = Plugin/checkFuturesplash.js; sourceTree = "<group>"; };
 		6CF2F0B8115B6C2B00C609E0 /* com.github.rentzsch.clicktoflash-updater.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = "com.github.rentzsch.clicktoflash-updater.plist"; path = "../../../Library/Preferences/com.github.rentzsch.clicktoflash-updater.plist"; sourceTree = SOURCE_ROOT; };
 		6CF9E9ED1083D8D7004C0C1C /* CTFFullScreenWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTFFullScreenWindow.h; path = Plugin/CTFFullScreenWindow.h; sourceTree = "<group>"; };
 		6CF9E9EE1083D8D7004C0C1C /* CTFFullscreenWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTFFullscreenWindow.m; path = Plugin/CTFFullscreenWindow.m; sourceTree = "<group>"; };
@@ -369,6 +371,7 @@
 				D9FFA7650F3941C1008A8708 /* ClickToFlash_Prefix.pch */,
 				79166CBF0FF69E2900B1F69B /* 10.4 Support */,
 				55EB70610E04A8D00016593D /* Info-Plugin.plist */,
+				6CCFAB5712B4E0D900B6A09A /* checkFuturesplash.js */,
 				A40485A510629A3D00FDC4E2 /* AboutBox.xib */,
 				6953E43A0F3EDEB50014ECF7 /* MenubarMenu.xib */,
 				072189BC0F30D9C3008C8944 /* Preferences.xib */,
@@ -560,6 +563,7 @@
 			files = (
 				D9566D8C0F380C9F00358646 /* sifr2-addons.js in Resources */,
 				D9566D8D0F380C9F00358646 /* sifr3-addons.js in Resources */,
+				6CCFAB6012B4E30800B6A09A /* checkFuturesplash.js in Resources */,
 				072189BF0F30D9C3008C8944 /* Preferences.xib in Resources */,
 				6953E43C0F3EDEB50014ECF7 /* MenubarMenu.xib in Resources */,
 				A494CC2C0F9F2446007D5EEB /* ctf.icns in Resources */,
@@ -809,7 +813,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PRODUCT_VERSION = "1.6b18-ssp";
+				PRODUCT_VERSION = "1.6b19-ssp";
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Debug;
@@ -825,7 +829,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PRODUCT_VERSION = "1.6b18-ssp";
+				PRODUCT_VERSION = "1.6b19-ssp";
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Release;

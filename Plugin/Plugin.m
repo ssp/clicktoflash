@@ -700,7 +700,7 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 		} else if ([self _isOptionPressed] && ![self isWhitelisted]) {
 			[self _askToAddCurrentSiteToWhitelist];
 		} else {
-				[self convertTypesForContainer:YES];
+			[self convertTypesForContainer:YES];
 		}
 	}
 }
@@ -909,6 +909,27 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 
 
 
+- (BOOL) flashPluginIsAvailable {
+	static const NSNumber * sCTFFlashPlugInAvailable;
+
+	if (!sCTFFlashPlugInAvailable) {
+		NSString * jsPath = [[NSBundle bundleForClass: [self class]] pathForResource:@"checkFuturesplash" ofType:@"js"];
+		NSError * err;
+		NSString * scriptString = [NSString stringWithContentsOfFile:jsPath encoding:NSUTF8StringEncoding error:&err];
+		
+		if (scriptString) {
+			if ([[[self webView] stringByEvaluatingJavaScriptFromString: scriptString] isEqualToString: @"true"]) {
+				sCTFFlashPlugInAvailable = [[NSNumber alloc] initWithBool:true];
+			}
+			else {
+				sCTFFlashPlugInAvailable = [[NSNumber alloc] initWithBool:false];
+			}
+		}
+	}
+
+	return [sCTFFlashPlugInAvailable boolValue];
+}
+
 
 
 
@@ -935,10 +956,36 @@ if ( [[CTFUserDefaultsController standardUserDefaults] objectForKey: defaultName
 	}
 
 	if (!success) {
-        [self performSelectorOnMainThread:@selector(convertTypesForFlashContainer) withObject:nil waitUntilDone:YES];
+		if ([self flashPluginIsAvailable]) {
+			[self performSelectorOnMainThread:@selector(convertTypesForFlashContainer) withObject:nil waitUntilDone:YES];
+			success = YES;
+		}
+		else {
+			// lacking a Flash plug-in, go to the plug-in's web page
+			NSString * pluginURLString =  [[self container] getAttribute:@"pluginspage"];
+			if (!pluginURLString || [pluginURLString length] == 0) {
+				NSUInteger i;
+				for (i = 0; i < [[[self container] childNodes] length]; i++) {
+					DOMNode * child = [[[self container] childNodes] item:i];
+					if ([child isKindOfClass:[DOMElement class]]) {
+						pluginURLString = [(DOMElement*) child getAttribute:@"pluginspage"];
+						if (pluginURLString && [pluginURLString length] > 0) {
+							break;
+						}
+					}
+				}
+			}
+			
+			if (pluginURLString && [pluginURLString length] > 0) {
+				NSURL * pluginURL = [NSURL URLWithString:pluginURLString];
+				[[NSWorkspace sharedWorkspace] openURL:pluginURL];
+			}
+		}
 	}
 	
-	[self setIsConverted: YES];
+	if (success) {
+		[self setIsConverted: YES];
+	}
 }
 
 
