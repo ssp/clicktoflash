@@ -75,9 +75,8 @@
 	[self setInfoFromFlashVars];
 
 	NSString * myVideoID = [self videoID];
-	NSString * myVideoHash = [self videoHash];
 	
-	if (myVideoID != nil && myVideoHash != nil) {
+	if (myVideoID != nil) {
 		// We are on a YouTube page which contains all relevant info right there.
 		// We already checked for video: check for videos. Now get the video's name.
 		 
@@ -171,7 +170,6 @@
 
 - (void) dealloc {
 	[self setVideoID: nil];
-	[self setVideoHash: nil];
 	[self setInfoLoader: nil];
 	
 	[super dealloc];
@@ -285,65 +283,6 @@
 
 
 #pragma mark -
-#pragma mark Check for Videos
-
-- (void)_checkForH264VideoVariants {
-	CTFLoader * loader;
-	
-	loader = [CTFLoader loaderWithURL: [NSURL URLWithString:[self videoURLString]]
-							 delegate: self
-							 selector: @selector(HEADDownloadFinished:)];
-	[self setVideoLookup: loader];
-	if (loader != nil) {
-		[loader setHEADOnly: YES];
-		[loader start];
-		[self increaseActiveLookups];
-	}
-	else {
-		[self setLookupStatus: failed];
-	}
-	
-	loader = [CTFLoader loaderWithURL: [NSURL URLWithString:[self videoHDURLString]]
-							 delegate: self
-							 selector: @selector(HEADHDDownloadFinished:)];
-	[self setVideoHDLookup: loader];
-	if (loader != nil) {
-		[loader setHEADOnly: YES];
-		[loader start];
-		[self increaseActiveLookups];
-	}
-	else {
-		[self setLookupStatus: failed];
-	}
-}
-
-
-
-- (void) HEADDownloadFinished: (CTFLoader *) loader {
-	if ( [self canPlayResponseResult: [loader response]] ) {
-		[self setHasVideo: YES];
-	}
-
-	[self decreaseActiveLookups];
-	[self setVideoLookup: nil];
-}
-
-
-- (void) HEADHDDownloadFinished: (CTFLoader *) loader {
-	if ( [self canPlayResponseResult: [loader response]] ) {
-		[self setHasVideoHD: YES];
-	}
-
-	[self decreaseActiveLookups];
-	[self setVideoHDLookup: nil];
-}
-
-
-
-
-
-
-#pragma mark -
 #pragma mark Get and evaluate Video Information
 
 
@@ -355,19 +294,6 @@
 				NSLog(@"ClickToFlashKillerYouTube -setInfoFromFlashVars: YouTube video with ambiguous IDs at %@ (%@, %@)", [self pageURL], [self videoID], myVideoID);
 			}
 			[self setVideoID: myVideoID];
-		}
-		
-		// 'hash' value is in the 't' or 'token' flashvar
-		NSString * myHash = [self flashVarWithName: @"t"];
-		if ( myHash == nil ) {
-			myHash = [self flashVarWithName: @"token"];
-		}
-		if ( myHash != nil ) {
-			[self setVideoHash: myHash];
-	//		[self _checkForH264VideoVariants];
-		}
-		else {
-			NSLog(@"ClickToFlashKillerYouTube -setInfoFromFlashVars: No 't' or 'token' Flash variable found for video %@", [self videoID]);
 		}
 		
 		NSString * myTitle = [self flashVarWithName: @"title"];
@@ -483,16 +409,6 @@
 	videoID = newVideoID;
 }
 
-
-- (NSString*) videoHash {
-	return videoHash;
-}
-
-- (void)setVideoHash:(NSString *)newVideoHash {
-	[newVideoHash retain];
-	[videoHash release];
-	videoHash = newVideoHash;
-}
 
 
 - (CTFLoader *) infoLoader {
