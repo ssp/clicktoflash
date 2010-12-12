@@ -146,13 +146,13 @@
 			}			
 		}
 		
-		
 		if (myVideoID != nil) {
 			[self setVideoID: myVideoID];
-			
-			// Download the video information asynchronously.
-			[self retrieveYouTubeInfoAndCheck];
 		}
+	}
+	
+	if ( ! ([self videoURLString] || [self videoHDURLString] ) ) {
+		[self retrieveYouTubeInfoAndCheck];
 	}
 	
 	if ( myVideoID != nil ) {
