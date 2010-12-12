@@ -33,12 +33,13 @@
 @interface CTFKillerYouTube : CTFKillerVideo {
 	NSString * videoID;
 	NSString * videoHash;
-		
+	
 	unsigned expectedResponses;
 	
 	CTFLoader * infoLoader;
 }
 
+- (NSString*) flashVarURLForFormat: (NSString *) format;
 
 + (BOOL) isYouTubeSiteURL: (NSURL*) theURL;
 - (NSURL *) YouTubeInfoURL;

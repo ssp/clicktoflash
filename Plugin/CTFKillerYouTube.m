@@ -191,29 +191,36 @@
 
 
 
-// URL to the video file used for loading it in the player.
-- (NSString*) videoURLString { 
+// Use Flash Vars to figure out URL to the video file for the format passed
+- (NSString*) flashVarURLForFormat: (NSString *) format {
 	NSString * result = nil;
-	NSString * ID = [self videoID];
-	NSString * hash = [self videoHash];
-	if (ID != nil && hash != nil) {
-		result = [ NSString stringWithFormat: @"http://www.youtube.com/get_video?fmt=18&video_id=%@&t=%@&asv=3", ID, hash ];		
+	
+	NSArray * formats = [[self flashVarWithName:@"fmt_url_map"] componentsSeparatedByString:@","];
+	NSEnumerator * formatEnumerator = [formats objectEnumerator];
+	NSString * formatString;
+	while ( (formatString = [formatEnumerator nextObject]) ) {
+		NSArray * components = [formatString componentsSeparatedByString:@"|"];
+		if ([components count] == 2) {
+			if ([[components objectAtIndex:0] isEqualToString: format]) {
+				result = [components objectAtIndex:1];
+				break;
+			}
+		}
 	}
-
+	
 	return result;
+}
+
+
+
+- (NSString*) videoURLString {
+	return [self flashVarURLForFormat: @"18"];
 } 
 
 
 
 - (NSString*) videoHDURLString { 
-	NSString * result = nil;
-	NSString * ID = [self videoID];
-	NSString * hash = [self videoHash];
-	if (ID != nil && hash != nil) {	
-		result = [ NSString stringWithFormat: @"http://www.youtube.com/get_video?fmt=22&video_id=%@&t=%@&asv=3", ID, hash ];
-	}
-	
-	return result; 
+	return [self flashVarURLForFormat: @"22"];
 }
 
 
@@ -357,7 +364,7 @@
 		}
 		if ( myHash != nil ) {
 			[self setVideoHash: myHash];
-			[self _checkForH264VideoVariants];
+	//		[self _checkForH264VideoVariants];
 		}
 		else {
 			NSLog(@"ClickToFlashKillerYouTube -setInfoFromFlashVars: No 't' or 'token' Flash variable found for video %@", [self videoID]);
@@ -377,6 +384,11 @@
 			[self setTitle: myTitle];
 		}
 		
+		
+		[self setHasVideo: ([self videoURLString] != nil)];
+		[self setHasVideoHD: ([self videoHDURLString] != nil)];
+		// video status has been set, thus lookups are finished
+		[self setLookupStatus: finished];
 	}
 }
 
@@ -391,7 +403,6 @@
 			if ( equalsRange.location != NSNotFound && [argument length] > equalsRange.location ) {
 				NSString * argumentName = [argument substringToIndex: equalsRange.location];
 				NSString * argumentInfo = [argument substringFromIndex: equalsRange.location + 1];
-				argumentInfo = [argumentInfo stringByReplacingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
 				[myFlashVars setObject: argumentInfo forKey: argumentName];
 			}
 		}

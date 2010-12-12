@@ -174,7 +174,7 @@
 
 - (NSString*) flashVarWithName: (NSString*) argName
 {
-    return [[[ flashVars objectForKey: argName ] retain] autorelease];
+    return [[flashVars objectForKey: argName] stringByReplacingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
 }
 
 
