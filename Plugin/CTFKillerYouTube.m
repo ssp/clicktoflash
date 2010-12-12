@@ -117,33 +117,30 @@
 				}
 			}		
 		}
-		
 	} 
 	else {
 		// it's an embedded YouTube flash view; scrub the URL to
 		// determine the video_id, then get the source of the YouTube
 		// page to get the Flash vars
 		
-		if ( myVideoID == nil ) {
-			NSURL * ytURL = [NSURL URLWithString: srcURLString];
-			NSString * host = [ytURL host];
-			if (([host rangeOfString:@"youtube.com" options: NSAnchoredSearch | NSBackwardsSearch].location != NSNotFound) || ([host rangeOfString:@"youtube-nocookie.com" options: NSAnchoredSearch | NSBackwardsSearch].location != NSNotFound ) ) {
+		NSURL * ytURL = [NSURL URLWithString: srcURLString];
+		NSString * host = [ytURL host];
+		if (([host rangeOfString:@"youtube.com" options: NSAnchoredSearch | NSBackwardsSearch].location != NSNotFound) || ([host rangeOfString:@"youtube-nocookie.com" options: NSAnchoredSearch | NSBackwardsSearch].location != NSNotFound ) ) {
 				
-				NSString * path = [ytURL path];
-				NSRange lastSlashRange = [path rangeOfString:@"/" options:NSLiteralSearch | NSBackwardsSearch];
-				NSInteger lastSlash = lastSlashRange.location;
-				NSRange firstAmpersandRange = [path rangeOfString:@"&" options:NSLiteralSearch];
-				if ( lastSlash != NSNotFound ) {
-					NSInteger firstAmpersand = firstAmpersandRange.location;
-					if (firstAmpersand == NSNotFound) {
-						firstAmpersand = [path length];
-					}
-					if (lastSlash < firstAmpersand ) {
-						NSRange IDRange = NSMakeRange(lastSlash + 1, firstAmpersand - lastSlash - 1);
-						myVideoID = [path substringWithRange:IDRange];
-					}
+			NSString * path = [ytURL path];
+			NSRange lastSlashRange = [path rangeOfString:@"/" options:NSLiteralSearch | NSBackwardsSearch];
+			NSInteger lastSlash = lastSlashRange.location;
+			NSRange firstAmpersandRange = [path rangeOfString:@"&" options:NSLiteralSearch];
+			if ( lastSlash != NSNotFound ) {
+				NSInteger firstAmpersand = firstAmpersandRange.location;
+				if (firstAmpersand == NSNotFound) {
+					firstAmpersand = [path length];
 				}
-			}			
+				if (lastSlash < firstAmpersand ) {
+					NSRange IDRange = NSMakeRange(lastSlash + 1, firstAmpersand - lastSlash - 1);
+					myVideoID = [path substringWithRange:IDRange];
+				}
+			}
 		}
 		
 		if (myVideoID != nil) {

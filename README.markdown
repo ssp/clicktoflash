@@ -29,7 +29,7 @@ I put out a few test versions over time. Those are close – but not quite ident
 * current [ssp/cutting-edge Code](http://github.com/ssp/clicktoflash/tree/cutting-edge)
 * download [ssp’s latest build](http://earthlingsoft.net/beta/ClickToFlash-ssp-latest.zip)
 * [1.6b20-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b20-ssp.zip)
-	* Handle case of embedded Flash where the videoID is stored in flashvars but the movie URL isn’t by loading the movie info from YouTube ([https://rentzsch.lighthouseapp.com/projects/24342/tickets/758-quicktimeyoutube#ticket-758-10](#758/10): 
+	* Handle case of embedded Flash where the videoID is stored in flashvars but the movie URL isn’t by loading the movie info from YouTube ([https://rentzsch.lighthouseapp.com/projects/24342/tickets/758-quicktimeyoutube#ticket-758-10](#758/10): 765173
 * [1.6b19-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b19-ssp.zip)
 	* Explicitly state that Flash isn’t installed, if necessary. An attempt to clarify the situation for users on new MacBook Airs (#776): ce82ded
 * [1.6b18-ssp](http://earthlingsoft.net/beta/ClickToFlash-1.6b18-ssp.zip)
